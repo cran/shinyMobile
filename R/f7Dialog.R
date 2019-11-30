@@ -1,0 +1,156 @@
+#' Create a Framework7 dialog window
+#'
+#' @param inputId Input associated to the alert. Works when type is one of
+#' "confirm", "prompt" or "login".
+#' @param title Dialog title
+#' @param text Dialog text.
+#' @param type Dialog type: \code{c("alert", "confirm", "prompt", "login")}.
+#' @param session shiny session.
+#'
+#' @export
+#' @examples
+#' # simple alert
+#' if (interactive()) {
+#'   library(shiny)
+#'   library(shinyMobile)
+#'   shinyApp(
+#'     ui = f7Page(
+#'       title = "My App",
+#'       f7SingleLayout(
+#'         navbar = f7Navbar(title = "f7Dialog"),
+#'         f7Button(inputId = "goButton", "Go!")
+#'       )
+#'     ),
+#'     server = function(input, output, session) {
+#'       shiny::observeEvent(input$goButton,{
+#'         f7Dialog(
+#'          title = "Dialog title",
+#'          text = "This is an alert dialog",
+#'          session = session
+#'         )
+#'       })
+#'     }
+#'   )
+#' }
+#' # confirm alert
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'  shinyApp(
+#'    ui = f7Page(
+#'      title = "My App",
+#'      f7SingleLayout(
+#'        navbar = f7Navbar(title = "f7Dialog"),
+#'        f7Button(inputId = "goButton", "Go!")
+#'      )
+#'    ),
+#'    server = function(input, output, session) {
+#'
+#'      observeEvent(input$goButton,{
+#'        f7Dialog(
+#'          inputId = "test",
+#'          title = "Dialog title",
+#'          type = "confirm",
+#'          text = "This is an alert dialog",
+#'          session = session
+#'        )
+#'      })
+#'
+#'      observeEvent(input$test, {
+#'        f7Toast(session, text = paste("Alert input is:", input$test))
+#'      })
+#'
+#'    }
+#'  )
+#' }
+#' # prompt dialog
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'  shinyApp(
+#'    ui = f7Page(
+#'      title = "My App",
+#'      f7SingleLayout(
+#'        navbar = f7Navbar(title = "f7Dialog"),
+#'        f7Button(inputId = "goButton", "Go!"),
+#'        uiOutput("res")
+#'      )
+#'    ),
+#'    server = function(input, output, session) {
+#'
+#'      observe({
+#'        print(input$prompt)
+#'      })
+#'
+#'      observeEvent(input$goButton,{
+#'        f7Dialog(
+#'          inputId = "prompt",
+#'          title = "Dialog title",
+#'          type = "prompt",
+#'          text = "This is a prompt dialog",
+#'          session = session
+#'        )
+#'      })
+#'
+#'      output$res <- renderUI(f7BlockTitle(title = input$prompt, size = "large"))
+#'    }
+#'  )
+#' }
+#'
+#' # login dialog
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'  shinyApp(
+#'    ui = f7Page(
+#'      title = "My App",
+#'      f7SingleLayout(
+#'        navbar = f7Navbar(title = "f7Dialog"),
+#'        f7Button(inputId = "goButton", "Go!"),
+#'        uiOutput("ui")
+#'      )
+#'    ),
+#'    server = function(input, output, session) {
+#'
+#'      observe({
+#'        print(input$login)
+#'      })
+#'
+#'      observeEvent(input$goButton,{
+#'        f7Dialog(
+#'          inputId = "login",
+#'          title = "Dialog title",
+#'          type = "login",
+#'          text = "This is an login dialog",
+#'          session = session
+#'        )
+#'      })
+#'
+#'      output$ui <- renderUI({
+#'        req(input$login$user == "David" & input$login$password == "prout")
+#'        img(src = "https://media2.giphy.com/media/12gfL8Xxrhv7C1fXiV/giphy.gif")
+#'      })
+#'    }
+#'  )
+#' }
+f7Dialog <- function(inputId = NULL, title = NULL, text,
+                     type = c("alert", "confirm", "prompt", "login"), session) {
+
+  type <- match.arg(type)
+
+  # force to render shiny.tag and convert it to character
+  # since text does not accept anything else
+  text <- if (class(text) %in% c("shiny.tag" , "shiny.tag.list")) as.character(force(text)) else text
+
+  message <- dropNulls(
+    list(
+      id = inputId,
+      title = title,
+      text = text,
+      type = type
+    )
+  )
+  # see my-app.js function
+  session$sendCustomMessage(type = "dialog", message = message)
+
+}
