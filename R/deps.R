@@ -14,15 +14,12 @@ addCSSDeps <- function(x) {
 
   # CSS
   framework7_css <- "framework7.bundle.min.css"
-  framework7_icons_css <- "framework7-icons.css"
   custom_css <- "my-app.css"
   # card extra elements
   social_cards_css <- "social-cards.css"
   card_img_css <- "card-img.css"
   # swiper css
   swiper_css <- "swiper.css"
-  # grid extra css
-  grid_css <- "grid-extra.css"
   # material icons
   material_icons_css <- "material-icons.css"
 
@@ -30,17 +27,16 @@ addCSSDeps <- function(x) {
     # deps
     htmltools::htmlDependency(
       name = "framework7",
-      version = "5.1.3",
-      src = c(file = system.file("framework7-5.1.3", package = "shinyMobile")),
+      version = "5.5.0",
+      src = c(file = "framework7-5.5.0"),
+      package = "shinyMobile",
       script = NULL,
       stylesheet = c(
         framework7_css,
         material_icons_css,
         custom_css,
-        framework7_icons_css,
         social_cards_css,
         card_img_css,
-        grid_css,
         swiper_css
       )
     )
@@ -61,22 +57,22 @@ addCSSDeps <- function(x) {
 # located at the end of the body.
 addJSDeps <- function() {
 
-  depsPath <- "framework7-5.1.3/"
+  depsPath <- "framework7-5.5.0/"
 
   # JS
   framework7_js <- paste0(depsPath, "framework7.bundle.min.js")
   custom_js <- paste0(depsPath, "my-app.js")
-  fullScreen_js <- paste0(depsPath, "fullscreen.js")
+  pwa_compat <- paste0(depsPath, "pwacompat/pwacompat.min.js")
 
   shiny::tagList(
     shiny::singleton(
       shiny::tags$script(src = framework7_js)
     ),
     shiny::singleton(
-      shiny::tags$script(src = custom_js)
+      shiny::tags$script(async = NA, src = custom_js)
     ),
     shiny::singleton(
-      shiny::tags$script(src = fullScreen_js)
+      shiny::tags$script(async = NA, src = pwa_compat)
     )
   )
 }
@@ -85,31 +81,76 @@ addJSDeps <- function() {
 #' @importFrom utils packageVersion
 #' @importFrom htmltools htmlDependency
 f7InputsDeps <- function() {
+
   htmltools::htmlDependency(
     name = "framework7-bindings",
     version = as.character(packageVersion("shinyMobile")),
     src = c(
-      file = system.file("framework7-5.1.3/input-bindings", package = "shinyMobile"),
-      href = "framework7-5.1.3/input-bindings"
+      file = "framework7-5.5.0",
+      href = "framework7-5.5.0"
     ),
     package = "shinyMobile",
-    script = c(
-      "sliderInputBinding.js",
-      "stepperInputBinding.js",
-      "toggleInputBinding.js",
-      "datePickerInputBinding.js",
-      "pickerInputBinding.js",
-      "colorPickerInputBinding.js",
-      "tabsInputBinding.js",
-      "dateInputBinding.js",
-      "panelInputBinding.js",
-      "collapsibleInputBinding.js",
-      "sheetInputBinding.js",
-      "cardInputBinding.js",
-      "autoCompleteInputBinding.js",
-      "actionSheetInputBinding.js",
-      "gaugeInputBinding.js"
+    script = "framework7.bindings.min.js"
+  )
+}
+
+
+html_dependencies_f7Icons <- function() {
+  name <- "f7-icons"
+  htmlDependency(
+    name = name,
+    version = "3.0.0",
+    src = list(
+      href = "framework7-5.5.0",
+      file = "framework7-5.5.0"
+    ),
+    package = "shinyMobile",
+    stylesheet = file.path(name, "css/framework7-icons.css"),
+    all_files = TRUE
+  )
+}
+
+
+# deps for pwa compat
+addPWADeps <- function(icon, favicon, manifest) {
+  depsPath <- "framework7-5.5.0/pwacompat/"
+  shiny::tagList(
+    # manifest
+    shiny::singleton(
+      shiny::tags$link(
+        rel = "manifest",
+        href = if(!is.null(manifest)) {
+          manifest
+        } else {
+          paste0(depsPath, "manifest.json")
+        }
+      )
+    ),
+    # apple touch icon (not created by pwacompat)
+    shiny::singleton(
+      shiny::tags$link(
+        rel = "apple-touch-icon",
+        href = if (!is.null(icon)) {
+          icon
+        } else {
+          paste0(depsPath, "icons/apple-touch-icon.png")
+        }
+      )
+    ),
+    #favicon
+    shiny::singleton(
+      shiny::tags$link(
+        rel = "icon",
+        href = if(!is.null(favicon)) {
+          favicon
+        } else {
+          paste0(depsPath, "icons/favicon.png")
+        }
+      )
     )
   )
 }
+
+
+
 

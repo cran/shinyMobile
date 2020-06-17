@@ -1,12 +1,50 @@
 tabCards <- f7Tab(
   tabName = "Cards",
-  icon = f7Icon("card", f7Badge(8, color = "green")),
+  icon = f7Icon("rectangle_stack", f7Badge(8, color = "green")),
   active = FALSE,
 
-  f7Align(
-    side = "center",
-    h1("miniUI 2.0 brings new card components")
+  f7BlockTitle(title = "f7Block") %>% f7Align(side = "center"),
+  f7Block(
+    f7BlockHeader(text = "Header"),
+    "Here comes paragraph within content block.
+     Donec et nulla auctor massa pharetra
+     adipiscing ut sit amet sem. Suspendisse
+     molestie velit vitae mattis tincidunt.
+     Ut sit amet quam mollis, vulputate
+     turpis vel, sagittis felis.",
+    f7BlockFooter(text = "Footer")
   ),
+  br(),
+
+  f7BlockTitle(title = "f7Block with wrapper") %>% f7Align(side = "center"),
+  f7Block(
+    strong = TRUE,
+    f7BlockHeader(text = "Header"),
+    "Here comes paragraph within content block.
+     Donec et nulla auctor massa pharetra
+     adipiscing ut sit amet sem. Suspendisse
+     molestie velit vitae mattis tincidunt.
+     Ut sit amet quam mollis, vulputate
+     turpis vel, sagittis felis.",
+    f7BlockFooter(text = "Footer")
+  ),
+  br(),
+
+  f7BlockTitle(title = "f7Block with wrapper and inset") %>% f7Align(side = "center"),
+  f7Block(
+    inset = TRUE,
+    strong = TRUE,
+    f7BlockHeader(text = "Header"),
+    "Here comes paragraph within content block.
+     Donec et nulla auctor massa pharetra
+     adipiscing ut sit amet sem. Suspendisse
+     molestie velit vitae mattis tincidunt.
+     Ut sit amet quam mollis, vulputate
+     turpis vel, sagittis felis.",
+    f7BlockFooter(text = "Footer")
+  ),
+
+  br(),
 
   # classic card without header nor footer
   f7BlockTitle(title = "f7Card with no header nor footer") %>% f7Align(side = "center"),
@@ -39,7 +77,7 @@ tabCards <- f7Tab(
   f7BlockTitle(title = "f7Card with media") %>% f7Align(side = "center"),
   f7Card(
     title = "Card with header, footer and image",
-    img = "https://lorempixel.com/1000/600/nature/3/",
+    img = "https://cdn.framework7.io/placeholder/nature-1000x600-3.jpg",
     "This is a simple card with plain text,
      but cards can also contain their own header,
      footer, list view, image, or any other element.",
@@ -54,11 +92,11 @@ tabCards <- f7Tab(
   # social card
   f7BlockTitle(title = "f7SocialCard") %>% f7Align(side = "center"),
   f7SocialCard(
-    author_img = "https://lorempixel.com/68/68/people/1/",
+    author_img = "https://cdn.framework7.io/placeholder/people-68x68-1.jpg",
     author = "A social Card",
     date = "Monday at 3:47 PM",
     "What a nice photo i took yesterday!",
-    img(src = "https://lorempixel.com/1000/700/nature/8/", width = "100%"),
+    img(src = "https://cdn.framework7.io/placeholder/nature-1000x700-8.jpg", width = "100%"),
     footer = tagList(
       f7Badge("1", color = "yellow"),
       f7Badge("2", color = "green"),
@@ -82,7 +120,7 @@ tabCards <- f7Tab(
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             Nulla sagittis tellus ut turpis condimentum, ut dignissim
             lacus tincidunt.",
-          media = tags$img(src = paste0("https://lorempixel.com/88/88/fashion/", j)),
+          media = tags$img(src = "https://picsum.photos/200"),
           right = "Right Text",
           url = "https://www.google.com"
         )
@@ -90,7 +128,7 @@ tabCards <- f7Tab(
     ),
     footer = tagList(
       span("January 20", 2015),
-      f7Chip(label = "Example Chip", img = "https://lorempixel.com/64/64/people/9/"),
+      f7Chip(label = "Example Chip", img = "https://picsum.photos/200"),
       span(5, "comments")
     )
   ),

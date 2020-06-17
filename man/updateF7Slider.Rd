@@ -5,17 +5,19 @@
 \title{Change the value of a slider input on the client}
 \usage{
 updateF7Slider(
-  session,
   inputId,
   min = NULL,
   max = NULL,
   value = NULL,
-  scale = FALSE
+  scale = FALSE,
+  scaleSteps = NULL,
+  scaleSubSteps = NULL,
+  step = NULL,
+  color = NULL,
+  session = shiny::getDefaultReactiveDomain()
 )
 }
 \arguments{
-\item{session}{The session object passed to function given to the server.}
-
 \item{inputId}{The id of the input object.}
 
 \item{min}{Slider minimum range.}
@@ -25,9 +27,22 @@ updateF7Slider(
 \item{value}{Slider value or a vector containing 2 values (for a range).}
 
 \item{scale}{Slider scale.}
+
+\item{scaleSteps}{Number of scale steps.}
+
+\item{scaleSubSteps}{Number of scale sub steps (each step will be divided by this value).}
+
+\item{step}{Slider increase step size.}
+
+\item{color}{See \link{getF7Colors} for valid colors.}
+
+\item{session}{The Shiny session object, usually the default value will suffice.}
 }
 \description{
 Change the value of a slider input on the client
+}
+\note{
+Important: you cannot transform a range slider into a simple slider and inversely.
 }
 \examples{
 if(interactive()){
@@ -35,40 +50,42 @@ if(interactive()){
  library(shinyMobile)
 
  shinyApp(
-  ui = f7Page(
-    title = "My app",
-    f7SingleLayout(
-      navbar = f7Navbar(title = "updateF7Slider"),
-      f7Card(
-        f7Button(inputId = "update", label = "Update slider"),
-        f7Slider(
-          inputId = "obs",
-          label = "Range values",
-          max = 500,
-          min = 0,
-          value = c(50, 100),
-          scale = TRUE,
-          vertical = FALSE
-        ),
-        verbatimTextOutput("test")
-      )
-    )
-  ),
-  server = function(input, output, session) {
+   ui = f7Page(
+     title = "My app",
+     f7SingleLayout(
+       navbar = f7Navbar(title = "updateF7Slider"),
+       f7Card(
+         f7Button(inputId = "update", label = "Update slider"),
+         f7Slider(
+           inputId = "obs",
+           label = "Range values",
+           max = 500,
+           min = 0,
+           step = 1,
+           color = "deeppurple",
+           value = c(50, 100)
+         ),
+         verbatimTextOutput("test")
+       )
+     )
+   ),
+   server = function(input, output, session) {
 
-    output$test <- renderPrint({input$obs})
+     output$test <- renderPrint({input$obs})
 
-    observeEvent(input$update, {
-      updateF7Slider(
-        session,
-        inputId = "obs",
-        value = c(20, 40),
-        min = 10,
-        max = 50,
-        scale = FALSE
-      )
-    })
-  }
+     observeEvent(input$update, {
+       updateF7Slider(
+         inputId = "obs",
+         value = c(1, 5),
+         min = 0,
+         scaleSteps = 10,
+         scaleSubSteps = 5,
+         step = 0.1,
+         max = 10,
+         color = "teal"
+       )
+     })
+   }
  )
 }
 }

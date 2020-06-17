@@ -1,10 +1,41 @@
 tabOthers <- f7Tab(
   tabName = "Others",
-  icon = f7Icon("more_round"),
+  icon = f7Icon("plus_circle"),
 
-  f7Align(
-    side = "center",
-    h1("miniUI 2.0 brings other elements")
+  # standalone tabs
+  f7BlockTitle(title = "f7Tabs") %>% f7Align(side = "center"),
+  f7Tabs(
+    style = "strong",
+    animated = TRUE,
+    swipeable = FALSE,
+    f7Tab(
+      tabName = "Tab 1",
+      active = TRUE,
+      f7Block(
+        strong = TRUE,
+        f7BlockHeader(text = "Header"),
+        "Here comes Tab 1.",
+        f7BlockFooter(text = "Footer")
+      )
+    ),
+    f7Tab(
+      tabName = "Tab 2",
+      f7Block(
+        strong = TRUE,
+        f7BlockHeader(text = "Header"),
+        "Here comes Tab 2.",
+        f7BlockFooter(text = "Footer")
+      )
+    ),
+    f7Tab(
+      tabName = "Tab 3",
+      f7Block(
+        strong = TRUE,
+        f7BlockHeader(text = "Header"),
+        "Here comes Tab 3.",
+        f7BlockFooter(text = "Footer")
+      )
+    )
   ),
 
   # skeletons
@@ -14,39 +45,6 @@ tabOthers <- f7Tab(
     f7ListItem(title = "Item 2")
   ) %>% f7Skeleton(duration = 5000),
 
-  br(),
-
-  # Messages
-  f7BlockTitle(title = "f7Messages") %>% f7Align(side = "center"),
-  f7Messages(
-    id = "messagelist",
-    f7Message(
-      "Lorem ipsum dolor sit amet,
-           consectetur adipiscing elit.
-           Duo Reges: constructio interrete",
-      src = "https://cdn.framework7.io/placeholder/people-100x100-7.jpg",
-      author = "David",
-      date = "2019-09-12",
-      state = "received",
-      type = "text"
-    ),
-    f7Message(
-      "https://cdn.framework7.io/placeholder/cats-200x260-4.jpg",
-      src = "https://cdn.framework7.io/placeholder/people-100x100-9.jpg",
-      author = "Lia",
-      date = NULL,
-      state = "sent",
-      type = "img"
-    ),
-    f7Message(
-      "Hi Bro",
-      src = "https://cdn.framework7.io/placeholder/people-100x100-9.jpg",
-      author = NULL,
-      date = "2019-08-15",
-      state = "sent",
-      type = "text"
-    )
-  ),
   br(),
 
   # Badges
@@ -67,7 +65,7 @@ tabOthers <- f7Tab(
     f7Chip(label = "Example Chip"),
     f7Chip(label = "Example Chip", outline = TRUE),
     f7Chip(label = "Example Chip", icon = f7Icon("add_round"), icon_status = "pink"),
-    f7Chip(label = "Example Chip", img = "https://lorempixel.com/64/64/people/9/"),
+    f7Chip(label = "Example Chip", img = "https://picsum.photos/200"),
     f7Chip(label = "Example Chip", closable = TRUE),
     f7Chip(label = "Example Chip", status = "green"),
     f7Chip(label = "Example Chip", status = "green", outline = TRUE)
@@ -99,10 +97,10 @@ tabOthers <- f7Tab(
   f7Swiper(
     id = "my-swiper",
     f7Slide(
-      plot_ly(z = ~volcano, type = "contour")
+      plot(sin, -pi, 2*pi)
     ),
     f7Slide(
-      plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length)
+      plot(cos, -pi, 2*pi)
     )
   ),
 
@@ -170,8 +168,11 @@ tabOthers <- f7Tab(
       value = 50,
       scale = TRUE
     ),
+    br(),
     f7Progress(id = "pg2", value = 100, color = "green"),
+    br(),
     f7Progress(id = "pg3", value = 50, color = "deeppurple"),
+    br(),
     f7ProgressInf()
   ),
   br(),
@@ -189,7 +190,6 @@ tabOthers <- f7Tab(
           value = 50,
           borderColor = "#2196f3",
           borderWidth = 10,
-          valueText = "50%",
           valueFontSize = 41,
           valueTextColor = "#2196f3",
           labelText = "amount of something"
@@ -202,7 +202,6 @@ tabOthers <- f7Tab(
           value = 30,
           borderColor = "orange",
           borderWidth = 10,
-          valueText = "30%",
           valueFontSize = 41,
           valueTextColor = "orange",
           labelText = "Other thing"
@@ -227,7 +226,12 @@ tabOthers <- f7Tab(
       inputId = "goPanel",
       label = "Toggle left panel"
     )
-  )
+  ),
+  br(),
+
+  # preloaders
+  f7BlockTitle(title = "f7ShowPreloader/f7HidePreloader") %>% f7Align(side = "center"),
+  f7Card(plotOutput("preloaderPlot"), f7Button("showLoader", "Show loader"))
 
 )
 

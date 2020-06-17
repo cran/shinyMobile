@@ -7,11 +7,6 @@ dropNulls <- function (x)
 }
 
 
-#' @importFrom magrittr %>%
-#' @export
-magrittr::`%>%`
-
-
 
 # function needed to set up the color theme
 # of the app. Generate the hex corresponding to the
@@ -72,4 +67,11 @@ tagAppendAttributes <- function (tag, ...)
 {
   tag$attribs <- c(tag$attribs, dropNulls(list(...)))
   tag
+}
+
+
+shinyInputLabel <- function(inputId, label = NULL) {
+  shiny::tags$label(label, class = "control-label", class = if (is.null(label)) {
+    "shiny-label-null"
+  }, `for` = inputId)
 }

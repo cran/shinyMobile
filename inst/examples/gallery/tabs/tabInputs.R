@@ -3,26 +3,33 @@ tabInputs <- f7Tab(
   icon = f7Icon("rocket_fill"),
   active = TRUE,
 
-  f7Align(
-    side = "center",
-    h1("miniUI 2.0 brings new inputs for iOs and android")
-  ),
-
-  f7BlockTitle(title = "f7Text input") %>% f7Align(side = "center"),
+  f7BlockTitle(title = "f7Text input with validation") %>% f7Align(side = "center"),
   f7Text(
     inputId = "text",
     label = "Your text",
     value = "some text",
-    placeholder = "Your text here"
+    placeholder = "Don't leave me empty!"
   ),
   verbatimTextOutput("text"),
   br(),
 
-  f7BlockTitle(title = "f7Password input") %>% f7Align(side = "center"),
+  f7BlockTitle(title = "f7TextArea input") %>% f7Align(side = "center"),
+  f7TextArea(
+    inputId = "textarea",
+    label = "Text Area",
+    value = "Lorem ipsum dolor sit amet, consectetur
+       adipiscing elit, sed do eiusmod tempor incididunt ut
+       labore et dolore magna aliqua",
+    placeholder = "Your text here",
+    resize = TRUE
+  ),
+  textOutput("textarea"),
+
+  f7BlockTitle(title = "f7Password input with validation") %>% f7Align(side = "center"),
   f7Password(
     inputId = "password",
     label = "Password:",
-    placeholder = "Your password here"
+    placeholder = "Expect a number"
   ),
   verbatimTextOutput("password"),
   br(),
@@ -38,17 +45,23 @@ tabInputs <- f7Tab(
       value = 10,
       scale = FALSE
     ),
-    verbatimTextOutput("slider"),
-    f7Slider(
-      inputId = "sliderRange",
-      label = "Range values",
-      max = 500,
-      min = 0,
-      value = c(50, 100),
-      scale = TRUE
-    ),
-    verbatimTextOutput("sliderRange")
+    verbatimTextOutput("slider")
   ),
+  br(),
+  f7Slider(
+    inputId = "sliderRange",
+    label = "Range values",
+    max = 500,
+    min = 0,
+    value = c(50, 100),
+    scale = TRUE,
+    labels = tagList(
+      f7Icon("bolt_slash_fill"),
+      f7Icon("bolt_fill")
+    )
+  ),
+  verbatimTextOutput("sliderRange"),
+
   br(),
 
   f7BlockTitle(title = "f7Stepper input") %>% f7Align(side = "center"),
@@ -126,7 +139,7 @@ tabInputs <- f7Tab(
     label = "Choose a variable:",
     selected = "drat",
     choices = colnames(mtcars)[-1],
-    type = "popup"
+    openIn = "popup"
   ),
   tableOutput("smartdata"),
   br(),
@@ -135,7 +148,7 @@ tabInputs <- f7Tab(
   f7AutoComplete(
     inputId = "myautocomplete",
     placeholder = "Select a fruit!",
-    type = "dropdown",
+    openIn = "dropdown",
     label = "Type a fruit name",
     choices = c('Apple', 'Apricot', 'Avocado', 'Banana', 'Melon',
                 'Orange', 'Peach', 'Pear', 'Pineapple')
@@ -150,7 +163,7 @@ tabInputs <- f7Tab(
     value = "2019-08-24"
   ),
   "The selected date is",
-  textOutput("selectDate"),
+  verbatimTextOutput("selectDate"),
   br(),
 
   f7BlockTitle(title = "f7Picker input") %>% f7Align(side = "center"),

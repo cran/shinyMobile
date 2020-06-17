@@ -10,10 +10,12 @@ f7Init(
   filled = FALSE,
   color = NULL,
   tapHold = TRUE,
+  tapHoldDelay = 750,
+  pullToRefresh = FALSE,
   iosTouchRipple = FALSE,
   iosCenterTitle = TRUE,
   iosTranslucentBars = FALSE,
-  hideNavOnPageScroll = TRUE,
+  hideNavOnPageScroll = FALSE,
   hideTabsOnPageScroll = FALSE,
   serviceWorker = NULL
 )
@@ -33,6 +35,11 @@ Expect a name like blue or red. If NULL, use the default color.}
 By default it is disabled. Note, that Tap Hold is a part of built-in Fast Clicks library,
 so Fast Clicks should be also enabled.}
 
+\item{tapHoldDelay}{Determines how long (in ms) the user must hold their tap before the taphold event is fired on the target element.
+Default to 750 ms.}
+
+\item{pullToRefresh}{Whether to active the pull to refresh feature. Default to FALSE.}
+
 \item{iosTouchRipple}{Default to FALSE. Enables touch ripple effect for iOS theme.}
 
 \item{iosCenterTitle}{Default to TRUE. When enabled then it will try to position
@@ -41,7 +48,7 @@ title at the center in iOS theme. Sometime (with some custom design) it may not 
 \item{iosTranslucentBars}{Enable translucent effect (blur background) on navigation bars for iOS theme (on iOS devices).
 FALSE by default.}
 
-\item{hideNavOnPageScroll}{Default to TRUE. Will hide Navbars on page scroll.}
+\item{hideNavOnPageScroll}{Default to FALSE. Will hide Navbars on page scroll.}
 
 \item{hideTabsOnPageScroll}{Default to FALSE. Will hide tabs on page scroll.}
 

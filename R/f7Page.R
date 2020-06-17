@@ -9,14 +9,20 @@
 #' @param preloader Whether to display a preloader before the app starts.
 #' FALSE by default.
 #' @param loading_duration Preloader duration.
+#' @param icon Link to 128x128 icon (PWA compatibility). If NULL, taken from
+#' shinyMobile ressources.
+#' @param favicon App favicon. If NULL, taken from shinyMobile ressources.
+#' @param manifest Path to web manifest (PWA compatibility). If NULL, taken from
+#' shinyMobile ressources.
 #'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
 #'
 #' @export
-f7Page <- function(..., init = f7Init(skin = "auto", theme = "light"), title = NULL, preloader = FALSE,
-                   loading_duration = 3){
+f7Page <- function(..., init = f7Init(skin = "auto", theme = "light"),
+                   title = NULL, preloader = FALSE, loading_duration = 3,
+                   icon = NULL, favicon = NULL, manifest = NULL){
 
-  shiny::tags$html(
+  shiny::tagList(
     # Head
     shiny::tags$head(
       shiny::tags$meta(charset = "utf-8"),
@@ -31,25 +37,8 @@ f7Page <- function(..., init = f7Init(skin = "auto", theme = "light"), title = N
           viewport-fit=cover"
       ),
 
-      # PAW properties
-      shiny::tags$meta(name = "apple-mobile-web-app-capable", content = "yes"),
-      shiny::tags$meta(name = "apple-mobile-web-app-title", content = title),
-      shiny::tags$meta(name = "apple-mobile-web-app-status-bar-style", content = "black-translucent"),
-      shiny::tags$link(rel = "apple-touch-icon", href = "icons/apple-touch-icon.png"),
-      shiny::tags$link(rel = "icon", href = "icons/favicon.png"),
-      shiny::tags$link(rel = "manifest", href = "manifest.json"),
-
-      # Splatshscreen for IOS must be in a www folder
-      shiny::tags$link(href = "splashscreens/iphone5_splash.png", media = "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/iphone6_splash.png", media = "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/iphoneplus_splash.png", media = "(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/iphonex_splash.png", media = "(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/iphonexr_splash.png", media = "(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/iphonexsmax_splash.png", media = "(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/ipad_splash.png", media = "(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/ipadpro1_splash.png", media = "(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/ipadpro3_splash.png", media = "(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)", rel = "apple-touch-startup-image"),
-      shiny::tags$link(href = "splashscreens/ipadpro2_splash.png", media = "(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)", rel = "apple-touch-startup-image"),
+      # PAW properties (include https://github.com/GoogleChromeLabs/pwacompat)
+      addPWADeps(icon, favicon, manifest),
 
       shiny::tags$title(title)
     ),
@@ -94,7 +83,7 @@ f7Page <- function(..., init = f7Init(skin = "auto", theme = "light"), title = N
 #' @param navbar Slot for \link{f7Navbar}.
 #' @param toolbar Slot for \link{f7Toolbar}.
 #' @param panels Slot for \link{f7Panel}.
-#' Wrap in \link[shiny]{tagList} if multiple panels.
+#' Wrap in \code{tagList} if multiple panels.
 #' @param appbar Slot for \link{f7Appbar}.
 #'
 #' @examples
@@ -121,7 +110,7 @@ f7Page <- function(..., init = f7Init(skin = "auto", theme = "light"), title = N
 #'         hover = TRUE,
 #'         f7Card(
 #'           title = "Card header",
-#'           sliderInput("obs", "Number of observations", 0, 1000, 500),
+#'           f7Slider("obs", "Number of observations", 0, 1000, 500),
 #'           plotOutput("distPlot"),
 #'           footer = tagList(
 #'             f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
@@ -179,110 +168,157 @@ f7SingleLayout <- function(..., navbar, toolbar = NULL,
 #'
 #' @param ... Slot for \link{f7Tabs}.
 #' @param navbar Slot for \link{f7Navbar}.
+#' @param messagebar Slot for \link{f7MessageBar}.
 #' @param panels Slot for \link{f7Panel}.
-#' Wrap in \link[shiny]{tagList} if multiple panels.
+#' Wrap in \code{tagList} if multiple panels.
 #' @param appbar Slot for \link{f7Appbar}.
 #'
 #' @examples
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
+#'  library(shinyWidgets)
 #'
 #'  shiny::shinyApp(
-#'   ui = f7Page(
-#'     title = "Tab Layout",
-#'     f7TabLayout(
-#'       panels = tagList(
-#'        f7Panel(title = "Left Panel", side = "left", theme = "light", "Blabla", effect = "cover"),
-#'        f7Panel(title = "Right Panel", side = "right", theme = "dark", "Blabla", effect = "cover")
-#'       ),
-#'       navbar = f7Navbar(
-#'         title = "Tabs",
-#'         hairline = FALSE,
-#'         shadow = TRUE,
-#'         left_panel = TRUE,
-#'         right_panel = TRUE
-#'       ),
-#'       f7Tabs(
-#'         animated = TRUE,
-#'         f7Tab(
-#'           tabName = "Tab 1",
-#'           icon = f7Icon("email"),
-#'           active = TRUE,
-#'           f7Shadow(
-#'             intensity = 10,
-#'             hover = TRUE,
-#'             f7Card(
-#'               title = "Card header",
-#'               sliderInput("obs1", "Number of observations", 0, 1000, 500),
-#'               plotOutput("distPlot1"),
-#'               footer = tagList(
-#'                 f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
-#'                 f7Badge("Badge", color = "green")
-#'               )
-#'             )
-#'           )
-#'         ),
-#'         f7Tab(
-#'           tabName = "Tab 2",
-#'           icon = f7Icon("today"),
-#'           active = FALSE,
-#'           f7Shadow(
-#'             intensity = 10,
-#'             hover = TRUE,
-#'             f7Card(
-#'               title = "Card header",
-#'               sliderInput("obs2", "Number of observations", 0, 10000, 5000),
-#'               plotOutput("distPlot2"),
-#'               footer = tagList(
-#'                 f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
-#'                 f7Badge("Badge", color = "green")
-#'               )
-#'             )
-#'           )
-#'         ),
-#'         f7Tab(
-#'           tabName = "Tab 3",
-#'           icon = f7Icon("cloud_upload"),
-#'           active = FALSE,
-#'           f7Shadow(
-#'             intensity = 10,
-#'             hover = TRUE,
-#'             f7Card(
-#'               title = "Card header",
-#'               sliderInput("obs3", "Number of observations", 0, 10, 5),
-#'               plotOutput("distPlot3"),
-#'               footer = tagList(
-#'                 f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
-#'                 f7Badge("Badge", color = "green")
-#'               )
-#'             )
-#'           )
-#'         )
-#'       )
-#'     )
-#'   ),
-#'   server = function(input, output) {
-#'     output$distPlot1 <- renderPlot({
-#'       dist <- rnorm(input$obs1)
-#'       hist(dist)
-#'     })
-#'     output$distPlot2 <- renderPlot({
-#'       dist <- rnorm(input$obs2)
-#'       hist(dist)
-#'     })
-#'     output$distPlot3 <- renderPlot({
-#'       dist <- rnorm(input$obs3)
-#'       hist(dist)
-#'     })
-#'   }
+#'    ui = f7Page(
+#'      title = "My app",
+#'      init = f7Init(skin = "md", theme = "light"),
+#'      f7TabLayout(
+#'        tags$head(
+#'          tags$script(
+#'            "$(function(){
+#'                $('#tapHold').on('taphold', function () {
+#'                  app.dialog.alert('Tap hold fired!');
+#'                });
+#'              });
+#'              "
+#'          )
+#'        ),
+#'        panels = tagList(
+#'          f7Panel(title = "Left Panel", side = "left", theme = "light", "Blabla", effect = "cover"),
+#'          f7Panel(title = "Right Panel", side = "right", theme = "dark", "Blabla", effect = "cover")
+#'        ),
+#'        navbar = f7Navbar(
+#'          title = "Tabs",
+#'          hairline = FALSE,
+#'          shadow = TRUE,
+#'          left_panel = TRUE,
+#'          right_panel = TRUE
+#'        ),
+#'        f7Tabs(
+#'          animated = FALSE,
+#'          swipeable = TRUE,
+#'          f7Tab(
+#'            tabName = "Tab 1",
+#'            icon = f7Icon("email"),
+#'            active = TRUE,
+#'            f7Shadow(
+#'              intensity = 10,
+#'              hover = TRUE,
+#'              f7Card(
+#'                title = "Card header",
+#'                f7Stepper(
+#'                  "obs1",
+#'                  "Number of observations",
+#'                  min = 0,
+#'                  max = 1000,
+#'                  value = 500,
+#'                  step = 100
+#'                ),
+#'                plotOutput("distPlot1"),
+#'                footer = tagList(
+#'                  f7Button(inputId = "tapHold", label = "My button"),
+#'                  f7Badge("Badge", color = "green")
+#'                )
+#'              )
+#'            )
+#'          ),
+#'          f7Tab(
+#'            tabName = "Tab 2",
+#'            icon = f7Icon("today"),
+#'            active = FALSE,
+#'            f7Shadow(
+#'              intensity = 10,
+#'              hover = TRUE,
+#'              f7Card(
+#'                title = "Card header",
+#'                f7Select(
+#'                  inputId = "obs2",
+#'                  label = "Distribution type:",
+#'                  choices = c(
+#'                    "Normal" = "norm",
+#'                    "Uniform" = "unif",
+#'                    "Log-normal" = "lnorm",
+#'                    "Exponential" = "exp"
+#'                  )
+#'                ),
+#'                plotOutput("distPlot2"),
+#'                footer = tagList(
+#'                  f7Button(label = "My button", src = "https://www.google.com"),
+#'                  f7Badge("Badge", color = "orange")
+#'                )
+#'              )
+#'            )
+#'          ),
+#'          f7Tab(
+#'            tabName = "Tab 3",
+#'            icon = f7Icon("cloud_upload"),
+#'            active = FALSE,
+#'            f7Shadow(
+#'              intensity = 10,
+#'              hover = TRUE,
+#'              f7Card(
+#'                title = "Card header",
+#'                f7SmartSelect(
+#'                  inputId = "variable",
+#'                  label = "Variables to show:",
+#'                  c("Cylinders" = "cyl",
+#'                    "Transmission" = "am",
+#'                    "Gears" = "gear"),
+#'                  multiple = TRUE,
+#'                  selected = "cyl"
+#'                ),
+#'                tableOutput("data"),
+#'                footer = tagList(
+#'                  f7Button(label = "My button", src = "https://www.google.com"),
+#'                  f7Badge("Badge", color = "green")
+#'                )
+#'              )
+#'            )
+#'          )
+#'        )
+#'      )
+#'    ),
+#'    server = function(input, output) {
+#'      output$distPlot1 <- renderPlot({
+#'        dist <- rnorm(input$obs1)
+#'        hist(dist)
+#'      })
+#'
+#'      output$distPlot2 <- renderPlot({
+#'        dist <- switch(
+#'          input$obs2,
+#'          norm = rnorm,
+#'          unif = runif,
+#'          lnorm = rlnorm,
+#'          exp = rexp,
+#'          rnorm
+#'        )
+#'
+#'        hist(dist(500))
+#'      })
+#'
+#'      output$data <- renderTable({
+#'        mtcars[, c("mpg", input$variable), drop = FALSE]
+#'      }, rownames = TRUE)
+#'    }
 #'  )
 #' }
 #'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
 #'
 #' @export
-f7TabLayout <- function(..., navbar, panels = NULL, appbar = NULL) {
+f7TabLayout <- function(..., navbar, messagebar = NULL, panels = NULL, appbar = NULL) {
 
   shiny::tagList(
     # appbar goes here
@@ -295,6 +331,7 @@ f7TabLayout <- function(..., navbar, panels = NULL, appbar = NULL) {
       # to swipe properly. It is not mentionned
       # in the doc. Also necessary to adequately
       # apply the dark mode
+      messagebar,
       shiny::tags$div(
         class = "page",
         # top navbar goes here
@@ -360,7 +397,7 @@ f7TabLayout <- function(..., navbar, panels = NULL, appbar = NULL) {
 #'        f7Items(
 #'          f7Item(
 #'            tabName = "tab1",
-#'            sliderInput("obs", "Number of observations:",
+#'            f7Slider("obs", "Number of observations:",
 #'                        min = 0, max = 1000, value = 500
 #'            ),
 #'            plotOutput("distPlot")

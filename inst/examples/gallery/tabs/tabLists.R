@@ -1,12 +1,7 @@
 tabLists <- f7Tab(
   tabName = "Lists",
-  icon = f7Icon("list", f7Badge("New", color = "red")),
+  icon = f7Icon("list_dash", f7Badge("New", color = "red")),
   active = FALSE,
-
-  f7Align(
-    side = "center",
-    h1("miniUI 2.0 brings new list containers")
-  ),
 
   # swipeable list
   f7BlockTitle(title = "f7Swipeout, swipeable list") %>%

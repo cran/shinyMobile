@@ -42,8 +42,9 @@ f7Navbar <- function(..., subNavbar = NULL, title = NULL, subtitle = NULL, hairl
          shiny::tags$a(
             class = "link icon-only panel-open",
             `data-panel` = "left",
-            shiny::tags$i(class = "f7-icons ios-only", "bars"),
-            shiny::tags$i(class = "icon material-icons md-only", "menu")
+            # shiny::tags$i(class = "f7-icons ios-only", "bars"),
+            # shiny::tags$i(class = "icon material-icons md-only", "menu")
+            f7Icon("bars")
          )
       )
    }
@@ -54,8 +55,9 @@ f7Navbar <- function(..., subNavbar = NULL, title = NULL, subtitle = NULL, hairl
          shiny::tags$a(
             class = "link icon-only panel-open",
             `data-panel` = "right",
-            shiny::tags$i(class = "f7-icons ios-only", "bars"),
-            shiny::tags$i(class = "icon material-icons md-only", "menu")
+            # shiny::tags$i(class = "f7-icons ios-only", "bars"),
+            # shiny::tags$i(class = "icon material-icons md-only", "menu")
+            f7Icon("bars")
          )
       )
    }
@@ -185,6 +187,8 @@ f7SubNavbar <- function(...) {
 #'
 #' @export
 #'
+#' @importFrom shiny getDefaultReactiveDomain
+#'
 #' @examples
 #' if (interactive()) {
 #'  library(shiny)
@@ -204,16 +208,16 @@ f7SubNavbar <- function(...) {
 #'     server = function(input, output, session) {
 #'
 #'        observeEvent(input$hide, {
-#'           f7NavbarHide()
+#'           f7HideNavbar()
 #'        })
 #'
 #'        observeEvent(input$show, {
-#'           f7NavbarShow()
+#'           f7ShowNavbar()
 #'        })
 #'     }
 #'  )
 #' }
-f7NavbarHide <- function(session = shiny::getDefaultReactiveDomain(), animate = TRUE,
+f7HideNavbar <- function(session = shiny::getDefaultReactiveDomain(), animate = TRUE,
                          hideStatusbar = FALSE) {
    message <- dropNulls(
       list(
@@ -233,6 +237,8 @@ f7NavbarHide <- function(session = shiny::getDefaultReactiveDomain(), animate = 
 #'
 #' @export
 #'
+#' @importFrom shiny getDefaultReactiveDomain
+#'
 #' @examples
 #' if (interactive()) {
 #'  library(shiny)
@@ -252,15 +258,15 @@ f7NavbarHide <- function(session = shiny::getDefaultReactiveDomain(), animate = 
 #'     server = function(input, output, session) {
 #'
 #'        observeEvent(input$hide, {
-#'           f7NavbarHide()
+#'           f7HideNavbar()
 #'        })
 #'
 #'        observeEvent(input$show, {
-#'           f7NavbarShow()
+#'           f7ShowNavbar()
 #'        })
 #'     }
 #'  )
 #' }
-f7NavbarShow <- function(session = shiny::getDefaultReactiveDomain(), animate = TRUE) {
+f7ShowNavbar <- function(session = shiny::getDefaultReactiveDomain(), animate = TRUE) {
    session$sendCustomMessage(type = "show_navbar", message = tolower(animate))
 }

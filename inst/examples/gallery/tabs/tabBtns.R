@@ -1,13 +1,9 @@
 tabBtns <- f7Tab(
   tabName = "FABs",
-  icon = f7Icon("keyboard_fill"),
+  icon = f7Icon("circle_grid_hex"),
+  active = FALSE,
 
   # FABS
-  f7Align(
-    side = "center",
-    h1("miniUI 2.0 brings brand new containers for actionButtons: f7Fabs")
-  ),
-
   f7Fabs(
     position = "right-top",
     color = "yellow",
@@ -37,11 +33,6 @@ tabBtns <- f7Tab(
 
 
   # segments
-  f7Align(
-    side = "center",
-    h1("miniUI 2.0 brings new buttons containers")
-  ),
-
   f7Segment(
     container = "row",
     f7Button(color = "blue", label = "My button", fill = FALSE),
@@ -60,9 +51,9 @@ tabBtns <- f7Tab(
   f7Segment(
     shadow = TRUE,
     container = "segment",
-    f7Button(label = "My button", outline = TRUE),
-    f7Button(label = "My button", outline = TRUE),
-    f7Button(label = "My button", outline = TRUE)
+    f7Button(label = "My button", outline = TRUE, fill = FALSE),
+    f7Button(label = "My button", outline = TRUE, fill = FALSE),
+    f7Button(label = "My button", outline = TRUE, fill = FALSE)
   ),
   f7BlockTitle(title = "Rounded Buttons in a segment container"),
   f7Segment(

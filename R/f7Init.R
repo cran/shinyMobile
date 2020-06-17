@@ -11,12 +11,15 @@
 #' @param tapHold  It triggers (if enabled) after a sustained, complete touch event.
 #' By default it is disabled. Note, that Tap Hold is a part of built-in Fast Clicks library,
 #' so Fast Clicks should be also enabled.
+#' @param tapHoldDelay Determines how long (in ms) the user must hold their tap before the taphold event is fired on the target element.
+#' Default to 750 ms.
+#' @param pullToRefresh Whether to active the pull to refresh feature. Default to FALSE.
 #' @param iosTouchRipple Default to FALSE. Enables touch ripple effect for iOS theme.
 #' @param iosCenterTitle Default to TRUE. When enabled then it will try to position
 #' title at the center in iOS theme. Sometime (with some custom design) it may not needed.
 #' @param iosTranslucentBars Enable translucent effect (blur background) on navigation bars for iOS theme (on iOS devices).
 #' FALSE by default.
-#' @param hideNavOnPageScroll Default to TRUE. Will hide Navbars on page scroll.
+#' @param hideNavOnPageScroll Default to FALSE. Will hide Navbars on page scroll.
 #' @param hideTabsOnPageScroll Default to FALSE. Will hide tabs on page scroll.
 #' @param serviceWorker Object with service worker module parameters. (Use for PWA).
 #'
@@ -24,16 +27,17 @@
 #'
 #' @export
 f7Init <- function(skin = c("ios", "md", "auto", "aurora"), theme = c("dark", "light"),
-                   filled = FALSE, color = NULL, tapHold = TRUE, iosTouchRipple = FALSE,
-                   iosCenterTitle = TRUE, iosTranslucentBars = FALSE, hideNavOnPageScroll = TRUE,
-                   hideTabsOnPageScroll = FALSE, serviceWorker = NULL) {
+                   filled = FALSE, color = NULL, tapHold = TRUE, tapHoldDelay = 750, pullToRefresh = FALSE,
+                   iosTouchRipple = FALSE, iosCenterTitle = TRUE, iosTranslucentBars = FALSE,
+                   hideNavOnPageScroll = FALSE, hideTabsOnPageScroll = FALSE,
+                   serviceWorker = NULL) {
 
   color <- colorToHex(color)
-
   theme <- match.arg(theme)
   skin <- match.arg(skin)
 
   shiny::tagList(
+    # use global framework7 variable to set the color
     shiny::singleton(
       shiny::tags$style(
         paste0(
@@ -54,6 +58,7 @@ f7Init <- function(skin = c("ios", "md", "auto", "aurora"), theme = c("dark", "l
         )
       )
     },
+    # specific css needs to apply if the style is filled
     if (filled) {
       shiny::singleton(
         shiny::tags$style(
@@ -89,51 +94,61 @@ f7Init <- function(skin = c("ios", "md", "auto", "aurora"), theme = c("dark", "l
         )
       )
     },
+    # app initialisation
     shiny::singleton(
       shiny::tags$script(
         paste0(
           "var app = new Framework7({
-          // App root element
-          root: '#app',
-          // App Name
-          name: '',
-          theme: '", skin, "',
-          swipeNoFollow: true,
-          touch: {
-            tapHold: ", tolower(tapHold), " //enable tap hold events
-          },
-          iosTouchRipple: ", tolower(iosTouchRipple), ",
-          // App id
-          id: 'f7App',
-          navbar: {
-            hideOnPageScroll: ", tolower(hideNavOnPageScroll), ",
-            iosCenterTitle: ", tolower(iosCenterTitle), ",
-          },
-          toolbar: {
-            hideOnPageScroll: ", tolower(hideTabsOnPageScroll), ",
-          },
-          iosTranslucentBars: ", tolower(iosTranslucentBars), ",
-          // Register service worker
-          //serviceWorker: {
-          //  path: './", serviceWorker, "',
-          //  scope: '/'
-          //},
-          methods: {
-            setLayoutTheme: function (", theme, ") {
-              var self = this;
-              var $html = self.$('html');
-              globalTheme = ", theme, ";
-              $html.removeClass('theme-dark theme-light').addClass('theme-' + globalTheme);
+            // data may be accessed in any other script!
+            data: function () {
+              return {
+                pullToRefresh: ", tolower(pullToRefresh),"
+              };
+            },
+            // App root element
+            root: '#app',
+            // App Name
+            name: '',
+            theme: '", skin, "',
+            swipeNoFollow: true,
+            touch: {
+              tapHold: ", tolower(tapHold), ", // enable tap hold events
+              tapHoldDelay: ", tapHoldDelay, ",
+            },
+            iosTouchRipple: ", tolower(iosTouchRipple), ",
+            // App id
+            id: 'f7App',
+            navbar: {
+              hideOnPageScroll: ", tolower(hideNavOnPageScroll), ",
+              iosCenterTitle: ", tolower(iosCenterTitle), ",
+            },
+            toolbar: {
+              hideOnPageScroll: ", tolower(hideTabsOnPageScroll), ",
+            },
+            iosTranslucentBars: ", tolower(iosTranslucentBars), ",
+            // Register service worker
+            //serviceWorker: {
+            //  path: './", serviceWorker, "',
+            //  scope: '/'
+            //},
+            methods: {
+              setLayoutTheme: function (", theme, ") {
+                var self = this;
+                var $html = self.$('html');
+                globalTheme = ", theme, ";
+                $html.removeClass('theme-dark theme-light').addClass('theme-' + globalTheme);
+              }
             }
-          }
-        });
-        var mainView = app.views.create('.view-main');
-        app.methods.setLayoutTheme('", theme, "');
-        // trick to fix the photo browser link issue
-        // we set the body class that will contain the color.
-        // We then recover this class in a variable in the my-app.js code
-        $('body').addClass('", color, "')
-      "
+          });
+
+          // create main view
+          var mainView = app.views.create('.view-main');
+          app.methods.setLayoutTheme('", theme, "');
+          // trick to fix the photo browser link issue
+          // we set the body class that will contain the color.
+          // We then recover this class in a variable in the my-app.js code
+          $('body').addClass('", color, "')
+        "
         )
       )
     )

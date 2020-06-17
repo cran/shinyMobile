@@ -20,32 +20,56 @@ Update \link{f7Tabs}.
 if (interactive()) {
  library(shiny)
  library(shinyMobile)
+
+ subtabs_ui <- function(id) {
+   ns <- shiny::NS(id)
+
+   tagList(
+     f7Toggle(inputId = ns("updateSubTab"), label = "Update SubTab", checked = FALSE),
+     f7Tabs(
+       id = ns("subtabdemo"),
+       style = "strong",
+       animated = FALSE,
+       f7Tab(tabName = "SubTab 1", "SubTab 1"),
+       f7Tab(tabName = "SubTab 2", "SubTab 2", active = TRUE),
+       f7Tab(tabName = "SubTab 3", "SubTab 3")
+     )
+   )
+ }
+
+ subtabs <- function(input, output, session) {
+   observeEvent(input$updateSubTab, {
+     selected <- ifelse(input$updateSubTab, "SubTab 1", "SubTab 2")
+     updateF7Tabs(session, id = "subtabdemo", selected = selected)
+   })
+   return(reactive(input$subtabdemo))
+ }
+
  shiny::shinyApp(
    ui = f7Page(
      title = "Tab Layout",
      f7TabLayout(
        navbar = f7Navbar(
-        title = HTML(paste("Currently selected:", textOutput("selected"))),
-        subNavbar = f7SubNavbar(
-         f7Flex(
-          f7Toggle(inputId = "updateTab", label = "Update Tab", checked = TRUE),
-          f7Toggle(inputId = "updateSubTab", label = "Update SubTab", checked = FALSE)
+         title =
+           f7Flex(
+             HTML(paste("Selected Tab:", textOutput("selectedTab"))),
+             HTML(paste("Selected Subtab:", textOutput("selectedSubTab")))
+           )
+         ,
+         subNavbar = f7SubNavbar(
+           f7Flex(
+             f7Toggle(inputId = "updateTab", label = "Update Tab", checked = TRUE),
+             subtabs_ui("subtabs1")[[1]]
+           )
          )
-        )
        ),
        f7Tabs(
          id = "tabdemo",
          swipeable = TRUE,
          animated = FALSE,
          f7Tab(
-          tabName = "Tab 1",
-          f7Tabs(
-           id = "subtabdemo",
-           animated = TRUE,
-           f7Tab(tabName = "SubTab 1", "SubTab 1"),
-           f7Tab(tabName = "SubTab 2", "SubTab 2", active = TRUE),
-           f7Tab(tabName = "SubTab 3", "SubTab 3")
-          )
+           tabName = "Tab 1",
+           subtabs_ui("subtabs1")[[2]]
          ),
          f7Tab(tabName = "Tab 2", "Tab 2"),
          f7Tab(tabName = "Tab 3", "Tab 3")
@@ -53,15 +77,69 @@ if (interactive()) {
      )
    ),
    server = function(input, output, session) {
+     output$selectedTab <- renderText(input$tabdemo)
      observeEvent(input$updateTab, {
        selected <- ifelse(input$updateTab, "Tab 1", "Tab 2")
        updateF7Tabs(session, id = "tabdemo", selected = selected)
      })
-     observeEvent(input$updateSubTab, {
-       selected <- ifelse(input$updateSubTab, "SubTab 1", "SubTab 2")
-       updateF7Tabs(session, id = "subtabdemo", selected = selected)
-     })
+     subtab <- callModule(subtabs, "subtabs1")
+     output$selectedSubTab <- renderText(subtab())
    }
+ )
+ # with hidden tabs
+ shinyApp(
+  ui <- f7Page(
+    title = "shinyMobile",
+    init = f7Init(
+      skin = "auto",
+      theme = "light",
+      color = 'blue',
+      filled = TRUE,
+      hideNavOnPageScroll = FALSE,
+      hideTabsOnPageScroll = FALSE
+    ),
+    f7TabLayout(
+      navbar = f7Navbar(
+        title = "Update Tabs with hidden tab",
+        subtitle = "",
+        hairline = TRUE,
+        shadow = TRUE,
+        left_panel = TRUE,
+        right_panel = FALSE,
+        bigger = FALSE,
+        transparent = TRUE
+      ),
+      f7Tabs(
+        id = 'tabs',
+        animated = TRUE,
+        f7Tab(
+          active = TRUE,
+          tabName = 'Main tab',
+          icon = f7Icon('document_text'),
+          h1("This is the first tab."),
+          f7Button(inputId ='goto', label = 'Go to hidden tab')
+        ),
+        f7Tab(
+          tabName = 'Second tab',
+          icon = f7Icon('bolt_horizontal'),
+          h1('This is the second tab.')
+        ),
+        f7Tab(
+          tabName = 'Hidden tab',
+          hidden = TRUE,
+          h1('This is a tab that does not appear in the tab menu.
+          Yet, you can still access it.')
+        )
+      )
+    )
+  ),
+  server = function(input, output, session) {
+    observe(print(input$tabs))
+    observeEvent(input$goto,{
+      updateF7Tabs(session = session, id = 'tabs', selected = 'Hidden tab')
+    })
+
+  }
  )
 }
 }

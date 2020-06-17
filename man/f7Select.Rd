@@ -4,7 +4,7 @@
 \alias{f7Select}
 \title{Create an f7 select input}
 \usage{
-f7Select(inputId, label, choices)
+f7Select(inputId, label, choices, selected = NULL, width = NULL)
 }
 \arguments{
 \item{inputId}{Select input id.}
@@ -12,6 +12,10 @@ f7Select(inputId, label, choices)
 \item{label}{Select input label.}
 
 \item{choices}{Select input choices.}
+
+\item{selected}{Select input default selected value.}
+
+\item{width}{The width of the input, e.g. \code{400px}, or \code{100\%}.}
 }
 \description{
 Create an f7 select input
@@ -29,7 +33,8 @@ if(interactive()){
       f7Select(
        inputId = "variable",
        label = "Choose a variable:",
-       choices = colnames(mtcars)[-1]
+       choices = colnames(mtcars)[-1],
+       selected = "hp"
       ),
       tableOutput("data")
      )

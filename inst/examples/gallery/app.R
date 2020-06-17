@@ -1,6 +1,5 @@
 library(shiny)
 library(shinyMobile)
-library(plotly)
 
 # source modules
 e <- environment()
@@ -21,17 +20,20 @@ shinyApp(
     title = "shinyMobile",
     init = f7Init(
       skin = "ios",
-      theme = "light",
+      theme = "dark",
       filled = TRUE,
       hideNavOnPageScroll = FALSE,
       hideTabsOnPageScroll = FALSE,
-      serviceWorker = "service-worker.js"
+      serviceWorker = "service-worker.js",
+      iosTranslucentBars = FALSE,
+      pullToRefresh = FALSE
     ),
     f7TabLayout(
       appbar = f7Appbar(
         f7Flex(f7Back(targetId = "tabset"), f7Next(targetId = "tabset")),
         f7Searchbar(id = "search1", inline = TRUE, placeholder = "Try me on the 4th tab!")
       ),
+      messagebar = f7MessageBar(inputId = "mymessagebar", placeholder = "Message"),
       panels = tagList(
         f7Panel(
           inputId = "panelLeft",
@@ -56,7 +58,16 @@ shinyApp(
         shadow = TRUE,
         left_panel = TRUE,
         right_panel = TRUE,
-        bigger = FALSE
+        bigger = TRUE,
+        transparent = FALSE
+      ),
+      f7Login(
+        id = "loginPage",
+        title = "You really think you can go here?",
+        footer = "This section simulates an authentication process. There
+        is actually no user and password database. Put whatever you want but
+        don't leave blank!",
+        startOpen = FALSE,
       ),
       # recover the color picker input and update the text background
       # color accordingly.
@@ -65,12 +76,24 @@ shinyApp(
           Shiny.addCustomMessageHandler('text-color', function(message) {
             $('#colorPickerVal').css('background-color', message);
           });
+
+          // toggle message bar based on the currently selected tab
+          Shiny.addCustomMessageHandler('toggleMessagebar', function(message) {
+            if (message === 'chat') {
+              $('#mymessagebar').show();
+              $('.toolbar.tabLinks').hide();
+            } else {
+              $('#mymessagebar').hide();
+              $('.toolbar.tabLinks').show();
+            }
+          });
         });
         "
       ),
       f7Tabs(
         id = "tabset",
-        animated = TRUE,
+        animated = FALSE,
+        swipeable = TRUE,
         tabInputs,
         tabBtns,
         tabCards,
@@ -82,8 +105,75 @@ shinyApp(
     )
   ),
   server = function(input, output, session) {
+
+    # input validation
+    observe({
+      f7ValidateInput(inputId = "text", info = "Whatever")
+      f7ValidateInput(
+        inputId = "password",
+        pattern = "[0-9]*",
+        error = "Only numbers please!"
+      )
+    })
+
+    # toggle message bar: should only be dislayed when on the messages tab
+    observeEvent(input$tabset, {
+      session$sendCustomMessage(type = "toggleMessagebar", input$tabset)
+    })
+
+    # user send new message
+    observeEvent(input[["mymessagebar-send"]], {
+      f7AddMessages(
+        id = "mymessages",
+        list(
+          f7Message(
+            text = input$mymessagebar,
+            name = "David",
+            type = "sent",
+            header = "Message Header",
+            footer = "Message Footer",
+            textHeader = "Text Header",
+            textFooter = "text Footer",
+            avatar = "https://cdn.framework7.io/placeholder/people-100x100-7.jpg"
+          )
+        )
+      )
+    })
+
+    # fake to receive random messages
+    observe({
+      invalidateLater(5000)
+      names <- c("Victor", "John")
+      name <- sample(names, 1)
+
+      f7AddMessages(
+        id = "mymessages",
+        list(
+          f7Message(
+            text = "Message",
+            name = name,
+            type = "received",
+            avatar = "https://cdn.framework7.io/placeholder/people-100x100-9.jpg"
+          )
+        )
+      )
+    })
+
+    # trigger for login
+    trigger <- reactive({
+      req(input$tabset == "chat")
+    })
+    # login server module
+    callModule(
+      f7LoginServer,
+      id = "loginPage",
+      ignoreInit = TRUE,
+      trigger = trigger
+    )
+
     output$text <- renderPrint(input$text)
     output$password <- renderPrint(input$password)
+    output$textarea <- renderPrint(input$textarea)
     output$slider <- renderPrint(input$slider)
     output$sliderRange <- renderPrint(input$sliderRange)
     output$stepper <- renderPrint(input$stepper)
@@ -96,7 +186,7 @@ shinyApp(
     output$smartdata <- renderTable({
       head(mtcars[, c("mpg", input$smartsel), drop = FALSE])
     }, rownames = TRUE)
-    output$selectDate <- renderText(input$date)
+    output$selectDate <- renderPrint(input$date)
     output$autocompleteval <- renderPrint(input$myautocomplete)
 
     lapply(1:12, function(i) {
@@ -110,9 +200,32 @@ shinyApp(
       session$sendCustomMessage(type = "text-color", message = input$mycolorpicker)
     })
 
+
+    # popup
+    output$popupContent <- renderPrint(input$popupText)
+
+    observeEvent(input$togglePopup, {
+      f7TogglePopup(id = "popup1")
+    })
+
+    observeEvent(input$popup1, {
+      if (input$tabset == "Popups") {
+        popupStatus <- if (input$popup1) "opened" else "closed"
+        f7Toast(
+          session,
+          position = "top",
+          text = paste("Popup is", popupStatus)
+        )
+      }
+    })
+
     # sheet plot
     output$sheetPlot <- renderPlot({
       hist(rnorm(input$sheetObs))
+    })
+
+    observeEvent(input$toggleSheet, {
+      updateF7Sheet(inputId = "sheet1", session = session)
     })
 
     # notifications
@@ -197,16 +310,23 @@ shinyApp(
       f7ActionSheet(
         grid = TRUE,
         id = "action1",
-        icons = list(f7Icon("info"), f7Icon("lightbulb_fill")),
-        buttons = data.frame(
-          text = c('Notification', 'Dialog'),
-          color = c(NA, NA)
+        buttons = list(
+          list(
+            text = "Notification",
+            icon = f7Icon("info"),
+            color = NULL
+          ),
+          list(
+            text = "Dialog",
+            icon = f7Icon("lightbulb_fill"),
+            color = NULL
+          )
         )
       )
     })
 
-    observeEvent(input$button, {
-      if (input$button == 1) {
+    observeEvent(input$action1_button, {
+      if (input$action1_button == 1) {
         f7Notif(
           text = "You clicked on the first button",
           icon = f7Icon("bolt_fill"),
@@ -214,7 +334,27 @@ shinyApp(
           titleRightText = "now",
           session = session
         )
-      } else if (input$button == 2) {
+      } else if (input$action1_button == 2) {
+        f7Dialog(
+          inputId = "actionSheetDialog",
+          title = "Click me to launch a Toast!",
+          type = "confirm",
+          text = "You clicked on the second button",
+          session = session
+        )
+      }
+    })
+
+    observeEvent(input$swipeAction_button, {
+      if (input$swipeAction_button == 1) {
+        f7Notif(
+          text = "You clicked on the first button",
+          icon = f7Icon("bolt_fill"),
+          title = "Notification",
+          titleRightText = "now",
+          session = session
+        )
+      } else if (input$swipeAction_button == 2) {
         f7Dialog(
           inputId = "actionSheetDialog",
           title = "Click me to launch a Toast!",
@@ -282,13 +422,42 @@ shinyApp(
       f7ActionSheet(
         grid = TRUE,
         id = "swipeAction",
-        icons = list(f7Icon("info"), f7Icon("lightbulb_fill")),
-        buttons = data.frame(
-          text = c('Notification', 'Dialog'),
-          color = c(NA, NA)
+        buttons = list(
+          list(
+            text = "Notification",
+            icon = f7Icon("info"),
+            color = NULL
+          ),
+          list(
+            text = "Dialog",
+            icon = f7Icon("lightbulb_fill"),
+            color = NULL
+          )
         )
       )
     })
+
+    # preloaders
+    observeEvent(input$showLoader, {
+      f7ShowPreloader(target = "#preloaderPlot", color = "blue")
+      Sys.sleep(2)
+      f7HidePreloader(target = "#preloaderPlot")
+    })
+    output$preloaderPlot <- renderPlot({
+      hist(rnorm(100))
+    })
+
+    # pull to refresh
+    # observeEvent(input$ptr, {
+    #
+    #   ptrStatus <- if (input$ptr) "on"
+    #
+    #   f7Dialog(
+    #     session = session,
+    #     text = paste('ptr is', ptrStatus),
+    #     type = "alert"
+    #   )
+    # })
 
   }
 )

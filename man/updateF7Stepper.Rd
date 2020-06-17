@@ -5,7 +5,6 @@
 \title{Change the value of a stepper input on the client}
 \usage{
 updateF7Stepper(
-  session,
   inputId,
   min = NULL,
   max = NULL,
@@ -17,13 +16,13 @@ updateF7Stepper(
   size = NULL,
   color = NULL,
   wraps = NULL,
+  decimalPoint = NULL,
   autorepeat = NULL,
-  manual = NULL
+  manual = NULL,
+  session = shiny::getDefaultReactiveDomain()
 )
 }
 \arguments{
-\item{session}{The session object passed to function given to the server.}
-
 \item{inputId}{The id of the input object.}
 
 \item{min}{Stepper minimum value.}
@@ -47,11 +46,18 @@ updateF7Stepper(
 \item{wraps}{In wraps mode incrementing beyond maximum value sets value to minimum value,
 likewise, decrementing below minimum value sets value to maximum value. FALSE by default.}
 
+\item{decimalPoint}{Number of digits after dot, when in manual input mode.}
+
 \item{autorepeat}{Pressing and holding one of its buttons increments or decrements the stepper’s
 value repeatedly. With dynamic autorepeat, the rate of change depends on how long the user
 continues pressing the control. TRUE by default.}
 
-\item{manual}{It is possible to enter value manually from keyboard or mobile keypad. When click on input field, stepper enter into manual input mode, which allow type value from keyboar and check fractional part with defined accurancy. Click outside or enter Return key, ending manual mode. TRUE by default.}
+\item{manual}{It is possible to enter value manually from keyboard or mobile keypad.
+When click on input field, stepper enter into manual input mode, which allow type value
+from keyboar and check fractional part with defined accurancy. Click outside or enter
+Return key, ending manual mode. TRUE by default.}
+
+\item{session}{The Shiny session object, usually the default value will suffice.}
 }
 \description{
 Change the value of a stepper input on the client
@@ -94,18 +100,19 @@ if (interactive()) {
 
     observeEvent(input$update, {
       updateF7Stepper(
-        session,
         inputId = "stepper",
-        value = 10,
+        value = 0.1,
+        step = 0.01,
         size = "large",
-        min = 5,
-        max = 20,
+        min = 0,
+        max = 1,
         wraps = FALSE,
         autorepeat = FALSE,
         rounded = TRUE,
         raised = TRUE,
         color = "pink",
-        manual = TRUE
+        manual = TRUE,
+        decimalPoint = 2
       )
     })
   }

@@ -14,7 +14,7 @@ f7SingleLayout(..., navbar, toolbar = NULL, panels = NULL, appbar = NULL)
 \item{toolbar}{Slot for \link{f7Toolbar}.}
 
 \item{panels}{Slot for \link{f7Panel}.
-Wrap in \link[shiny]{tagList} if multiple panels.}
+Wrap in \code{tagList} if multiple panels.}
 
 \item{appbar}{Slot for \link{f7Appbar}.}
 }
@@ -45,7 +45,7 @@ if(interactive()){
         hover = TRUE,
         f7Card(
           title = "Card header",
-          sliderInput("obs", "Number of observations", 0, 1000, 500),
+          f7Slider("obs", "Number of observations", 0, 1000, 500),
           plotOutput("distPlot"),
           footer = tagList(
             f7Button(color = "blue", label = "My button", src = "https://www.google.com"),

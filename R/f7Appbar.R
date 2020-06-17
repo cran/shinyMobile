@@ -8,8 +8,7 @@
 #' \link{f7Back} in a \link{f7Flex}.
 #' @param left_panel Whether to enable the left panel. FALSE by default.
 #' @param right_panel Whether to enable the right panel. FALSE by default.
-#' @param maximizable Whether to allow fullscreen. FALSE by default. This should only
-#' be used when the app runs on a desktop.
+#'
 #' @export
 #' @examples
 #' if (interactive()) {
@@ -37,7 +36,7 @@
 #'          id = "tabset",
 #'          f7Tab(
 #'            tabName = "Tab 1",
-#'            icon = f7Icon("email"),
+#'            icon = f7Icon("envelope"),
 #'            active = TRUE,
 #'            "Text 1"
 #'          ),
@@ -59,8 +58,7 @@
 #'    server = function(input, output) {}
 #'  )
 #' }
-f7Appbar <- function(..., left_panel = FALSE, right_panel = FALSE,
-                     maximizable = FALSE) {
+f7Appbar <- function(..., left_panel = FALSE, right_panel = FALSE) {
 
   panelToggle <- if (left_panel | right_panel) {
     shiny::tags$a(
@@ -87,14 +85,6 @@ f7Appbar <- function(..., left_panel = FALSE, right_panel = FALSE,
         )
       },
       ...,
-      # fullScreen toggle
-      if (maximizable) {
-        shiny::tagAppendAttributes(
-          f7Button(label = f7Icon("zoom_in")),
-          onclick = "toggleFullScreen();",
-          id = "fullScreenToggle"
-        )
-      },
       if (right_panel) {
         shiny::tags$div(
           class = "right",
@@ -153,7 +143,7 @@ f7Back <- function(targetId) {
     href = "#",
     id = paste0("back_", targetId),
     class = "button button-small display-flex margin-left-half",
-    f7Icon("reply_fill")
+    f7Icon("arrowshape_turn_up_left_fill")
   )
 
   shiny::tagList(backJS, backTag)
@@ -208,7 +198,7 @@ f7Next <- function(targetId) {
     href = "#",
     id = paste0("next_", targetId),
     class = "button button-small display-flex margin-left-half",
-    f7Icon("forward_fill")
+    f7Icon("arrowshape_turn_up_right_fill")
   )
 
   shiny::tagList(nextJS, nextTag)
