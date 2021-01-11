@@ -2,14 +2,9 @@
 % Please edit documentation in R/f7Searchbar.R
 \name{f7Searchbar}
 \alias{f7Searchbar}
-\title{Create a Framework 7 searchbar}
+\title{Framework 7 searchbar}
 \usage{
-f7Searchbar(
-  id = NULL,
-  placeholder = "Search",
-  expandable = FALSE,
-  inline = FALSE
-)
+f7Searchbar(id, placeholder = "Search", expandable = FALSE, inline = FALSE)
 }
 \arguments{
 \item{id}{Necessary when using \link{f7SearchbarTrigger}. NULL otherwise.}
@@ -24,7 +19,7 @@ Notice that utilities like \link{f7HideOnSearch} and \link{f7NotFound} are not
 compatible with this mode.}
 }
 \description{
-Create a Framework 7 searchbar
+Searchbar to filter elements in a page.
 }
 \examples{
 if (interactive()) {
@@ -33,9 +28,9 @@ library(shinyMobile)
 
 cars <- rownames(mtcars)
 
-shiny::shinyApp(
+shinyApp(
   ui = f7Page(
-    title = "My app",
+    title = "Simple searchbar",
     f7SingleLayout(
       navbar = f7Navbar(
         title = "f7Searchbar",
@@ -69,7 +64,7 @@ shiny::shinyApp(
 
  shiny::shinyApp(
    ui = f7Page(
-     title = "My app",
+     title = "Expandable searchbar",
      f7SingleLayout(
        navbar = f7Navbar(
          title = "f7Searchbar with trigger",
@@ -100,9 +95,9 @@ shiny::shinyApp(
  )
 
  # Searchbar in \link{f7Appbar}
- shiny::shinyApp(
+ shinyApp(
   ui = f7Page(
-    title = "My app",
+    title = "Searchbar in appbar",
     f7Appbar(
       f7Searchbar(id = "search1", inline = TRUE)
     ),

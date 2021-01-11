@@ -1,9 +1,11 @@
-#' Create a Framework7 panel
+#' Framework7 panel
 #'
-#' Build a Framework7 panel
+#' \link{f7Panel} is a sidebar element. It may be used as a simple
+#' sidebar or as a container for \link{f7PanelMenu} in case of
+#' \link{f7SplitLayout}.
 #'
 #' @param ... Panel content. Slot for \link{f7PanelMenu}, if used as a sidebar.
-#' @param inputId Panel unique id. This is to access the input$id giving the panel
+#' @param id Panel unique id. This is to access the input$id giving the panel
 #' state, namely open or closed.
 #' @param title Panel title.
 #' @param side Panel side: "left" or "right".
@@ -12,35 +14,35 @@
 #' @param resizable Whether to enable panel resize. FALSE by default.
 #'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
+#' @rdname panel
 #'
 #' @export
 #' @examples
 #' if (interactive()) {
 #'  library(shiny)
 #'  library(shinyMobile)
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
-#'      title = "My app",
-#'      init = f7Init(skin = "ios", theme = "light"),
+#'      title = "Panels",
 #'      f7SingleLayout(
 #'        navbar = f7Navbar(
 #'          title = "Single Layout",
 #'          hairline = FALSE,
 #'          shadow = TRUE,
-#'          left_panel = TRUE,
-#'          right_panel = TRUE
+#'          leftPanel = TRUE,
+#'          rightPanel = TRUE
 #'        ),
 #'        panels = tagList(
-#'          f7Panel(side = "left", inputId = "mypanel1"),
-#'          f7Panel(side = "right", inputId = "mypanel2")
+#'          f7Panel(side = "left", id = "mypanel1"),
+#'          f7Panel(side = "right", id = "mypanel2")
 #'        ),
 #'        toolbar = f7Toolbar(
 #'          position = "bottom",
 #'          icons = TRUE,
 #'          hairline = FALSE,
 #'          shadow = FALSE,
-#'          f7Link(label = "Link 1", src = "https://www.google.com"),
-#'          f7Link(label = "Link 2", src = "https://www.google.com", external = TRUE)
+#'          f7Link(label = "Link 1", href = "https://www.google.com"),
+#'          f7Link(label = "Link 2", href = "https://www.google.com")
 #'        ),
 #'        # main content
 #'        f7Shadow(
@@ -52,7 +54,7 @@
 #'            h1("You only see me by opening the left panel"),
 #'            plotOutput("distPlot"),
 #'            footer = tagList(
-#'              f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
+#'              f7Button(color = "blue", label = "My button", href = "https://www.google.com"),
 #'              f7Badge("Badge", color = "green")
 #'            )
 #'          )
@@ -66,7 +68,6 @@
 #'        state <- if (input$mypanel2) "open" else "closed"
 #'
 #'        f7Toast(
-#'          session,
 #'          text = paste0("Right panel is ", state),
 #'          position = "center",
 #'          closeTimeout = 1000,
@@ -83,7 +84,7 @@
 #'    }
 #'  )
 #' }
-f7Panel <- function(..., inputId = NULL, title = NULL,
+f7Panel <- function(..., id = NULL, title = NULL,
                     side = c("left", "right"), theme = c("dark", "light"),
                     effect = c("reveal", "cover"), resizable = FALSE) {
 
@@ -106,7 +107,7 @@ f7Panel <- function(..., inputId = NULL, title = NULL,
 
   panelTag <- shiny::tags$div(
     class = panelCl,
-    id = inputId,
+    id = id,
     shiny::tags$div(
       class = "page",
       # Panel Header
@@ -125,20 +126,23 @@ f7Panel <- function(..., inputId = NULL, title = NULL,
     )
   )
 
-  shiny::tagList(f7InputsDeps(), f7Shadow(panelTag, intensity = 24))
+  f7Shadow(panelTag, intensity = 24)
 
 }
 
 
 
-#' Create a Framework7 sidebar menu
+#' Framework7 sidebar menu
 #'
-#' Build a Framework7 sidebar menu
+#' \link{f7PanelMenu} creates a menu for \link{f7Panel}. It may contain
+#' multiple \link{f7PanelItem}.
 #'
 #' @param ... Slot for \link{f7PanelItem}.
 #' @param id Unique id to access the currently selected item.
 #'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
+#'
+#' @rdname panelmenu
 #'
 #' @export
 f7PanelMenu <- function(..., id = NULL) {
@@ -202,9 +206,9 @@ f7PanelMenu <- function(..., id = NULL) {
 
 
 
-#' Create a Framework7 sidebar menu item
+#' Framework7 sidebar menu item
 #'
-#' Build a Framework7 sidebar menu item for \link{f7SplitLayout}.
+#' \link{f7PanelItem} creates a Framework7 sidebar menu item for \link{f7SplitLayout}.
 #'
 #' @param title Item name.
 #' @param tabName Item unique tabName. Must correspond to what is passed to
@@ -212,7 +216,7 @@ f7PanelMenu <- function(..., id = NULL) {
 #' @param icon Item icon.
 #' @param active Whether the item is active at start. Default to FALSE.
 #'
-#' @author David Granjon, \email{dgranjon@@ymail.com}
+#' @rdname panelmenu
 #'
 #' @export
 f7PanelItem <- function(title, tabName, icon = NULL, active = FALSE) {
@@ -239,44 +243,43 @@ f7PanelItem <- function(title, tabName, icon = NULL, active = FALSE) {
 
 
 
-#' Function to programmatically update the state of a \link{f7Panel}
+#' Update Framework7 panel
 #'
-#' From open to close state and inversely
+#' \link{updateF7Panel} toggles a \link{f7Panel} from the server.
 #'
-#' @inheritParams f7Panel
+#' @param id Panel unique id.
 #' @param session Shiny session object.
+#' @rdname panel
 #'
 #' @export
 #'
-#' @importFrom shiny getDefaultReactiveDomain
-#'
 #' @examples
+#' # Toggle panel
 #' if (interactive()) {
 #'  library(shiny)
 #'  library(shinyMobile)
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
-#'      title = "My app",
-#'      init = f7Init(skin = "md", theme = "light"),
+#'      title = "Update panel menu",
 #'      f7SingleLayout(
 #'        navbar = f7Navbar(
 #'          title = "Single Layout",
 #'          hairline = FALSE,
 #'          shadow = TRUE,
-#'          left_panel = TRUE,
-#'          right_panel = TRUE
+#'          leftPanel = TRUE,
+#'          rightPanel = TRUE
 #'        ),
 #'        panels = tagList(
-#'          f7Panel(side = "left", inputId = "mypanel1", theme = "light", effect = "cover"),
-#'          f7Panel(side = "right", inputId = "mypanel2", theme = "light")
+#'          f7Panel(side = "left", id = "mypanel1", theme = "light", effect = "cover"),
+#'          f7Panel(side = "right", id = "mypanel2", theme = "light")
 #'        ),
 #'        toolbar = f7Toolbar(
 #'          position = "bottom",
 #'          icons = TRUE,
 #'          hairline = FALSE,
 #'          shadow = FALSE,
-#'          f7Link(label = "Link 1", src = "https://www.google.com"),
-#'          f7Link(label = "Link 2", src = "https://www.google.com", external = TRUE)
+#'          f7Link(label = "Link 1", href = "https://www.google.com"),
+#'          f7Link(label = "Link 2", href = "https://www.google.com")
 #'        )
 #'      )
 #'    ),
@@ -293,13 +296,12 @@ f7PanelItem <- function(title, tabName, icon = NULL, active = FALSE) {
 #'
 #'      observe({
 #'        invalidateLater(2000)
-#'        updateF7Panel(inputId = "mypanel1", session = session)
+#'        updateF7Panel(id = "mypanel1")
 #'      })
 #'
 #'    }
 #'  )
 #' }
-updateF7Panel <- function(inputId, session = shiny::getDefaultReactiveDomain()) {
-  message <- NULL
-  session$sendInputMessage(inputId, NULL)
+updateF7Panel <- function(id, session = shiny::getDefaultReactiveDomain()) {
+  session$sendInputMessage(id, NULL)
 }

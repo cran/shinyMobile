@@ -1,13 +1,15 @@
-#' Create a Framework 7 appbar
+#' Framework7 appbar
 #'
-#' Displayed on top of \link{f7Navbar}. Interestingly, \link{f7Appbar} can also
+#' \link{f7Appbar} is displayed on top of \link{f7Navbar}. \link{f7Appbar} can also
 #' trigger \link{f7Panel}.
 #'
 #' @param ... Any UI content such as \link{f7Searchbar}, \link{f7Next} and
 #' \link{f7Back}. It is best practice to wrap \link{f7Next} and
 #' \link{f7Back} in a \link{f7Flex}.
-#' @param left_panel Whether to enable the left panel. FALSE by default.
-#' @param right_panel Whether to enable the right panel. FALSE by default.
+#' @param leftPanel Whether to enable the left panel. FALSE by default.
+#' @param rightPanel Whether to enable the right panel. FALSE by default.
+#'
+#' @rdname appbar
 #'
 #' @export
 #' @examples
@@ -17,11 +19,11 @@
 #'
 #'  cities <- names(precip)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'      title = "My app",
 #'      f7Appbar(
-#'        f7Flex(f7Back(targetId = "tabset"),f7Next(targetId = "tabset")),
+#'        f7Flex(f7Back(targetId = "tabset"), f7Next(targetId = "tabset")),
 #'        f7Searchbar(id = "search1", inline = TRUE)
 #'      ),
 #'      f7TabLayout(
@@ -58,9 +60,9 @@
 #'    server = function(input, output) {}
 #'  )
 #' }
-f7Appbar <- function(..., left_panel = FALSE, right_panel = FALSE) {
+f7Appbar <- function(..., leftPanel = FALSE, rightPanel = FALSE) {
 
-  panelToggle <- if (left_panel | right_panel) {
+  panelToggle <- if (leftPanel || rightPanel) {
     shiny::tags$a(
       href = "#",
       class = "button button-small panel-toggle display-flex",
@@ -78,14 +80,14 @@ f7Appbar <- function(..., left_panel = FALSE, right_panel = FALSE) {
     class = "appbar",
     shiny::tags$div(
       class = "appbar-inner",
-      if (left_panel) {
+      if (leftPanel) {
         shiny::tags$div(
           class = "left",
           setPanelToggle(panelToggle, "left")
         )
       },
       ...,
-      if (right_panel) {
+      if (rightPanel) {
         shiny::tags$div(
           class = "right",
           setPanelToggle(panelToggle, "right")
@@ -98,11 +100,12 @@ f7Appbar <- function(..., left_panel = FALSE, right_panel = FALSE) {
 
 
 
-#' Create a framework 7 back button
+#' Framework7 back button
 #'
-#' This buttons allows to switch between multiple \link{f7Tab}.
+#' \link{f7Back} is a button to go back in \link{f7Tabs}.
 #'
 #' @param targetId \link{f7Tabs} id.
+#' @rdname appbar
 #' @export
 f7Back <- function(targetId) {
 
@@ -122,13 +125,10 @@ f7Back <- function(targetId) {
             $('#back_", targetId, "').on('click', function(e) {
               currentTab = $('#", targetId, "').find('.tab-active');
               currentTabId = $(currentTab).attr('id');
-              //console.log(currentTabId);
               // if the first tab is already active, we cannot go back
               if (currentTabId !== firstTabId) {
                 var backTab = $(currentTab).prev();
                 var backTabId = $(backTab).attr('id');
-                console.log(backTab);
-                console.log(backTabId);
                 app.tab.show('#' + backTabId);
               }
             });
@@ -154,11 +154,12 @@ f7Back <- function(targetId) {
 
 
 
-#' Create a framework 7 next button
+#' Framework7 next button
 #'
-#' This buttons allows to switch between multiple \link{f7Tab}.
+#' \link{f7Next} is a button to go next in \link{f7Tabs}.
 #'
 #' @param targetId \link{f7Tabs} id.
+#' @rdname appbar
 #' @export
 f7Next <- function(targetId) {
 
@@ -182,8 +183,6 @@ f7Next <- function(targetId) {
               if (currentTabId !== lastTabId) {
                 var backTab = $(currentTab).next();
                 var backTabId = $(backTab).attr('id');
-                console.log(backTab);
-                console.log(backTabId);
                 app.tab.show('#' + backTabId);
               }
             });

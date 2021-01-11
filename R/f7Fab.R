@@ -1,6 +1,6 @@
-#' Create a Framework7 container for floating action button (FAB)
+#' Framework7 container for floating action button (FAB)
 #'
-#' Build a Framework7 container for floating action button (FAB)
+#' \link{f7Fabs} hosts multiple \link{f7Fab}.
 #'
 #' @param ... Slot for \link{f7Fab}.
 #' @param id Optional: access the current state of the \link{f7Fabs} container.
@@ -15,6 +15,8 @@
 #' @note The background color might be an issue depending on the parent container. Consider
 #' it experimental.
 #'
+#' @rdname fabs
+#'
 #' @author David Granjon, \email{dgranjon@@ymail.com}
 #'
 #' @examples
@@ -22,9 +24,8 @@
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'   ui = f7Page(
-#'     color = "pink",
 #'     title = "Floating action buttons",
 #'     f7SingleLayout(
 #'      navbar = f7Navbar(title = "f7Fabs"),
@@ -76,39 +77,82 @@ f7Fabs <- function(..., id = NULL, position = c("right-top", "right-center", "ri
 
   sideOpen <- match.arg(sideOpen)
 
-  shiny::tagList(
-    f7InputsDeps(),
-    shiny::tags$div(
-      class = fabCl,
-      id = id,
-      `data-morph-to` = if (morph) morphTarget else NULL,
-      shiny::a(
-        href = "#",
-        f7Icon("plus"),
-        f7Icon("multiply"),
-        if (!is.null(label)) {
-          shiny::tags$div(class = "fab-text", label)
-        }
-      ),
-      # do not create button wrapper if there are no items inside...
-      if (length(list(...)) > 0) {
-        shiny::tags$div(class = paste0("fab-buttons fab-buttons-", sideOpen), ...)
+  shiny::tags$div(
+    class = fabCl,
+    id = id,
+    `data-morph-to` = if (morph) morphTarget else NULL,
+    shiny::a(
+      href = "#",
+      f7Icon("plus"),
+      f7Icon("multiply"),
+      if (!is.null(label)) {
+        shiny::tags$div(class = "fab-text", label)
       }
-    )
+    ),
+    # do not create button wrapper if there are no items inside...
+    if (length(list(...)) > 0) {
+      shiny::tags$div(class = paste0("fab-buttons fab-buttons-", sideOpen), ...)
+    }
   )
 }
 
 
 
 
-#' Create a Framework7 floating action button (FAB)
+
+#' Update Framework 7 FAB container
 #'
-#' Build a Framework7 floating action button (FAB)
+#' \link{updateF7Fabs} toggles \link{f7Fabs} on the server side.
+#'
+#' @param id The id of the input object.
+#' @param session The Shiny session object, usually the default value will suffice.
+#'
+#' @rdname fabs
+#' @export
+#'
+#' @examples
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  shinyApp(
+#'   ui = f7Page(
+#'     title = "Update f7Fabs",
+#'     f7SingleLayout(
+#'       navbar = f7Navbar(title = "Update f7Fabs"),
+#'       f7Button(inputId = "toggleFabs", label = "Toggle Fabs"),
+#'       f7Fabs(
+#'         position = "center-center",
+#'         id = "fabs",
+#'         lapply(1:3, function(i) f7Fab(inputId = i, label = i))
+#'       )
+#'     )
+#'   ),
+#'   server = function(input, output, session) {
+#'     observe(print(input$fabs))
+#'     observeEvent(input$toggleFabs, {
+#'       updateF7Fabs(id = "fabs")
+#'     })
+#'   }
+#'  )
+#' }
+updateF7Fabs <- function(id, session = shiny::getDefaultReactiveDomain()) {
+  session$sendInputMessage(inputId = id, NULL)
+}
+
+
+
+
+
+#' Framework7 floating action button (FAB)
+#'
+#' \link{f7Fab} generates a nice button to be put in \link{f7Fabs}.
 #'
 #' @inheritParams shiny::actionButton
 #' @param flag Additional text displayed next to the button content. Only works
 #' if \link{f7Fabs} position parameter is not starting with center-...
 #'
+#' @rdname fab
 #' @author David Granjon, \email{dgranjon@@ymail.com}
 #'
 #' @export
@@ -131,7 +175,54 @@ f7Fab <- function(inputId, label, width = NULL, ..., flag = NULL) {
 
 
 
-#' Convert a tag into a target morphing
+
+#' Update FAB
+#'
+#' \link{updateF7Fab} changes the label of a \link{f7Fab} input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param label The label to set for the input object.
+#' @param session The Shiny session object, usually the default value will suffice.
+#'
+#' @export
+#'
+#' @rdname fab
+#'
+#' @examples
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  ui <- f7Page(
+#'    f7SingleLayout(
+#'     navbar = f7Navbar(title = "updateF7Fab"),
+#'     f7Fab("trigger", "Click me")
+#'    )
+#'  )
+#'
+#'  server <- function(input, output, session) {
+#'    observeEvent(input$trigger, {
+#'      updateF7Fab("trigger", label = "Don't click me")
+#'    })
+#'  }
+#' shinyApp(ui, server)
+#' }
+updateF7Fab <- function(inputId, label = NULL,
+                        session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(list(label=label))
+  session$sendInputMessage(inputId, message)
+}
+
+
+
+
+
+#' Framework7 FAB morphing
+#'
+#' \link{f7FabMorphTarget} convert a tag into a target morphing.
+#' See \url{https://v5.framework7.io/docs/floating-action-button.html#fab-morph}.
+#'
+#' @rdname fabs
 #'
 #' @param tag Target tag.
 #' @export
@@ -140,7 +231,7 @@ f7Fab <- function(inputId, label, width = NULL, ..., flag = NULL) {
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'      f7SingleLayout(
 #'        navbar = f7Navbar(title = "f7Fabs Morph"),
@@ -170,7 +261,9 @@ f7FabMorphTarget <- function(tag) {
 }
 
 
-#' Indicate that the current tag should close the \link{f7Fabs}
+#' Framework7 FAB close
+#'
+#' \link{f7FabClose} indicates that the current tag should close the \link{f7Fabs}.
 #'
 #' @param tag Target tag.
 #' @export

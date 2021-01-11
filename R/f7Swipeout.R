@@ -1,6 +1,6 @@
-#' Create a framework7 swipeout element
+#' Framework7 swipeout element
 #'
-#' To be used in combination with \link{f7ListItem}
+#' \link{f7Swipeout} is designed to be used in combination with \link{f7ListItem}.
 #'
 #' @param tag Tag to be swiped.
 #' @param ... When side is either "right" or "left" use this slot to pass
@@ -10,17 +10,18 @@
 #' @param side On which side to swipe: "left", "right" or "both".
 #'
 #' @export
+#' @rdname swipeout
 #'
 #' @examples
 #' if (interactive()) {
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
-#'      title = "My app",
+#'      title = "Swipeout",
 #'      f7SingleLayout(
-#'        navbar = f7Navbar(title = "f7List"),
+#'        navbar = f7Navbar(title = "Swipeout"),
 #'        # simple list
 #'        f7List(
 #'          lapply(1:3, function(j) {
@@ -50,16 +51,14 @@
 #'          icon = f7Icon("bolt_fill"),
 #'          title = "Notification",
 #'          subtitle = "A subtitle",
-#'          titleRightText = "now",
-#'          session = session
+#'          titleRightText = "now"
 #'        )
 #'      })
 #'
 #'      observeEvent(input$alert, {
 #'        f7Dialog(
 #'          title = "Dialog title",
-#'          text = "This is an alert dialog",
-#'          session = session
+#'          text = "This is an alert dialog"
 #'        )
 #'      })
 #'
@@ -87,15 +86,16 @@ f7Swipeout <- function(tag, ...,left = NULL, right = NULL, side = c("left", "rig
 
 
 
-#' Create a framework7 swipeout item
+#' Framework7 swipeout item
 #'
-#' Insert in \link{f7Swipeout}
+#' \link{f7SwipeoutItem} is inserted in \link{f7Swipeout}.
 #'
 #' @param id  Item unique id.
 #' @param label Item label.
 #' @param color Item color.
 #'
 #' @export
+#' @rdname swipeout
 f7SwipeoutItem <- function(id, label, color = NULL) {
 
   itemCl <- if (!is.null(color)) paste0("color-", color)

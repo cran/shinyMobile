@@ -2,22 +2,21 @@
 % Please edit documentation in R/f7Toast.R
 \name{f7Toast}
 \alias{f7Toast}
-\title{Create a Framework7 toast}
+\title{Framework7 toast}
 \usage{
 f7Toast(
-  session,
   text,
   position = c("bottom", "top", "center"),
   closeButton = TRUE,
   closeButtonText = "close",
   closeButtonColor = "red",
   closeTimeout = 3000,
-  icon = NULL
+  icon = NULL,
+  ...,
+  session = shiny::getDefaultReactiveDomain()
 )
 }
 \arguments{
-\item{session}{Shiny session.}
-
 \item{text}{Toast content.}
 
 \item{position}{Toast position \code{c("bottom", "top", "center")}.}
@@ -33,9 +32,13 @@ TRUE by default.}
 
 \item{icon}{Optional. Expect \link{f7Icon}. Warning:
 Adding icon will hide the close button.}
+
+\item{...}{Other options. See \url{https://framework7.io/docs/toast.html#toast-parameters}.}
+
+\item{session}{Shiny session.}
 }
 \description{
-Create a Framework7 toast
+\link{f7Toast} creates a small toast notification from the server side.
 }
 \examples{
 if (interactive()) {
@@ -43,7 +46,7 @@ if (interactive()) {
  library(shinyMobile)
  shinyApp(
   ui = f7Page(
-    title = "My app",
+    title = "Toast",
     f7SingleLayout(
       navbar = f7Navbar(title = "f7Toast"),
       f7Button(inputId = "toast", label = "Open Toast")
@@ -52,7 +55,6 @@ if (interactive()) {
   server = function(input, output, session) {
     observeEvent(input$toast, {
       f7Toast(
-        session,
         position = "top",
         text = "I am a toast. Eat me!"
       )

@@ -2,7 +2,7 @@
 % Please edit documentation in R/f7Page.R
 \name{f7TabLayout}
 \alias{f7TabLayout}
-\title{Create a Framework7 page with tab layout}
+\title{Framework7 tab layout}
 \usage{
 f7TabLayout(..., navbar, messagebar = NULL, panels = NULL, appbar = NULL)
 }
@@ -19,7 +19,8 @@ Wrap in \code{tagList} if multiple panels.}
 \item{appbar}{Slot for \link{f7Appbar}.}
 }
 \description{
-Build a Framework7 page with tab layout
+\link{f7TabLayout} create a single page app with multiple tabs,
+giving the illusion of a multi pages experience.
 }
 \examples{
 if(interactive()){
@@ -27,10 +28,9 @@ if(interactive()){
  library(shinyMobile)
  library(shinyWidgets)
 
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
-     title = "My app",
-     init = f7Init(skin = "md", theme = "light"),
+     title = "Tab layout",
      f7TabLayout(
        tags$head(
          tags$script(
@@ -50,8 +50,8 @@ if(interactive()){
          title = "Tabs",
          hairline = FALSE,
          shadow = TRUE,
-         left_panel = TRUE,
-         right_panel = TRUE
+         leftPanel = TRUE,
+         rightPanel = TRUE
        ),
        f7Tabs(
          animated = FALSE,
@@ -102,7 +102,7 @@ if(interactive()){
                ),
                plotOutput("distPlot2"),
                footer = tagList(
-                 f7Button(label = "My button", src = "https://www.google.com"),
+                 f7Button(label = "My button", href = "https://www.google.com"),
                  f7Badge("Badge", color = "orange")
                )
              )
@@ -128,7 +128,7 @@ if(interactive()){
                ),
                tableOutput("data"),
                footer = tagList(
-                 f7Button(label = "My button", src = "https://www.google.com"),
+                 f7Button(label = "My button", href = "https://www.google.com"),
                  f7Badge("Badge", color = "green")
                )
              )

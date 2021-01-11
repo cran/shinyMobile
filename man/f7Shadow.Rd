@@ -2,7 +2,7 @@
 % Please edit documentation in R/f7Shadow.R
 \name{f7Shadow}
 \alias{f7Shadow}
-\title{Create a Framework7 shadow effect}
+\title{Framework7 shadow effect}
 \usage{
 f7Shadow(tag, intensity, hover = FALSE, pressed = FALSE)
 }
@@ -16,14 +16,14 @@ f7Shadow(tag, intensity, hover = FALSE, pressed = FALSE)
 \item{pressed}{Whether to display the shadow on click. FALSE by default.}
 }
 \description{
-Build a Framework7 shadow effect
+Creates a shadow effect to apply on UI elements like \link{f7Card}.
 }
 \examples{
 if(interactive()){
  library(shiny)
  library(shinyMobile)
 
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
     title = "Shadows",
     f7SingleLayout(
@@ -38,7 +38,7 @@ if(interactive()){
        but cards can also contain their own header,
        footer, list view, image, or any other element.",
       footer = tagList(
-       f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
+       f7Button(color = "blue", label = "My button", href = "https://www.google.com"),
        f7Badge("Badge", color = "green")
       )
      )

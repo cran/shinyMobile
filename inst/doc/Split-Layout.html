@@ -12,10 +12,75 @@
 
 <meta name="author" content="David Granjon" />
 
-<meta name="date" content="2020-06-17" />
+<meta name="date" content="2021-01-11" />
 
 <title>Split-Layout</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+ul > li > .anchor-section {display: none;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '' || x.matches(':empty')) {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -303,11 +368,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Split-Layout</h1>
 <h4 class="author">David Granjon</h4>
-<h4 class="date">2020-06-17</h4>
+<h4 class="date">2021-01-11</h4>
 
 
 
-<p><code>f7SplitLayout()</code> is the third layout introduced with shinyMobile. This template is focused for tablet use. It is composed of a sidebar, and a main panel. The sidebar goes in its dedicated slot, corresponding to <code>f7Panel()</code>. While <code>f7Panel()</code> may also be embedded in both <code>f7SingleLayout()</code> and <code>f7TabsLayout</code>, it accepts extra arguments like <code>f7PanelMenu()</code> and <code>f7PanelItem()</code>, which are very similar to sidebar items of shinydashboard:</p>
+<p><code>f7SplitLayout()</code> is the third layout introduced with <code>{shinyMobile}</code>. This template is focused for tablet/desktop use. It is composed of a sidebar, and a main panel. The sidebar goes in its dedicated slot, corresponding to <code>f7Panel()</code>. While <code>f7Panel()</code> may also be embedded in both <code>f7SingleLayout()</code> and <code>f7TabsLayout</code>, it accepts extra arguments like <code>f7PanelMenu()</code> and <code>f7PanelItem()</code>, which are very similar to sidebar items of <code>{shinydashboard}</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">f7Panel</span>(</span>
 <span id="cb1-2"><a href="#cb1-2"></a>  <span class="dt">title =</span> <span class="st">&quot;Sidebar&quot;</span>,</span>
 <span id="cb1-3"><a href="#cb1-3"></a>  <span class="dt">side =</span> <span class="st">&quot;left&quot;</span>,</span>
@@ -319,7 +384,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-9"><a href="#cb1-9"></a>  ),</span>
 <span id="cb1-10"><a href="#cb1-10"></a>  <span class="dt">style =</span> <span class="st">&quot;reveal&quot;</span></span>
 <span id="cb1-11"><a href="#cb1-11"></a>)</span></code></pre></div>
-<p>The content must be passed in <code>...</code> If you have a menu in the sidebar, you must use the corresponding body function, namely <code>f7Items()</code> and <code>f7Item()</code>. Particularly, the <em>tabName</em> argument provided in <code>f7PanelItem()</code> and <code>f7Item()</code> must exactly match (like in shinydashboard, again). If you don’t have any <code>f7PanelMenu()</code>, you can pass tags in the <code>...</code> directly. However, this prevents you from having a tabbed navigation.</p>
+<p>The content must be passed in <code>...</code> If you have a menu in the sidebar, you must use the corresponding body function, namely <code>f7Items()</code> and <code>f7Item()</code>. Particularly, the <em>tabName</em> argument provided in <code>f7PanelItem()</code> and <code>f7Item()</code> must exactly match (like in <code>{shinydashboard}</code>, again). If you don’t have any <code>f7PanelMenu()</code>, you can pass tags in the <code>...</code> directly. However, this prevents you from having a tabbed navigation.</p>
 <div class="marvel-device ipad black">
 <div class="camera">
 
@@ -333,148 +398,168 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 </div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">library</span>(shiny)</span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">library</span>(shinyMobile)</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">library</span>(apexcharter)</span>
-<span id="cb2-4"><a href="#cb2-4"></a></span>
-<span id="cb2-5"><a href="#cb2-5"></a>fruits &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
-<span id="cb2-6"><a href="#cb2-6"></a>  <span class="dt">name =</span> <span class="kw">c</span>(<span class="st">&#39;Apples&#39;</span>, <span class="st">&#39;Oranges&#39;</span>, <span class="st">&#39;Bananas&#39;</span>, <span class="st">&#39;Berries&#39;</span>),</span>
-<span id="cb2-7"><a href="#cb2-7"></a>  <span class="dt">value =</span> <span class="kw">c</span>(<span class="dv">44</span>, <span class="dv">55</span>, <span class="dv">67</span>, <span class="dv">83</span>)</span>
-<span id="cb2-8"><a href="#cb2-8"></a>)</span>
-<span id="cb2-9"><a href="#cb2-9"></a></span>
-<span id="cb2-10"><a href="#cb2-10"></a>new_mtcars &lt;-<span class="st"> </span><span class="kw">reshape</span>(</span>
-<span id="cb2-11"><a href="#cb2-11"></a>  <span class="dt">data =</span> <span class="kw">head</span>(mtcars),</span>
-<span id="cb2-12"><a href="#cb2-12"></a>  <span class="dt">idvar =</span> <span class="st">&quot;model&quot;</span>,</span>
-<span id="cb2-13"><a href="#cb2-13"></a>  <span class="dt">varying =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;drat&quot;</span>, <span class="st">&quot;wt&quot;</span>)),</span>
-<span id="cb2-14"><a href="#cb2-14"></a>  <span class="dt">times =</span> <span class="kw">c</span>(<span class="st">&quot;drat&quot;</span>, <span class="st">&quot;wt&quot;</span>),</span>
-<span id="cb2-15"><a href="#cb2-15"></a>  <span class="dt">direction =</span> <span class="st">&quot;long&quot;</span>,</span>
-<span id="cb2-16"><a href="#cb2-16"></a>  <span class="dt">v.names =</span> <span class="st">&quot;value&quot;</span>,</span>
-<span id="cb2-17"><a href="#cb2-17"></a>  <span class="dt">drop =</span> <span class="kw">c</span>(<span class="st">&quot;mpg&quot;</span>, <span class="st">&quot;cyl&quot;</span>, <span class="st">&quot;hp&quot;</span>, <span class="st">&quot;dist&quot;</span>, <span class="st">&quot;qsec&quot;</span>, <span class="st">&quot;vs&quot;</span>, <span class="st">&quot;am&quot;</span>, <span class="st">&quot;gear&quot;</span>, <span class="st">&quot;carb&quot;</span>)</span>
-<span id="cb2-18"><a href="#cb2-18"></a>)</span>
-<span id="cb2-19"><a href="#cb2-19"></a></span>
-<span id="cb2-20"><a href="#cb2-20"></a><span class="kw">shinyApp</span>(</span>
-<span id="cb2-21"><a href="#cb2-21"></a>  <span class="dt">ui =</span> <span class="kw">f7Page</span>(</span>
-<span id="cb2-22"><a href="#cb2-22"></a>    <span class="dt">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
-<span id="cb2-23"><a href="#cb2-23"></a>    <span class="dt">init =</span> <span class="kw">f7Init</span>(</span>
-<span id="cb2-24"><a href="#cb2-24"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb2-25"><a href="#cb2-25"></a>      <span class="dt">hideTabsOnPageScroll =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb2-26"><a href="#cb2-26"></a>      <span class="dt">theme =</span> <span class="st">&quot;light&quot;</span></span>
-<span id="cb2-27"><a href="#cb2-27"></a>    ),</span>
-<span id="cb2-28"><a href="#cb2-28"></a>    <span class="kw">f7SplitLayout</span>(</span>
-<span id="cb2-29"><a href="#cb2-29"></a>      <span class="dt">sidebar =</span> <span class="kw">f7Panel</span>(</span>
-<span id="cb2-30"><a href="#cb2-30"></a>        <span class="dt">title =</span> <span class="st">&quot;Sidebar&quot;</span>,</span>
-<span id="cb2-31"><a href="#cb2-31"></a>        <span class="dt">side =</span> <span class="st">&quot;left&quot;</span>,</span>
-<span id="cb2-32"><a href="#cb2-32"></a>        <span class="dt">theme =</span> <span class="st">&quot;light&quot;</span>,</span>
-<span id="cb2-33"><a href="#cb2-33"></a>        <span class="kw">f7PanelMenu</span>(</span>
-<span id="cb2-34"><a href="#cb2-34"></a>          <span class="dt">id =</span> <span class="st">&quot;menu&quot;</span>,</span>
-<span id="cb2-35"><a href="#cb2-35"></a>          <span class="kw">f7PanelItem</span>(</span>
-<span id="cb2-36"><a href="#cb2-36"></a>            <span class="dt">tabName =</span> <span class="st">&quot;tab1&quot;</span>,</span>
-<span id="cb2-37"><a href="#cb2-37"></a>            <span class="dt">title =</span> <span class="st">&quot;Tab 1&quot;</span>,</span>
-<span id="cb2-38"><a href="#cb2-38"></a>            <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;equal_circle&quot;</span>),</span>
-<span id="cb2-39"><a href="#cb2-39"></a>            <span class="dt">active =</span> <span class="ot">TRUE</span></span>
-<span id="cb2-40"><a href="#cb2-40"></a>          ),</span>
-<span id="cb2-41"><a href="#cb2-41"></a>          <span class="kw">f7PanelItem</span>(</span>
-<span id="cb2-42"><a href="#cb2-42"></a>            <span class="dt">tabName =</span> <span class="st">&quot;tab2&quot;</span>,</span>
-<span id="cb2-43"><a href="#cb2-43"></a>            <span class="dt">title =</span> <span class="st">&quot;Tab 2&quot;</span>,</span>
-<span id="cb2-44"><a href="#cb2-44"></a>            <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;equal_circle&quot;</span>)</span>
-<span id="cb2-45"><a href="#cb2-45"></a>          ),</span>
-<span id="cb2-46"><a href="#cb2-46"></a>          <span class="kw">f7PanelItem</span>(</span>
-<span id="cb2-47"><a href="#cb2-47"></a>            <span class="dt">tabName =</span> <span class="st">&quot;tab3&quot;</span>,</span>
-<span id="cb2-48"><a href="#cb2-48"></a>            <span class="dt">title =</span> <span class="st">&quot;Tab 3&quot;</span>,</span>
-<span id="cb2-49"><a href="#cb2-49"></a>            <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;equal_circle&quot;</span>)</span>
-<span id="cb2-50"><a href="#cb2-50"></a>          )</span>
-<span id="cb2-51"><a href="#cb2-51"></a>        ),</span>
-<span id="cb2-52"><a href="#cb2-52"></a>        <span class="kw">uiOutput</span>(<span class="st">&quot;selected_tab&quot;</span>),</span>
-<span id="cb2-53"><a href="#cb2-53"></a>        <span class="dt">effect =</span> <span class="st">&quot;reveal&quot;</span></span>
-<span id="cb2-54"><a href="#cb2-54"></a>      ),</span>
-<span id="cb2-55"><a href="#cb2-55"></a>      <span class="dt">navbar =</span> <span class="kw">f7Navbar</span>(</span>
-<span id="cb2-56"><a href="#cb2-56"></a>        <span class="dt">title =</span> <span class="st">&quot;Split Layout&quot;</span>,</span>
-<span id="cb2-57"><a href="#cb2-57"></a>        <span class="dt">hairline =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb2-58"><a href="#cb2-58"></a>        <span class="dt">shadow =</span> <span class="ot">TRUE</span></span>
-<span id="cb2-59"><a href="#cb2-59"></a>      ),</span>
-<span id="cb2-60"><a href="#cb2-60"></a>      <span class="dt">toolbar =</span> <span class="kw">f7Toolbar</span>(</span>
-<span id="cb2-61"><a href="#cb2-61"></a>        <span class="dt">position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb2-62"><a href="#cb2-62"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 1&quot;</span>, <span class="dt">src =</span> <span class="st">&quot;https://www.google.com&quot;</span>),</span>
-<span id="cb2-63"><a href="#cb2-63"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 2&quot;</span>, <span class="dt">src =</span> <span class="st">&quot;https://www.google.com&quot;</span>, <span class="dt">external =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-64"><a href="#cb2-64"></a>      ),</span>
-<span id="cb2-65"><a href="#cb2-65"></a>      <span class="co"># main content</span></span>
-<span id="cb2-66"><a href="#cb2-66"></a>      <span class="kw">f7Items</span>(</span>
-<span id="cb2-67"><a href="#cb2-67"></a>        <span class="kw">f7Item</span>(</span>
-<span id="cb2-68"><a href="#cb2-68"></a>          <span class="dt">tabName =</span> <span class="st">&quot;tab1&quot;</span>,</span>
-<span id="cb2-69"><a href="#cb2-69"></a>          <span class="kw">f7Sheet</span>(</span>
-<span id="cb2-70"><a href="#cb2-70"></a>            <span class="dt">id =</span> <span class="st">&quot;sheet1&quot;</span>,</span>
-<span id="cb2-71"><a href="#cb2-71"></a>            <span class="dt">label =</span> <span class="st">&quot;Plot Parameters&quot;</span>,</span>
-<span id="cb2-72"><a href="#cb2-72"></a>            <span class="dt">orientation =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb2-73"><a href="#cb2-73"></a>            <span class="dt">swipeToClose =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb2-74"><a href="#cb2-74"></a>            <span class="dt">backdrop =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb2-75"><a href="#cb2-75"></a>            <span class="kw">f7Slider</span>(</span>
-<span id="cb2-76"><a href="#cb2-76"></a>              <span class="st">&quot;obs&quot;</span>,</span>
-<span id="cb2-77"><a href="#cb2-77"></a>              <span class="st">&quot;Number of observations:&quot;</span>,</span>
-<span id="cb2-78"><a href="#cb2-78"></a>              <span class="dt">min =</span> <span class="dv">0</span>, <span class="dt">max =</span> <span class="dv">1000</span>,</span>
-<span id="cb2-79"><a href="#cb2-79"></a>              <span class="dt">value =</span> <span class="dv">500</span></span>
-<span id="cb2-80"><a href="#cb2-80"></a>            )</span>
-<span id="cb2-81"><a href="#cb2-81"></a>          ),</span>
-<span id="cb2-82"><a href="#cb2-82"></a>          <span class="kw">br</span>(),</span>
-<span id="cb2-83"><a href="#cb2-83"></a>          <span class="kw">plotOutput</span>(<span class="st">&quot;distPlot&quot;</span>)</span>
-<span id="cb2-84"><a href="#cb2-84"></a>        ),</span>
-<span id="cb2-85"><a href="#cb2-85"></a>        <span class="kw">f7Item</span>(</span>
-<span id="cb2-86"><a href="#cb2-86"></a>          <span class="dt">tabName =</span> <span class="st">&quot;tab2&quot;</span>,</span>
-<span id="cb2-87"><a href="#cb2-87"></a>          <span class="kw">apexchartOutput</span>(<span class="st">&quot;radar&quot;</span>)</span>
-<span id="cb2-88"><a href="#cb2-88"></a>        ),</span>
-<span id="cb2-89"><a href="#cb2-89"></a>        <span class="kw">f7Item</span>(</span>
-<span id="cb2-90"><a href="#cb2-90"></a>          <span class="dt">tabName =</span> <span class="st">&quot;tab3&quot;</span>,</span>
-<span id="cb2-91"><a href="#cb2-91"></a>          <span class="kw">f7Toggle</span>(</span>
-<span id="cb2-92"><a href="#cb2-92"></a>            <span class="dt">inputId =</span> <span class="st">&quot;plot_show&quot;</span>,</span>
-<span id="cb2-93"><a href="#cb2-93"></a>            <span class="dt">label =</span> <span class="st">&quot;Show Plot?&quot;</span>,</span>
-<span id="cb2-94"><a href="#cb2-94"></a>            <span class="dt">checked =</span> <span class="ot">TRUE</span></span>
-<span id="cb2-95"><a href="#cb2-95"></a>          ),</span>
-<span id="cb2-96"><a href="#cb2-96"></a>          <span class="kw">apexchartOutput</span>(<span class="st">&quot;multi_radial&quot;</span>)</span>
-<span id="cb2-97"><a href="#cb2-97"></a>        )</span>
-<span id="cb2-98"><a href="#cb2-98"></a>      )</span>
-<span id="cb2-99"><a href="#cb2-99"></a>    )</span>
-<span id="cb2-100"><a href="#cb2-100"></a>  ),</span>
-<span id="cb2-101"><a href="#cb2-101"></a>  <span class="dt">server =</span> <span class="cf">function</span>(input, output, session) {</span>
-<span id="cb2-102"><a href="#cb2-102"></a></span>
-<span id="cb2-103"><a href="#cb2-103"></a>    <span class="kw">observeEvent</span>(input<span class="op">$</span>obs, {</span>
-<span id="cb2-104"><a href="#cb2-104"></a>      <span class="cf">if</span> (input<span class="op">$</span>obs <span class="op">&lt;</span><span class="st"> </span><span class="dv">500</span>) {</span>
-<span id="cb2-105"><a href="#cb2-105"></a>        <span class="kw">f7Notif</span>(</span>
-<span id="cb2-106"><a href="#cb2-106"></a>          <span class="dt">text =</span> <span class="kw">paste0</span>(<span class="st">&quot;The slider value is only &quot;</span>, input<span class="op">$</span>obs, <span class="st">&quot;. Please</span></span>
-<span id="cb2-107"><a href="#cb2-107"></a><span class="st">                        increase it&quot;</span>),</span>
-<span id="cb2-108"><a href="#cb2-108"></a>          <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;bolt_fill&quot;</span>),</span>
-<span id="cb2-109"><a href="#cb2-109"></a>          <span class="dt">title =</span> <span class="st">&quot;Alert&quot;</span>,</span>
-<span id="cb2-110"><a href="#cb2-110"></a>          <span class="dt">titleRightText =</span> <span class="kw">Sys.Date</span>(),</span>
-<span id="cb2-111"><a href="#cb2-111"></a>          <span class="dt">session =</span> session</span>
-<span id="cb2-112"><a href="#cb2-112"></a>        )</span>
-<span id="cb2-113"><a href="#cb2-113"></a>      }</span>
-<span id="cb2-114"><a href="#cb2-114"></a>    })</span>
-<span id="cb2-115"><a href="#cb2-115"></a></span>
-<span id="cb2-116"><a href="#cb2-116"></a>    output<span class="op">$</span>radar &lt;-<span class="st"> </span><span class="kw">renderApexchart</span>({</span>
-<span id="cb2-117"><a href="#cb2-117"></a>      <span class="kw">apex</span>(</span>
-<span id="cb2-118"><a href="#cb2-118"></a>        <span class="dt">data =</span> new_mtcars,</span>
-<span id="cb2-119"><a href="#cb2-119"></a>        <span class="dt">type =</span> <span class="st">&quot;radar&quot;</span>,</span>
-<span id="cb2-120"><a href="#cb2-120"></a>        <span class="dt">mapping =</span> <span class="kw">aes</span>(</span>
-<span id="cb2-121"><a href="#cb2-121"></a>          <span class="dt">x =</span> model,</span>
-<span id="cb2-122"><a href="#cb2-122"></a>          <span class="dt">y =</span> value,</span>
-<span id="cb2-123"><a href="#cb2-123"></a>          <span class="dt">group =</span> time)</span>
-<span id="cb2-124"><a href="#cb2-124"></a>      )</span>
-<span id="cb2-125"><a href="#cb2-125"></a>    })</span>
-<span id="cb2-126"><a href="#cb2-126"></a></span>
-<span id="cb2-127"><a href="#cb2-127"></a>    output<span class="op">$</span>selected_tab &lt;-<span class="st"> </span><span class="kw">renderUI</span>({</span>
-<span id="cb2-128"><a href="#cb2-128"></a>      <span class="kw">HTML</span>(<span class="kw">paste0</span>(<span class="st">&quot;Access the currently selected tab: &quot;</span>, <span class="kw">strong</span>(input<span class="op">$</span>menu)))</span>
-<span id="cb2-129"><a href="#cb2-129"></a>    })</span>
-<span id="cb2-130"><a href="#cb2-130"></a></span>
-<span id="cb2-131"><a href="#cb2-131"></a>    output<span class="op">$</span>distPlot &lt;-<span class="st"> </span><span class="kw">renderPlot</span>({</span>
-<span id="cb2-132"><a href="#cb2-132"></a>      dist &lt;-<span class="st"> </span><span class="kw">rnorm</span>(input<span class="op">$</span>obs)</span>
-<span id="cb2-133"><a href="#cb2-133"></a>      <span class="kw">hist</span>(dist)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">library</span>(shinyMobile)</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">library</span>(apexcharter)</span>
+<span id="cb2-5"><a href="#cb2-5"></a></span>
+<span id="cb2-6"><a href="#cb2-6"></a>fruits &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb2-7"><a href="#cb2-7"></a>  <span class="dt">name =</span> <span class="kw">c</span>(<span class="st">&#39;Apples&#39;</span>, <span class="st">&#39;Oranges&#39;</span>, <span class="st">&#39;Bananas&#39;</span>, <span class="st">&#39;Berries&#39;</span>),</span>
+<span id="cb2-8"><a href="#cb2-8"></a>  <span class="dt">value =</span> <span class="kw">c</span>(<span class="dv">44</span>, <span class="dv">55</span>, <span class="dv">67</span>, <span class="dv">83</span>)</span>
+<span id="cb2-9"><a href="#cb2-9"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10"></a></span>
+<span id="cb2-11"><a href="#cb2-11"></a>new_mtcars &lt;-<span class="st"> </span><span class="kw">reshape</span>(</span>
+<span id="cb2-12"><a href="#cb2-12"></a>  <span class="dt">data =</span> <span class="kw">head</span>(mtcars),</span>
+<span id="cb2-13"><a href="#cb2-13"></a>  <span class="dt">idvar =</span> <span class="st">&quot;model&quot;</span>,</span>
+<span id="cb2-14"><a href="#cb2-14"></a>  <span class="dt">varying =</span> <span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;drat&quot;</span>, <span class="st">&quot;wt&quot;</span>)),</span>
+<span id="cb2-15"><a href="#cb2-15"></a>  <span class="dt">times =</span> <span class="kw">c</span>(<span class="st">&quot;drat&quot;</span>, <span class="st">&quot;wt&quot;</span>),</span>
+<span id="cb2-16"><a href="#cb2-16"></a>  <span class="dt">direction =</span> <span class="st">&quot;long&quot;</span>,</span>
+<span id="cb2-17"><a href="#cb2-17"></a>  <span class="dt">v.names =</span> <span class="st">&quot;value&quot;</span>,</span>
+<span id="cb2-18"><a href="#cb2-18"></a>  <span class="dt">drop =</span> <span class="kw">c</span>(<span class="st">&quot;mpg&quot;</span>, <span class="st">&quot;cyl&quot;</span>, <span class="st">&quot;hp&quot;</span>, <span class="st">&quot;dist&quot;</span>, <span class="st">&quot;qsec&quot;</span>, <span class="st">&quot;vs&quot;</span>, <span class="st">&quot;am&quot;</span>, <span class="st">&quot;gear&quot;</span>, <span class="st">&quot;carb&quot;</span>)</span>
+<span id="cb2-19"><a href="#cb2-19"></a>)</span>
+<span id="cb2-20"><a href="#cb2-20"></a></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="kw">shinyApp</span>(</span>
+<span id="cb2-22"><a href="#cb2-22"></a>  <span class="dt">ui =</span> <span class="kw">f7Page</span>(</span>
+<span id="cb2-23"><a href="#cb2-23"></a>    <span class="dt">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
+<span id="cb2-24"><a href="#cb2-24"></a>    <span class="dt">options =</span> <span class="kw">list</span>(</span>
+<span id="cb2-25"><a href="#cb2-25"></a>      <span class="dt">theme =</span> <span class="st">&quot;aurora&quot;</span>,</span>
+<span id="cb2-26"><a href="#cb2-26"></a>      <span class="dt">dark =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb2-27"><a href="#cb2-27"></a>      <span class="dt">filled =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb2-28"><a href="#cb2-28"></a>      <span class="dt">color =</span> <span class="st">&quot;#007aff&quot;</span>,</span>
+<span id="cb2-29"><a href="#cb2-29"></a>      <span class="dt">touch =</span> <span class="kw">list</span>(</span>
+<span id="cb2-30"><a href="#cb2-30"></a>        <span class="dt">tapHold =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb2-31"><a href="#cb2-31"></a>        <span class="dt">tapHoldDelay =</span> <span class="dv">750</span>,</span>
+<span id="cb2-32"><a href="#cb2-32"></a>        <span class="dt">iosTouchRipple =</span> <span class="ot">FALSE</span></span>
+<span id="cb2-33"><a href="#cb2-33"></a>      ),</span>
+<span id="cb2-34"><a href="#cb2-34"></a>      <span class="dt">iosTranslucentBars =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb2-35"><a href="#cb2-35"></a>      <span class="dt">navbar =</span> <span class="kw">list</span>(</span>
+<span id="cb2-36"><a href="#cb2-36"></a>        <span class="dt">iosCenterTitle =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb2-37"><a href="#cb2-37"></a>        <span class="dt">hideNavOnPageScroll =</span> <span class="ot">TRUE</span></span>
+<span id="cb2-38"><a href="#cb2-38"></a>      ),</span>
+<span id="cb2-39"><a href="#cb2-39"></a>      <span class="dt">toolbar =</span> <span class="kw">list</span>(</span>
+<span id="cb2-40"><a href="#cb2-40"></a>        <span class="dt">hideNavOnPageScroll =</span> <span class="ot">FALSE</span></span>
+<span id="cb2-41"><a href="#cb2-41"></a>      ),</span>
+<span id="cb2-42"><a href="#cb2-42"></a>      <span class="dt">pullToRefresh =</span> <span class="ot">FALSE</span></span>
+<span id="cb2-43"><a href="#cb2-43"></a>    ),</span>
+<span id="cb2-44"><a href="#cb2-44"></a>    <span class="kw">f7SplitLayout</span>(</span>
+<span id="cb2-45"><a href="#cb2-45"></a>      <span class="dt">sidebar =</span> <span class="kw">f7Panel</span>(</span>
+<span id="cb2-46"><a href="#cb2-46"></a>        <span class="dt">title =</span> <span class="st">&quot;Sidebar&quot;</span>,</span>
+<span id="cb2-47"><a href="#cb2-47"></a>        <span class="dt">side =</span> <span class="st">&quot;left&quot;</span>,</span>
+<span id="cb2-48"><a href="#cb2-48"></a>        <span class="dt">theme =</span> <span class="st">&quot;light&quot;</span>,</span>
+<span id="cb2-49"><a href="#cb2-49"></a>        <span class="kw">f7PanelMenu</span>(</span>
+<span id="cb2-50"><a href="#cb2-50"></a>          <span class="dt">id =</span> <span class="st">&quot;menu&quot;</span>,</span>
+<span id="cb2-51"><a href="#cb2-51"></a>          <span class="kw">f7PanelItem</span>(</span>
+<span id="cb2-52"><a href="#cb2-52"></a>            <span class="dt">tabName =</span> <span class="st">&quot;tab1&quot;</span>,</span>
+<span id="cb2-53"><a href="#cb2-53"></a>            <span class="dt">title =</span> <span class="st">&quot;Tab 1&quot;</span>,</span>
+<span id="cb2-54"><a href="#cb2-54"></a>            <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;equal_circle&quot;</span>),</span>
+<span id="cb2-55"><a href="#cb2-55"></a>            <span class="dt">active =</span> <span class="ot">TRUE</span></span>
+<span id="cb2-56"><a href="#cb2-56"></a>          ),</span>
+<span id="cb2-57"><a href="#cb2-57"></a>          <span class="kw">f7PanelItem</span>(</span>
+<span id="cb2-58"><a href="#cb2-58"></a>            <span class="dt">tabName =</span> <span class="st">&quot;tab2&quot;</span>,</span>
+<span id="cb2-59"><a href="#cb2-59"></a>            <span class="dt">title =</span> <span class="st">&quot;Tab 2&quot;</span>,</span>
+<span id="cb2-60"><a href="#cb2-60"></a>            <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;equal_circle&quot;</span>)</span>
+<span id="cb2-61"><a href="#cb2-61"></a>          ),</span>
+<span id="cb2-62"><a href="#cb2-62"></a>          <span class="kw">f7PanelItem</span>(</span>
+<span id="cb2-63"><a href="#cb2-63"></a>            <span class="dt">tabName =</span> <span class="st">&quot;tab3&quot;</span>,</span>
+<span id="cb2-64"><a href="#cb2-64"></a>            <span class="dt">title =</span> <span class="st">&quot;Tab 3&quot;</span>,</span>
+<span id="cb2-65"><a href="#cb2-65"></a>            <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;equal_circle&quot;</span>)</span>
+<span id="cb2-66"><a href="#cb2-66"></a>          )</span>
+<span id="cb2-67"><a href="#cb2-67"></a>        ),</span>
+<span id="cb2-68"><a href="#cb2-68"></a>        <span class="kw">uiOutput</span>(<span class="st">&quot;selected_tab&quot;</span>),</span>
+<span id="cb2-69"><a href="#cb2-69"></a>        <span class="dt">effect =</span> <span class="st">&quot;reveal&quot;</span></span>
+<span id="cb2-70"><a href="#cb2-70"></a>      ),</span>
+<span id="cb2-71"><a href="#cb2-71"></a>      <span class="dt">navbar =</span> <span class="kw">f7Navbar</span>(</span>
+<span id="cb2-72"><a href="#cb2-72"></a>        <span class="dt">title =</span> <span class="st">&quot;Split Layout&quot;</span>,</span>
+<span id="cb2-73"><a href="#cb2-73"></a>        <span class="dt">hairline =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb2-74"><a href="#cb2-74"></a>        <span class="dt">shadow =</span> <span class="ot">TRUE</span></span>
+<span id="cb2-75"><a href="#cb2-75"></a>      ),</span>
+<span id="cb2-76"><a href="#cb2-76"></a>      <span class="dt">toolbar =</span> <span class="kw">f7Toolbar</span>(</span>
+<span id="cb2-77"><a href="#cb2-77"></a>        <span class="dt">position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb2-78"><a href="#cb2-78"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 1&quot;</span>, <span class="dt">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>),</span>
+<span id="cb2-79"><a href="#cb2-79"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 2&quot;</span>, <span class="dt">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>)</span>
+<span id="cb2-80"><a href="#cb2-80"></a>      ),</span>
+<span id="cb2-81"><a href="#cb2-81"></a>      <span class="co"># main content</span></span>
+<span id="cb2-82"><a href="#cb2-82"></a>      <span class="kw">f7Items</span>(</span>
+<span id="cb2-83"><a href="#cb2-83"></a>        <span class="kw">f7Item</span>(</span>
+<span id="cb2-84"><a href="#cb2-84"></a>          <span class="dt">tabName =</span> <span class="st">&quot;tab1&quot;</span>,</span>
+<span id="cb2-85"><a href="#cb2-85"></a>          <span class="kw">f7Button</span>(<span class="st">&quot;toggleSheet&quot;</span>, <span class="st">&quot;Plot parameters&quot;</span>),</span>
+<span id="cb2-86"><a href="#cb2-86"></a>          <span class="kw">f7Sheet</span>(</span>
+<span id="cb2-87"><a href="#cb2-87"></a>            <span class="dt">id =</span> <span class="st">&quot;sheet1&quot;</span>,</span>
+<span id="cb2-88"><a href="#cb2-88"></a>            <span class="dt">label =</span> <span class="st">&quot;Plot Parameters&quot;</span>,</span>
+<span id="cb2-89"><a href="#cb2-89"></a>            <span class="dt">orientation =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb2-90"><a href="#cb2-90"></a>            <span class="dt">swipeToClose =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb2-91"><a href="#cb2-91"></a>            <span class="dt">backdrop =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb2-92"><a href="#cb2-92"></a>            <span class="kw">f7Slider</span>(</span>
+<span id="cb2-93"><a href="#cb2-93"></a>              <span class="st">&quot;obs&quot;</span>,</span>
+<span id="cb2-94"><a href="#cb2-94"></a>              <span class="st">&quot;Number of observations:&quot;</span>,</span>
+<span id="cb2-95"><a href="#cb2-95"></a>              <span class="dt">min =</span> <span class="dv">0</span>, <span class="dt">max =</span> <span class="dv">1000</span>,</span>
+<span id="cb2-96"><a href="#cb2-96"></a>              <span class="dt">value =</span> <span class="dv">500</span></span>
+<span id="cb2-97"><a href="#cb2-97"></a>            )</span>
+<span id="cb2-98"><a href="#cb2-98"></a>          ),</span>
+<span id="cb2-99"><a href="#cb2-99"></a>          <span class="kw">br</span>(),</span>
+<span id="cb2-100"><a href="#cb2-100"></a>          <span class="kw">plotOutput</span>(<span class="st">&quot;distPlot&quot;</span>)</span>
+<span id="cb2-101"><a href="#cb2-101"></a>        ),</span>
+<span id="cb2-102"><a href="#cb2-102"></a>        <span class="kw">f7Item</span>(</span>
+<span id="cb2-103"><a href="#cb2-103"></a>          <span class="dt">tabName =</span> <span class="st">&quot;tab2&quot;</span>,</span>
+<span id="cb2-104"><a href="#cb2-104"></a>          <span class="kw">apexchartOutput</span>(<span class="st">&quot;radar&quot;</span>)</span>
+<span id="cb2-105"><a href="#cb2-105"></a>        ),</span>
+<span id="cb2-106"><a href="#cb2-106"></a>        <span class="kw">f7Item</span>(</span>
+<span id="cb2-107"><a href="#cb2-107"></a>          <span class="dt">tabName =</span> <span class="st">&quot;tab3&quot;</span>,</span>
+<span id="cb2-108"><a href="#cb2-108"></a>          <span class="kw">f7Toggle</span>(</span>
+<span id="cb2-109"><a href="#cb2-109"></a>            <span class="dt">inputId =</span> <span class="st">&quot;plot_show&quot;</span>,</span>
+<span id="cb2-110"><a href="#cb2-110"></a>            <span class="dt">label =</span> <span class="st">&quot;Show Plot?&quot;</span>,</span>
+<span id="cb2-111"><a href="#cb2-111"></a>            <span class="dt">checked =</span> <span class="ot">TRUE</span></span>
+<span id="cb2-112"><a href="#cb2-112"></a>          ),</span>
+<span id="cb2-113"><a href="#cb2-113"></a>          <span class="kw">apexchartOutput</span>(<span class="st">&quot;multi_radial&quot;</span>)</span>
+<span id="cb2-114"><a href="#cb2-114"></a>        )</span>
+<span id="cb2-115"><a href="#cb2-115"></a>      )</span>
+<span id="cb2-116"><a href="#cb2-116"></a>    )</span>
+<span id="cb2-117"><a href="#cb2-117"></a>  ),</span>
+<span id="cb2-118"><a href="#cb2-118"></a>  <span class="dt">server =</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb2-119"><a href="#cb2-119"></a></span>
+<span id="cb2-120"><a href="#cb2-120"></a>    <span class="kw">observeEvent</span>(input<span class="op">$</span>toggleSheet, {</span>
+<span id="cb2-121"><a href="#cb2-121"></a>      <span class="kw">updateF7Sheet</span>(<span class="dt">id =</span> <span class="st">&quot;sheet1&quot;</span>)</span>
+<span id="cb2-122"><a href="#cb2-122"></a>    })</span>
+<span id="cb2-123"><a href="#cb2-123"></a></span>
+<span id="cb2-124"><a href="#cb2-124"></a>    <span class="kw">observeEvent</span>(input<span class="op">$</span>obs, {</span>
+<span id="cb2-125"><a href="#cb2-125"></a>      <span class="cf">if</span> (input<span class="op">$</span>obs <span class="op">&lt;</span><span class="st"> </span><span class="dv">500</span>) {</span>
+<span id="cb2-126"><a href="#cb2-126"></a>        <span class="kw">f7Notif</span>(</span>
+<span id="cb2-127"><a href="#cb2-127"></a>          <span class="dt">text =</span> <span class="kw">paste0</span>(<span class="st">&quot;The slider value is only &quot;</span>, input<span class="op">$</span>obs, <span class="st">&quot;. Please</span></span>
+<span id="cb2-128"><a href="#cb2-128"></a><span class="st">                        increase it&quot;</span>),</span>
+<span id="cb2-129"><a href="#cb2-129"></a>          <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;bolt_fill&quot;</span>),</span>
+<span id="cb2-130"><a href="#cb2-130"></a>          <span class="dt">title =</span> <span class="st">&quot;Alert&quot;</span>,</span>
+<span id="cb2-131"><a href="#cb2-131"></a>          <span class="dt">titleRightText =</span> <span class="kw">Sys.Date</span>()</span>
+<span id="cb2-132"><a href="#cb2-132"></a>        )</span>
+<span id="cb2-133"><a href="#cb2-133"></a>      }</span>
 <span id="cb2-134"><a href="#cb2-134"></a>    })</span>
 <span id="cb2-135"><a href="#cb2-135"></a></span>
-<span id="cb2-136"><a href="#cb2-136"></a>    output<span class="op">$</span>multi_radial &lt;-<span class="st"> </span><span class="kw">renderApexchart</span>({</span>
-<span id="cb2-137"><a href="#cb2-137"></a>      <span class="cf">if</span> (input<span class="op">$</span>plot_show) {</span>
-<span id="cb2-138"><a href="#cb2-138"></a>        <span class="kw">apex</span>(<span class="dt">data =</span> fruits, <span class="dt">type =</span> <span class="st">&quot;radialBar&quot;</span>, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> name, <span class="dt">y =</span> value))</span>
-<span id="cb2-139"><a href="#cb2-139"></a>      }</span>
-<span id="cb2-140"><a href="#cb2-140"></a>    })</span>
-<span id="cb2-141"><a href="#cb2-141"></a></span>
-<span id="cb2-142"><a href="#cb2-142"></a>  }</span>
-<span id="cb2-143"><a href="#cb2-143"></a>)</span></code></pre></div>
+<span id="cb2-136"><a href="#cb2-136"></a>    output<span class="op">$</span>radar &lt;-<span class="st"> </span><span class="kw">renderApexchart</span>({</span>
+<span id="cb2-137"><a href="#cb2-137"></a>      <span class="kw">apex</span>(</span>
+<span id="cb2-138"><a href="#cb2-138"></a>        <span class="dt">data =</span> new_mtcars,</span>
+<span id="cb2-139"><a href="#cb2-139"></a>        <span class="dt">type =</span> <span class="st">&quot;radar&quot;</span>,</span>
+<span id="cb2-140"><a href="#cb2-140"></a>        <span class="dt">mapping =</span> <span class="kw">aes</span>(</span>
+<span id="cb2-141"><a href="#cb2-141"></a>          <span class="dt">x =</span> model,</span>
+<span id="cb2-142"><a href="#cb2-142"></a>          <span class="dt">y =</span> value,</span>
+<span id="cb2-143"><a href="#cb2-143"></a>          <span class="dt">group =</span> time)</span>
+<span id="cb2-144"><a href="#cb2-144"></a>      )</span>
+<span id="cb2-145"><a href="#cb2-145"></a>    })</span>
+<span id="cb2-146"><a href="#cb2-146"></a></span>
+<span id="cb2-147"><a href="#cb2-147"></a>    output<span class="op">$</span>selected_tab &lt;-<span class="st"> </span><span class="kw">renderUI</span>({</span>
+<span id="cb2-148"><a href="#cb2-148"></a>      <span class="kw">HTML</span>(<span class="kw">paste0</span>(<span class="st">&quot;Access the currently selected tab: &quot;</span>, <span class="kw">strong</span>(input<span class="op">$</span>menu)))</span>
+<span id="cb2-149"><a href="#cb2-149"></a>    })</span>
+<span id="cb2-150"><a href="#cb2-150"></a></span>
+<span id="cb2-151"><a href="#cb2-151"></a>    output<span class="op">$</span>distPlot &lt;-<span class="st"> </span><span class="kw">renderPlot</span>({</span>
+<span id="cb2-152"><a href="#cb2-152"></a>      dist &lt;-<span class="st"> </span><span class="kw">rnorm</span>(input<span class="op">$</span>obs)</span>
+<span id="cb2-153"><a href="#cb2-153"></a>      <span class="kw">hist</span>(dist)</span>
+<span id="cb2-154"><a href="#cb2-154"></a>    })</span>
+<span id="cb2-155"><a href="#cb2-155"></a></span>
+<span id="cb2-156"><a href="#cb2-156"></a>    output<span class="op">$</span>multi_radial &lt;-<span class="st"> </span><span class="kw">renderApexchart</span>({</span>
+<span id="cb2-157"><a href="#cb2-157"></a>      <span class="cf">if</span> (input<span class="op">$</span>plot_show) {</span>
+<span id="cb2-158"><a href="#cb2-158"></a>        <span class="kw">apex</span>(<span class="dt">data =</span> fruits, <span class="dt">type =</span> <span class="st">&quot;radialBar&quot;</span>, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> name, <span class="dt">y =</span> value))</span>
+<span id="cb2-159"><a href="#cb2-159"></a>      }</span>
+<span id="cb2-160"><a href="#cb2-160"></a>    })</span>
+<span id="cb2-161"><a href="#cb2-161"></a></span>
+<span id="cb2-162"><a href="#cb2-162"></a>  }</span>
+<span id="cb2-163"><a href="#cb2-163"></a>)</span></code></pre></div>
 
 
 

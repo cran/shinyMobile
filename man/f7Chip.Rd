@@ -2,22 +2,22 @@
 % Please edit documentation in R/f7Chips.R
 \name{f7Chip}
 \alias{f7Chip}
-\title{Create a Framework7 chips}
+\title{Framework7 chips}
 \usage{
 f7Chip(
   label = NULL,
-  img = NULL,
+  image = NULL,
   icon = NULL,
   outline = FALSE,
   status = NULL,
-  icon_status = NULL,
+  iconStatus = NULL,
   closable = FALSE
 )
 }
 \arguments{
 \item{label}{Chip label.}
 
-\item{img}{Chip image, if any.}
+\item{image}{Chip image, if any.}
 
 \item{icon}{Icon, if any. IOS and Material icons available.}
 
@@ -25,33 +25,29 @@ f7Chip(
 
 \item{status}{Chip color: see here for valid colors \url{https://framework7.io/docs/chips.html}.}
 
-\item{icon_status}{Chip icon color: see here for valid colors \url{https://framework7.io/docs/chips.html}.}
+\item{iconStatus}{Chip icon color: see here for valid colors \url{https://framework7.io/docs/chips.html}.}
 
 \item{closable}{Whether to close the chip. FALSE by default.}
 }
 \description{
-Build a Framework7 chips
-}
-\note{
-Not ready for production color and icon isssues.
+\link{f7Chip} is an improved badge container.
 }
 \examples{
 if(interactive()){
  library(shiny)
  library(shinyMobile)
 
- shiny::shinyApp(
+ shinyApp(
   ui = f7Page(
     title = "Chips",
-    init = f7Init(theme = "light", skin = "md"),
     f7SingleLayout(
-      navbar = f7Navbar(title = "f7Navbar"),
+      navbar = f7Navbar(title = "f7Chip"),
       f7Block(
         strong = TRUE,
         f7Chip(label = "simple Chip"),
         f7Chip(label = "outline Chip", outline = TRUE),
-        f7Chip(label = "icon Chip", icon = f7Icon("add_round"), icon_status = "pink"),
-        f7Chip(label = "image Chip", img = "https://lorempixel.com/64/64/people/9/"),
+        f7Chip(label = "icon Chip", icon = f7Icon("add_round"), iconStatus = "pink"),
+        f7Chip(label = "image Chip", image = "https://lorempixel.com/64/64/people/9/"),
         f7Chip(label = "closable Chip", closable = TRUE),
         f7Chip(label = "colored Chip", status = "green"),
         f7Chip(label = "colored outline Chip", status = "green", outline = TRUE)

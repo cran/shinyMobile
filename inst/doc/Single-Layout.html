@@ -12,10 +12,75 @@
 
 <meta name="author" content="David Granjon" />
 
-<meta name="date" content="2020-06-17" />
+<meta name="date" content="2021-01-11" />
 
 <title>Single-Layout</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+ul > li > .anchor-section {display: none;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '' || x.matches(':empty')) {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -303,11 +368,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Single-Layout</h1>
 <h4 class="author">David Granjon</h4>
-<h4 class="date">2020-06-17</h4>
+<h4 class="date">2021-01-11</h4>
 
 
 
-<p>shinyMobile comes with 3 predefined layouts. <code>f7SingleLayout()</code> is dedicated to build simple, one-page apps or gadgets.</p>
+<p><code>{shinyMobile}</code> comes with 3 predefined layouts. <code>f7SingleLayout()</code> is dedicated to build simple, one-page apps or gadgets.</p>
 <div class="marvel-device iphone-x">
 <div class="top-bar">
 
@@ -358,47 +423,45 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-13"><a href="#cb1-13"></a><span class="kw">shinyApp</span>(</span>
 <span id="cb1-14"><a href="#cb1-14"></a>  <span class="dt">ui =</span> <span class="kw">f7Page</span>(</span>
 <span id="cb1-15"><a href="#cb1-15"></a>    <span class="dt">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
-<span id="cb1-16"><a href="#cb1-16"></a>    <span class="dt">dark_mode =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb1-17"><a href="#cb1-17"></a>    <span class="dt">init =</span> <span class="kw">f7Init</span>(<span class="dt">skin =</span> <span class="st">&quot;ios&quot;</span>, <span class="dt">theme =</span> <span class="st">&quot;light&quot;</span>),</span>
-<span id="cb1-18"><a href="#cb1-18"></a>    <span class="kw">f7SingleLayout</span>(</span>
-<span id="cb1-19"><a href="#cb1-19"></a>      <span class="dt">navbar =</span> <span class="kw">f7Navbar</span>(</span>
-<span id="cb1-20"><a href="#cb1-20"></a>        <span class="dt">title =</span> <span class="st">&quot;Single Layout&quot;</span>,</span>
-<span id="cb1-21"><a href="#cb1-21"></a>        <span class="dt">hairline =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb1-22"><a href="#cb1-22"></a>        <span class="dt">shadow =</span> <span class="ot">TRUE</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a>      ),</span>
-<span id="cb1-24"><a href="#cb1-24"></a>      <span class="dt">toolbar =</span> <span class="kw">f7Toolbar</span>(</span>
-<span id="cb1-25"><a href="#cb1-25"></a>        <span class="dt">position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb1-26"><a href="#cb1-26"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 1&quot;</span>, <span class="dt">src =</span> <span class="st">&quot;https://www.google.com&quot;</span>),</span>
-<span id="cb1-27"><a href="#cb1-27"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 2&quot;</span>, <span class="dt">src =</span> <span class="st">&quot;https://www.google.com&quot;</span>, <span class="dt">external =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb1-28"><a href="#cb1-28"></a>      ),</span>
-<span id="cb1-29"><a href="#cb1-29"></a>      <span class="co"># main content</span></span>
-<span id="cb1-30"><a href="#cb1-30"></a>      <span class="kw">f7Shadow</span>(</span>
-<span id="cb1-31"><a href="#cb1-31"></a>        <span class="dt">intensity =</span> <span class="dv">16</span>,</span>
-<span id="cb1-32"><a href="#cb1-32"></a>        <span class="dt">hover =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb1-33"><a href="#cb1-33"></a>        <span class="kw">f7Card</span>(</span>
-<span id="cb1-34"><a href="#cb1-34"></a>          <span class="dt">title =</span> <span class="st">&quot;Card header&quot;</span>,</span>
-<span id="cb1-35"><a href="#cb1-35"></a>          <span class="kw">apexchartOutput</span>(<span class="st">&quot;areaChart&quot;</span>)</span>
-<span id="cb1-36"><a href="#cb1-36"></a>        )</span>
-<span id="cb1-37"><a href="#cb1-37"></a>      )</span>
-<span id="cb1-38"><a href="#cb1-38"></a>    )</span>
-<span id="cb1-39"><a href="#cb1-39"></a>  ),</span>
-<span id="cb1-40"><a href="#cb1-40"></a>  <span class="dt">server =</span> <span class="cf">function</span>(input, output) {</span>
-<span id="cb1-41"><a href="#cb1-41"></a>    output<span class="op">$</span>areaChart &lt;-<span class="st"> </span><span class="kw">renderApexchart</span>({</span>
-<span id="cb1-42"><a href="#cb1-42"></a>      <span class="kw">apex</span>(</span>
-<span id="cb1-43"><a href="#cb1-43"></a>        <span class="dt">data =</span> economics_long,</span>
-<span id="cb1-44"><a href="#cb1-44"></a>        <span class="dt">type =</span> <span class="st">&quot;area&quot;</span>,</span>
-<span id="cb1-45"><a href="#cb1-45"></a>        <span class="dt">mapping =</span> <span class="kw">aes</span>(</span>
-<span id="cb1-46"><a href="#cb1-46"></a>          <span class="dt">x =</span> date,</span>
-<span id="cb1-47"><a href="#cb1-47"></a>          <span class="dt">y =</span> value01,</span>
-<span id="cb1-48"><a href="#cb1-48"></a>          <span class="dt">fill =</span> variable</span>
-<span id="cb1-49"><a href="#cb1-49"></a>        )</span>
-<span id="cb1-50"><a href="#cb1-50"></a>      ) <span class="op">%&gt;%</span></span>
-<span id="cb1-51"><a href="#cb1-51"></a><span class="st">        </span><span class="kw">ax_yaxis</span>(<span class="dt">decimalsInFloat =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># number of decimals to keep</span></span>
-<span id="cb1-52"><a href="#cb1-52"></a><span class="st">        </span><span class="kw">ax_chart</span>(<span class="dt">stacked =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb1-53"><a href="#cb1-53"></a><span class="st">        </span><span class="kw">ax_yaxis</span>(<span class="dt">max =</span> <span class="dv">4</span>, <span class="dt">tickAmount =</span> <span class="dv">4</span>)</span>
-<span id="cb1-54"><a href="#cb1-54"></a>    })</span>
-<span id="cb1-55"><a href="#cb1-55"></a>  }</span>
-<span id="cb1-56"><a href="#cb1-56"></a>)</span></code></pre></div>
+<span id="cb1-16"><a href="#cb1-16"></a>    <span class="kw">f7SingleLayout</span>(</span>
+<span id="cb1-17"><a href="#cb1-17"></a>      <span class="dt">navbar =</span> <span class="kw">f7Navbar</span>(</span>
+<span id="cb1-18"><a href="#cb1-18"></a>        <span class="dt">title =</span> <span class="st">&quot;Single Layout&quot;</span>,</span>
+<span id="cb1-19"><a href="#cb1-19"></a>        <span class="dt">hairline =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb1-20"><a href="#cb1-20"></a>        <span class="dt">shadow =</span> <span class="ot">TRUE</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>      ),</span>
+<span id="cb1-22"><a href="#cb1-22"></a>      <span class="dt">toolbar =</span> <span class="kw">f7Toolbar</span>(</span>
+<span id="cb1-23"><a href="#cb1-23"></a>        <span class="dt">position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb1-24"><a href="#cb1-24"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 1&quot;</span>, <span class="dt">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>),</span>
+<span id="cb1-25"><a href="#cb1-25"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 2&quot;</span>, <span class="dt">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>)</span>
+<span id="cb1-26"><a href="#cb1-26"></a>      ),</span>
+<span id="cb1-27"><a href="#cb1-27"></a>      <span class="co"># main content</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a>      <span class="kw">f7Shadow</span>(</span>
+<span id="cb1-29"><a href="#cb1-29"></a>        <span class="dt">intensity =</span> <span class="dv">16</span>,</span>
+<span id="cb1-30"><a href="#cb1-30"></a>        <span class="dt">hover =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb1-31"><a href="#cb1-31"></a>        <span class="kw">f7Card</span>(</span>
+<span id="cb1-32"><a href="#cb1-32"></a>          <span class="dt">title =</span> <span class="st">&quot;Card header&quot;</span>,</span>
+<span id="cb1-33"><a href="#cb1-33"></a>          <span class="kw">apexchartOutput</span>(<span class="st">&quot;areaChart&quot;</span>)</span>
+<span id="cb1-34"><a href="#cb1-34"></a>        )</span>
+<span id="cb1-35"><a href="#cb1-35"></a>      )</span>
+<span id="cb1-36"><a href="#cb1-36"></a>    )</span>
+<span id="cb1-37"><a href="#cb1-37"></a>  ),</span>
+<span id="cb1-38"><a href="#cb1-38"></a>  <span class="dt">server =</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb1-39"><a href="#cb1-39"></a>    output<span class="op">$</span>areaChart &lt;-<span class="st"> </span><span class="kw">renderApexchart</span>({</span>
+<span id="cb1-40"><a href="#cb1-40"></a>      <span class="kw">apex</span>(</span>
+<span id="cb1-41"><a href="#cb1-41"></a>        <span class="dt">data =</span> economics_long,</span>
+<span id="cb1-42"><a href="#cb1-42"></a>        <span class="dt">type =</span> <span class="st">&quot;area&quot;</span>,</span>
+<span id="cb1-43"><a href="#cb1-43"></a>        <span class="dt">mapping =</span> <span class="kw">aes</span>(</span>
+<span id="cb1-44"><a href="#cb1-44"></a>          <span class="dt">x =</span> date,</span>
+<span id="cb1-45"><a href="#cb1-45"></a>          <span class="dt">y =</span> value01,</span>
+<span id="cb1-46"><a href="#cb1-46"></a>          <span class="dt">fill =</span> variable</span>
+<span id="cb1-47"><a href="#cb1-47"></a>        )</span>
+<span id="cb1-48"><a href="#cb1-48"></a>      ) <span class="op">%&gt;%</span></span>
+<span id="cb1-49"><a href="#cb1-49"></a><span class="st">        </span><span class="kw">ax_yaxis</span>(<span class="dt">decimalsInFloat =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># number of decimals to keep</span></span>
+<span id="cb1-50"><a href="#cb1-50"></a><span class="st">        </span><span class="kw">ax_chart</span>(<span class="dt">stacked =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb1-51"><a href="#cb1-51"></a><span class="st">        </span><span class="kw">ax_yaxis</span>(<span class="dt">max =</span> <span class="dv">4</span>, <span class="dt">tickAmount =</span> <span class="dv">4</span>)</span>
+<span id="cb1-52"><a href="#cb1-52"></a>    })</span>
+<span id="cb1-53"><a href="#cb1-53"></a>  }</span>
+<span id="cb1-54"><a href="#cb1-54"></a>)</span></code></pre></div>
 
 
 

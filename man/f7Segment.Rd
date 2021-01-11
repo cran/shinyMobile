@@ -2,7 +2,7 @@
 % Please edit documentation in R/f7Button.R
 \name{f7Segment}
 \alias{f7Segment}
-\title{Create a Framework7 segmented button container}
+\title{Framework7 segmented button container}
 \usage{
 f7Segment(
   ...,
@@ -24,14 +24,14 @@ f7Segment(
 \item{strong}{Strong style. FALSE by default.}
 }
 \description{
-Build a Framework7 segmented button container
+A Framework7 segmented button container for \link{f7Button}.
 }
 \examples{
 if(interactive()){
  library(shiny)
  library(shinyMobile)
 
- shiny::shinyApp(
+ shinyApp(
   ui = f7Page(
     title = "Button Segments",
     f7SingleLayout(
@@ -40,7 +40,7 @@ if(interactive()){
     f7Segment(
      container = "row",
      f7Button(color = "blue", label = "My button", fill = FALSE),
-     f7Button(color = "green", label = "My button", src = "http://www.google.com", fill = FALSE),
+     f7Button(color = "green", label = "My button", href = "https://www.google.com", fill = FALSE),
      f7Button(color = "yellow", label = "My button", fill = FALSE)
     ),
     f7BlockTitle(title = "Filled Buttons in a segment/rounded container"),
@@ -48,7 +48,7 @@ if(interactive()){
      rounded = TRUE,
      container = "segment",
      f7Button(color = "black", label = "Action Button", inputId = "button2"),
-     f7Button(color = "green", label = "My button", src = "http://www.google.com"),
+     f7Button(color = "green", label = "My button", href = "https://www.google.com"),
      f7Button(color = "yellow", label = "My button")
     ),
     f7BlockTitle(title = "Outline Buttons in a segment/shadow container"),

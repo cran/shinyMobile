@@ -1,4 +1,6 @@
-#' Create a Framework7 toast
+#' Framework7 toast
+#'
+#' \link{f7Toast} creates a small toast notification from the server side.
 #'
 #' @param text Toast content.
 #' @param position Toast position \code{c("bottom", "top", "center")}.
@@ -9,6 +11,7 @@
 #' @param closeTimeout Time before toast closes.
 #' @param icon Optional. Expect \link{f7Icon}. Warning:
 #' Adding icon will hide the close button.
+#' @param ... Other options. See \url{https://framework7.io/docs/toast.html#toast-parameters}.
 #' @param session Shiny session.
 #'
 #' @export
@@ -19,7 +22,7 @@
 #'  library(shinyMobile)
 #'  shinyApp(
 #'   ui = f7Page(
-#'     title = "My app",
+#'     title = "Toast",
 #'     f7SingleLayout(
 #'       navbar = f7Navbar(title = "f7Toast"),
 #'       f7Button(inputId = "toast", label = "Open Toast")
@@ -28,7 +31,6 @@
 #'   server = function(input, output, session) {
 #'     observeEvent(input$toast, {
 #'       f7Toast(
-#'         session,
 #'         position = "top",
 #'         text = "I am a toast. Eat me!"
 #'       )
@@ -36,11 +38,12 @@
 #'   }
 #'  )
 #' }
-f7Toast <- function(session, text, position = c("bottom", "top", "center"),
+f7Toast <- function(text, position = c("bottom", "top", "center"),
                     closeButton = TRUE, closeButtonText = "close",
-                    closeButtonColor = "red", closeTimeout = 3000, icon = NULL) {
+                    closeButtonColor = "red", closeTimeout = 3000, icon = NULL,
+                    ..., session = shiny::getDefaultReactiveDomain()) {
 
-  icon <- if(!is.null(icon)) as.character(icon)
+  if(!is.null(icon)) icon <- as.character(icon)
 
   position <- match.arg(position)
 
@@ -50,11 +53,19 @@ f7Toast <- function(session, text, position = c("bottom", "top", "center"),
       position = position,
       closeTimeout = closeTimeout,
       icon = icon,
-      closeButton = tolower(closeButton),
+      closeButton = closeButton,
       closeButtonText = closeButtonText,
-      closeButtonColor = closeButtonColor
+      closeButtonColor = closeButtonColor,
+      ...
     )
   )
   # see my-app.js function
-  session$sendCustomMessage(type = "toast", message = message)
+  session$sendCustomMessage(
+    type = "toast",
+    message = jsonlite::toJSON(
+      message,
+      auto_unbox = TRUE,
+      json_verbatim = TRUE
+    )
+  )
 }

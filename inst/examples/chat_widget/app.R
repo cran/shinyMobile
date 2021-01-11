@@ -5,19 +5,10 @@ library(dplyr)
 library(tibble)
 library(parallel)
 
-shiny::shinyApp(
+shinyApp(
   ui = f7Page(
     title = "shinyChat",
-    icon = "apple-touch-icon.png",
-    favicon = "favicon.png",
-    manifest = "manifest.json",
-    init = f7Init(
-      skin = "ios",
-      theme = "dark",
-      iosTranslucentBars = TRUE,
-      hideNavOnPageScroll = TRUE,
-      hideTabsOnPageScroll = TRUE
-    ),
+    allowPWA = TRUE,
     f7SingleLayout(
       navbar = f7Navbar(
         title = "shinyChat",
@@ -41,7 +32,7 @@ shiny::shinyApp(
       f7Dialog(
         type = "prompt",
         text = "Enter your pseudo",
-        inputId = "nickname"
+        id = "nickname"
       )
     }, priority = 100)
 

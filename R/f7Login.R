@@ -1,3 +1,5 @@
+#' Framework7 login screen
+#'
 #' Provide a template for authentication
 #'
 #' This function does not provide the backend features. You would
@@ -28,9 +30,9 @@
 #'  # global authentication
 #'  library(shiny)
 #'  library(shinyMobile)
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
-#'      title = "My app",
+#'      title = "Login module",
 #'      f7SingleLayout(
 #'        navbar = f7Navbar(
 #'          title = "Login Example",
@@ -39,8 +41,8 @@
 #'        ),
 #'        toolbar = f7Toolbar(
 #'          position = "bottom",
-#'          f7Link(label = "Link 1", src = "https://www.google.com"),
-#'          f7Link(label = "Link 2", src = "https://www.google.com", external = TRUE)
+#'          f7Link(label = "Link 1", href = "https://www.google.com"),
+#'          f7Link(label = "Link 2", href = "https://www.google.com")
 #'        ),
 #'        f7Login(id = "loginPage", title = "Welcome"),
 #'        # main content
@@ -64,9 +66,9 @@
 #'  # section specific authentication
 #'  library(shiny)
 #'  library(shinyMobile)
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
-#'      title = "My app",
+#'      title = "Local access restriction",
 #'      f7TabLayout(
 #'        navbar = f7Navbar(
 #'          title = "Login Example for Specific Section",
@@ -115,11 +117,11 @@
 #'  )
 #'
 #'  # with 2 different protected sections
-#'  ibrary(shiny)
+#'  library(shiny)
 #'  library(shinyMobile)
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
-#'      title = "My app",
+#'      title = "Multiple restricted areas",
 #'      f7TabLayout(
 #'        navbar = f7Navbar(
 #'          title = "Login Example for 2 Specific Section",
@@ -190,44 +192,41 @@ f7Login <- function(..., id, title, label = "Sign In", footer = NULL,
   submitBttn[[2]]$attribs$class <- "item-link list-button f7-action-button"
   submitBttn[[2]]$name <- "a"
 
-  shiny::tagList(
-    f7InputsDeps(),
+  shiny::tags$div(
+    id = ns(id),
+    `data-start-open` = jsonlite::toJSON(startOpen),
+    class = "login-screen",
     shiny::tags$div(
-      id = ns(id),
-      `data-start-open` = jsonlite::toJSON(startOpen),
-      class = "login-screen",
+      class = "view",
       shiny::tags$div(
-        class = "view",
+        class = "page",
         shiny::tags$div(
-          class = "page",
-          shiny::tags$div(
-            class = "page-content login-screen-content",
-            shiny::tags$div(class = "login-screen-title", title),
+          class = "page-content login-screen-content",
+          shiny::tags$div(class = "login-screen-title", title),
 
-            # inputs
-            shiny::tags$form(
-              shiny::tags$div(
-                class = "list", shiny::tags$ul(
-                  f7Text(
-                    inputId = ns("login_user"),
-                    label = "",
-                    placeholder = "Your name here"
-                  ),
-                  f7Password(
-                    inputId = ns("login_password"),
-                    label = "",
-                    placeholder = "Your password here"
-                  ),
-                  ...
-                )
-              ),
-              shiny::tags$div(
-                class = "list",
-                shiny::tags$ul(shiny::tags$li(submitBttn)),
-                if (!is.null(footer)) {
-                  shiny::tags$div(class = "block-footer", footer)
-                }
+          # inputs
+          shiny::tags$form(
+            shiny::tags$div(
+              class = "list", shiny::tags$ul(
+                f7Text(
+                  inputId = ns("login_user"),
+                  label = "",
+                  placeholder = "Your name here"
+                ),
+                f7Password(
+                  inputId = ns("login_password"),
+                  label = "",
+                  placeholder = "Your password here"
+                ),
+                ...
               )
+            ),
+            shiny::tags$div(
+              class = "list",
+              shiny::tags$ul(shiny::tags$li(submitBttn)),
+              if (!is.null(footer)) {
+                shiny::tags$div(class = "block-footer", footer)
+              }
             )
           )
         )
@@ -237,7 +236,10 @@ f7Login <- function(..., id, title, label = "Sign In", footer = NULL,
 }
 
 
-#' Useful server elements to fine tune the \link{f7Login} page
+#' Framework7 login server module
+#'
+#' \link{f7LoginServer} is a useful server elements to fine tune the
+#' \link{f7Login} page.
 #'
 #' @param input Shiny input object.
 #' @param output Shiny output object.
@@ -294,7 +296,9 @@ f7LoginServer <- function(input, output, session, ignoreInit = FALSE,
 }
 
 
-#' Toggle login page
+#' Activates Framework7 login.
+#'
+#' \link{updateF7Login} toggles a login page.
 #'
 #' @param id \link{f7Login} unique id.
 #' @param user Value of the user input.

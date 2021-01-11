@@ -64,8 +64,8 @@ tabOthers <- f7Tab(
     strong = TRUE,
     f7Chip(label = "Example Chip"),
     f7Chip(label = "Example Chip", outline = TRUE),
-    f7Chip(label = "Example Chip", icon = f7Icon("add_round"), icon_status = "pink"),
-    f7Chip(label = "Example Chip", img = "https://picsum.photos/200"),
+    f7Chip(label = "Example Chip", icon = f7Icon("add_round"), iconStatus = "pink"),
+    f7Chip(label = "Example Chip", image = "https://picsum.photos/200"),
     f7Chip(label = "Example Chip", closable = TRUE),
     f7Chip(label = "Example Chip", status = "green"),
     f7Chip(label = "Example Chip", status = "green", outline = TRUE)
@@ -75,7 +75,7 @@ tabOthers <- f7Tab(
   # accordion
   f7BlockTitle(title = "f7Accordion") %>% f7Align(side = "center"),
   f7Accordion(
-    inputId = "accordion1",
+    id = "accordion1",
     f7AccordionItem(
       title = "Item 1",
       f7Block("Item 1 content")
@@ -97,30 +97,18 @@ tabOthers <- f7Tab(
   f7Swiper(
     id = "my-swiper",
     f7Slide(
-      plot(sin, -pi, 2*pi)
+      plotOutput("sin")
     ),
     f7Slide(
-      plot(cos, -pi, 2*pi)
+      plotOutput("cos")
     )
   ),
 
   br(), br(), br(),
 
-  # timelines
+  # Pthoto browser trigger
   f7BlockTitle(title = "f7PhotoBrowser") %>% f7Align(side = "center"),
-  f7Block(
-    f7PhotoBrowser(
-      id = "photobrowser1",
-      label = "Open",
-      theme = "light",
-      type = "standalone",
-      photos = c(
-        "https://cdn.framework7.io/placeholder/sports-1024x1024-1.jpg",
-        "https://cdn.framework7.io/placeholder/sports-1024x1024-2.jpg",
-        "https://cdn.framework7.io/placeholder/sports-1024x1024-3.jpg"
-      )
-    )
-  ),
+  f7Block(f7Button(inputId = "togglePhoto", "Open photo browser")),
   br(), br(),
 
   # timelines
@@ -171,9 +159,7 @@ tabOthers <- f7Tab(
     br(),
     f7Progress(id = "pg2", value = 100, color = "green"),
     br(),
-    f7Progress(id = "pg3", value = 50, color = "deeppurple"),
-    br(),
-    f7ProgressInf()
+    f7Progress(id = "pg3", value = 50, color = "deeppurple")
   ),
   br(),
 

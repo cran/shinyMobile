@@ -1,9 +1,11 @@
-#' Create an f7 sheet modal
+#' Framework7 sheet
+#'
+#' \link{f7Sheet} creates an f7 sheet modal window.
 #'
 #' @param ... Sheet content. If wipeToStep is TRUE, these items will be visible at start.
+#' @param id Sheet unique id.
 #' @param hiddenItems Put items you want to hide inside. Only works when
 #' swipeToStep is TRUE. Default to NULL.
-#' @param id Sheet unique id.
 #' @param orientation "top" or "bottom".
 #' @param swipeToClose If TRUE, it can be closed by swiping down.
 #' @param swipeToStep If TRUE then sheet will be opened partially,
@@ -20,9 +22,10 @@
 #' Yet, if you need a specific trigger, simply add \code{`data-sheet` = paste0("#", id)},
 #' to the tag of your choice (a button), where id refers to the sheet unique id.
 #'
-#' @export
 #' @rdname sheet
-f7Sheet <- function(..., hiddenItems = NULL, id, orientation = c("top", "bottom"),
+#'
+#' @export
+f7Sheet <- function(..., id, hiddenItems = NULL, orientation = c("top", "bottom"),
                     swipeToClose = FALSE, swipeToStep = FALSE, backdrop = FALSE,
                     closeByOutsideClick = TRUE, swipeHandler = TRUE) {
 
@@ -68,7 +71,7 @@ f7Sheet <- function(..., hiddenItems = NULL, id, orientation = c("top", "bottom"
  }
 
  # inner sheet elements
- sheetTag <- shiny::tagAppendChildren(
+ shiny::tagAppendChildren(
     sheetTag,
     if (!(swipeToStep | swipeToClose)) {
        shiny::tags$div(
@@ -103,31 +106,27 @@ f7Sheet <- function(..., hiddenItems = NULL, id, orientation = c("top", "bottom"
        hiddenItems
     )
  )
-
- shiny::tagList(
-   # javascript initialization
-   f7InputsDeps(),
-   sheetTag
- )
 }
 
 
 
 
-#' update a framework 7 sheet modal
+#' Update Framework7 sheet modal
 #'
-#' @param inputId Sheet id.
+#' \link{updateF7Sheet} toggles a \link{f7Sheet} on the client.
+#'
+#' @param id Sheet id.
 #' @param session Shiny session object
 #' @export
 #' @rdname sheet
 #' @examples
+#' # Toggle sheet modal
 #' if (interactive()) {
 #'  library(shiny)
 #'  library(shinyMobile)
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'     ui = f7Page(
-#'        color = "pink",
-#'        title = "My app",
+#'        title = "Update f7Sheet",
 #'        f7SingleLayout(
 #'           navbar = f7Navbar(title = "f7Sheet"),
 #'           f7Button(inputId = "go", label = "Go"),
@@ -180,15 +179,14 @@ f7Sheet <- function(..., hiddenItems = NULL, id, orientation = c("top", "bottom"
 #'           hist(rnorm(input$obs))
 #'        })
 #'        observeEvent(input$obs, {
-#'           updateF7Gauge(session, id = "mygauge", value = input$obs)
+#'           updateF7Gauge(id = "mygauge", value = input$obs)
 #'        })
 #'        observeEvent(input$go, {
-#'           updateF7Sheet(inputId = "sheet1", session = session)
+#'           updateF7Sheet(id = "sheet1")
 #'        })
 #'     }
 #'  )
 #' }
-updateF7Sheet <- function(inputId, session) {
-   message <- NULL
-   session$sendInputMessage(inputId, NULL)
+updateF7Sheet <- function(id, session = shiny::getDefaultReactiveDomain()) {
+   session$sendInputMessage(id, NULL)
 }

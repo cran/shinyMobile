@@ -2,7 +2,6 @@
 #  library(shiny)
 #  library(shinyMobile)
 #  library(apexcharter)
-#  library(shinyWidgets)
 #  
 #  poll <- data.frame(
 #    answer = c("Yes", "No"),
@@ -12,18 +11,17 @@
 #  shinyApp(
 #    ui = f7Page(
 #      title = "My app",
-#      init = f7Init(theme = "dark"),
 #      f7TabLayout(
 #        panels = tagList(
-#         f7Panel(title = "Left Panel", side = "left", theme = "light", "Blabla", effect = "cover"),
-#         f7Panel(title = "Right Panel", side = "right", theme = "dark", "Blabla", effect = "cover")
+#          f7Panel(title = "Left Panel", side = "left", theme = "light", "Blabla", effect = "cover"),
+#          f7Panel(title = "Right Panel", side = "right", theme = "dark", "Blabla", effect = "cover")
 #        ),
 #        navbar = f7Navbar(
 #          title = "Tabs",
 #          hairline = TRUE,
 #          shadow = TRUE,
-#          left_panel = TRUE,
-#          right_panel = TRUE
+#          leftPanel = TRUE,
+#          rightPanel = TRUE
 #        ),
 #        f7Tabs(
 #          animated = TRUE,
@@ -114,15 +112,14 @@
 #              hover = TRUE,
 #              f7Card(
 #                title = "Card header",
-#                prettyCheckboxGroup(
+#                f7SmartSelect(
 #                  "variable",
 #                  "Variables to show:",
 #                  c("Cylinders" = "cyl",
 #                    "Transmission" = "am",
 #                    "Gears" = "gear"),
-#                  inline = TRUE,
-#                  status = "danger",
-#                  animation = "pulse"
+#                  openIn = "sheet",
+#                  multiple = TRUE
 #                ),
 #                tableOutput("data")
 #              )
@@ -173,4 +170,5 @@
 #  
 #    }
 #  )
+#  
 

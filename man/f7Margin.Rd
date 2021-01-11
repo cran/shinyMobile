@@ -2,7 +2,7 @@
 % Please edit documentation in R/typography.R
 \name{f7Margin}
 \alias{f7Margin}
-\title{Create a Framework7 margin}
+\title{Framework7 margin utility}
 \usage{
 f7Margin(tag, side = NULL)
 }
@@ -14,7 +14,7 @@ f7Margin(tag, side = NULL)
 Leave NULL to apply on all sides.}
 }
 \description{
-Build a Framework7 margin
+\link{f7Margin} adds a margin to the given tag.
 }
 \examples{
 if(interactive()){
@@ -27,12 +27,12 @@ if(interactive()){
   but cards can also contain their own header,
   footer, list view, image, or any other element.",
   footer = tagList(
-    f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
+    f7Button(color = "blue", label = "My button", href = "https://www.google.com"),
     f7Badge("Badge", color = "green")
   )
  )
 
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
     title = "Margins",
     f7SingleLayout(

@@ -1,4 +1,6 @@
-#' Show preloader
+#' Framework7 preloader
+#'
+#' Deprecated. \link{f7ShowPreloader} shows a preloader.
 #'
 #' @param target Element where preloader overlay will be added.
 #' @param color Preloader color.
@@ -11,9 +13,9 @@
 #'  library(shinyMobile)
 #'
 #'  # basic preloader with red color
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'   ui = f7Page(
-#'     title = "My app",
+#'     title = "Preloader",
 #'     f7SingleLayout(
 #'       navbar = f7Navbar(
 #'         title = "Preloader",
@@ -48,9 +50,9 @@
 #'  )
 #'
 #'  # preloader in container
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'   ui = f7Page(
-#'     title = "My app",
+#'     title = "Preloader in container",
 #'     f7SingleLayout(
 #'       navbar = f7Navbar(
 #'         title = "Preloader in container",
@@ -88,18 +90,62 @@
 #' }
 f7ShowPreloader <- function(target = NULL, color = NULL,
                             session = shiny::getDefaultReactiveDomain()) {
+
+  .Deprecated(
+    "showF7Preloader",
+    package = "shinyMobile",
+    "f7ShowPreloader will be removed in future release. Please use
+    showF7Preloader instead.",
+    old = as.character(sys.call(sys.parent()))[1L]
+  )
+
   message <- dropNulls(list(el = target, color = color))
   session$sendCustomMessage('show-preloader', message)
 }
 
 
-#' Hide preloader
+#' Framework7 preloader
+#'
+#' \link{showF7Preloader} shows a preloader.
+#'
+#' @param target Element where preloader overlay will be added.
+#' @param color Preloader color.
+#' @param session Shiny session object.
+#' @export
+#' @rdname preloader
+showF7Preloader <- f7ShowPreloader
+
+
+#' Framework7 preloader
+#'
+#' Deprecated. \link{f7HidePreloader} hides a preloader.
 #'
 #' @param target Element where preloader overlay will be added.
 #' @param session Shiny session object.
 #' @export
 #' @rdname preloader
 f7HidePreloader <- function(target = NULL, session = shiny::getDefaultReactiveDomain()) {
+
+  .Deprecated(
+    "hideF7Preloader",
+    package = "shinyMobile",
+    "f7HidePreloader will be removed in future release. Please use
+    hideF7Preloader instead.",
+    old = as.character(sys.call(sys.parent()))[1L]
+  )
+
   message <- dropNulls(list(el = target))
   session$sendCustomMessage('hide-preloader', message)
 }
+
+
+
+#' Framework7 preloader
+#'
+#' \link{hideF7Preloader} hides a preloader.
+#'
+#' @param target Element where preloader overlay will be added.
+#' @param session Shiny session object.
+#' @export
+#' @rdname preloader
+hideF7Preloader <- f7HidePreloader

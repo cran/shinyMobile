@@ -2,34 +2,32 @@
 % Please edit documentation in R/f7Link.R
 \name{f7Link}
 \alias{f7Link}
-\title{Create a Framework7 link}
+\title{Framework7 link}
 \usage{
-f7Link(label = NULL, icon = NULL, src = NULL, external = FALSE)
+f7Link(label, href, icon = NULL)
 }
 \arguments{
 \item{label}{Link text.}
 
+\item{href}{Link source, url.}
+
 \item{icon}{Link icon, if any.}
-
-\item{src}{Link source, url.}
-
-\item{external}{Whether switch to an external link. FALSE by default.}
 }
 \description{
-Build a Framework7 link
+Link to point toward external content.
 }
 \examples{
 if(interactive()){
  library(shiny)
  library(shinyMobile)
 
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
     title = "Links",
     f7SingleLayout(
      navbar = f7Navbar(title = "f7Link"),
-     f7Link(label = "Google", src = "https://www.google.com"),
-     f7Link(label = "Google", src = "https://www.google.com", external = TRUE)
+     f7Link(label = "Google", href = "https://www.google.com"),
+     f7Link(label = "Twitter", href = "https://www.twitter.com")
     )
    ),
    server = function(input, output) {}

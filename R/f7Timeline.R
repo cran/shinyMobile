@@ -1,6 +1,6 @@
-#' Create a Framework7 timeline
+#' Framework7 timeline
 #'
-#' Build a Framework7 timeline
+#' \link{f7Timeline} is a static timeline container.
 #'
 #' @param ... Slot for \link{f7TimelineItem}.
 #' @param sides Enable side-by-side timeline mode.
@@ -8,6 +8,8 @@
 #' @param calendar Special type of horizontal layout with current year and month.
 #' @param year Current year, only if calendar is TRUE.
 #' @param month Current month, only if calendar is TRUE.
+#'
+#' @rdname timeline
 #'
 #' @examples
 #' if(interactive()){
@@ -42,7 +44,7 @@
 #'    )
 #'  )
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'      title = "Timelines",
 #'      f7SingleLayout(
@@ -72,7 +74,7 @@
 #'  )
 #' }
 #'
-#' @author David Granjon and Isabelle Rudolf, \email{dgranjon@@ymail.com}
+#' @author David Granjon \email{dgranjon@@ymail.com}
 #'
 #' @export
 f7Timeline <- function(..., sides = FALSE, horizontal = FALSE, calendar = FALSE,
@@ -119,9 +121,9 @@ f7Timeline <- function(..., sides = FALSE, horizontal = FALSE, calendar = FALSE,
 }
 
 
-#' Create a Framework7 timeline item
+#' Framework7 timeline item
 #'
-#' Build a Framework7 timeline item
+#' \link{f7TimelineItem} goes inside \link{f7Timeline}.
 #'
 #' @param ... Item content, text for instance.
 #' @param date Timeline item date. Required.
@@ -131,7 +133,9 @@ f7Timeline <- function(..., sides = FALSE, horizontal = FALSE, calendar = FALSE,
 #' @param subtitle Timeline item subtitle. Optional.
 #' @param side Force element to required side: "right" or "left". Only if sides os TRUE in \link{f7Timeline}
 #'
-#' @author David Granjon and Isabelle Rudolf, \email{dgranjon@@ymail.com}
+#' @author David Granjon \email{dgranjon@@ymail.com}
+#'
+#' @rdname timeline
 #'
 #' @export
 f7TimelineItem <- function(..., date = NULL, card = FALSE, time = NULL,

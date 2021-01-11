@@ -1,4 +1,6 @@
-#' Create a Framework7 notification
+#' Framework7 notification
+#'
+#' Notification with title, text, icon and more.
 #'
 #' @param text Notification content.
 #' @param icon Notification icon.
@@ -10,11 +12,10 @@
 #' FALSE by default.
 #' @param closeOnClick Whether to close the notification on click. TRUE by default.
 #' @param swipeToClose If enabled, notification can be closed by swipe gesture.
+#' @param ... Other options. See \url{https://framework7.io/docs/notification.html}.
 #' @param session shiny session.
 #'
 #' @export
-#'
-#' @importFrom shiny getDefaultReactiveDomain
 #'
 #' @examples
 #' if (interactive()) {
@@ -22,7 +23,6 @@
 #'   library(shinyMobile)
 #'   shinyApp(
 #'     ui = f7Page(
-#'       color = "pink",
 #'       title = "My app",
 #'       f7SingleLayout(
 #'         navbar = f7Navbar(title = "f7Notif"),
@@ -30,14 +30,13 @@
 #'       )
 #'     ),
 #'     server = function(input, output, session) {
-#'       shiny::observeEvent(input$goButton,{
+#'       observeEvent(input$goButton,{
 #'         f7Notif(
 #'           text = "test",
 #'           icon = f7Icon("bolt_fill"),
 #'           title = "Notification",
 #'           subtitle = "A subtitle",
-#'           titleRightText = "now",
-#'           session = session
+#'           titleRightText = "now"
 #'         )
 #'       })
 #'     }
@@ -46,7 +45,9 @@
 f7Notif <- function(text, icon = NULL, title = NULL, titleRightText = NULL, subtitle = NULL,
                     closeTimeout = 5000, closeButton = FALSE,
                     closeOnClick = TRUE, swipeToClose = TRUE,
-                    session = shiny::getDefaultReactiveDomain()) {
+                    ..., session = shiny::getDefaultReactiveDomain()) {
+
+  if (!is.null(icon)) icon <- as.character(icon)
 
   message <- dropNulls(
     list(
@@ -55,14 +56,22 @@ f7Notif <- function(text, icon = NULL, title = NULL, titleRightText = NULL, subt
       titleRightText = titleRightText,
       subtitle = subtitle,
       text = text,
-      closeOnClick = tolower(closeOnClick),
-      swipeToClose = tolower(swipeToClose),
-      closeButton = tolower(closeButton),
-      closeTimeout = closeTimeout
+      closeOnClick = closeOnClick,
+      swipeToClose = swipeToClose,
+      closeButton = closeButton,
+      closeTimeout = closeTimeout,
+      ...
     )
   )
   # see my-app.js function
-  session$sendCustomMessage(type = "notif", message = message)
+  session$sendCustomMessage(
+    type = "notif",
+    message = jsonlite::toJSON(
+      message,
+      auto_unbox = TRUE,
+      json_verbatim = TRUE
+    )
+  )
 
 }
 

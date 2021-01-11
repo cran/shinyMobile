@@ -1,6 +1,6 @@
-#' Create a Framework7 shadow effect
+#' Framework7 shadow effect
 #'
-#' Build a Framework7 shadow effect
+#' Creates a shadow effect to apply on UI elements like \link{f7Card}.
 #'
 #' @param tag Tag to apply the shadow on.
 #' @param intensity Shadow intensity. Numeric between 1 and 24. 24 is the highest elevation.
@@ -12,7 +12,7 @@
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'     title = "Shadows",
 #'     f7SingleLayout(
@@ -27,7 +27,7 @@
 #'        but cards can also contain their own header,
 #'        footer, list view, image, or any other element.",
 #'       footer = tagList(
-#'        f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
+#'        f7Button(color = "blue", label = "My button", href = "https://www.google.com"),
 #'        f7Badge("Badge", color = "green")
 #'       )
 #'      )

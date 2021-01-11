@@ -4,7 +4,7 @@
 \alias{f7Login}
 \alias{f7LoginServer}
 \alias{updateF7Login}
-\title{Provide a template for authentication}
+\title{Framework7 login screen}
 \usage{
 f7Login(..., id, title, label = "Sign In", footer = NULL, startOpen = TRUE)
 
@@ -50,6 +50,14 @@ one wants to set up local authentication (for a specific section). See example 2
 \item{password}{Value of the password input.}
 }
 \description{
+Provide a template for authentication
+
+\link{f7LoginServer} is a useful server elements to fine tune the
+\link{f7Login} page.
+
+\link{updateF7Login} toggles a login page.
+}
+\details{
 This function does not provide the backend features. You would
 need to store credentials in a database for instance.
 }
@@ -66,9 +74,9 @@ if (interactive()) {
  # global authentication
  library(shiny)
  library(shinyMobile)
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
-     title = "My app",
+     title = "Login module",
      f7SingleLayout(
        navbar = f7Navbar(
          title = "Login Example",
@@ -77,8 +85,8 @@ if (interactive()) {
        ),
        toolbar = f7Toolbar(
          position = "bottom",
-         f7Link(label = "Link 1", src = "https://www.google.com"),
-         f7Link(label = "Link 2", src = "https://www.google.com", external = TRUE)
+         f7Link(label = "Link 1", href = "https://www.google.com"),
+         f7Link(label = "Link 2", href = "https://www.google.com")
        ),
        f7Login(id = "loginPage", title = "Welcome"),
        # main content
@@ -102,9 +110,9 @@ if (interactive()) {
  # section specific authentication
  library(shiny)
  library(shinyMobile)
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
-     title = "My app",
+     title = "Local access restriction",
      f7TabLayout(
        navbar = f7Navbar(
          title = "Login Example for Specific Section",
@@ -153,11 +161,11 @@ if (interactive()) {
  )
 
  # with 2 different protected sections
- ibrary(shiny)
+ library(shiny)
  library(shinyMobile)
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
-     title = "My app",
+     title = "Multiple restricted areas",
      f7TabLayout(
        navbar = f7Navbar(
          title = "Login Example for 2 Specific Section",

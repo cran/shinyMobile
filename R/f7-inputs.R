@@ -1,6 +1,6 @@
-#' Create a Framework7 autocomplete input
+#' Framework7 autocomplete input
 #'
-#' Build a Framework7 autocomplete input
+#' \link{f7AutoComplete} generates a Framework7 autocomplete input.
 #'
 #' @param inputId Autocomplete input id.
 #' @param label Autocomplete label.
@@ -22,7 +22,10 @@
 #' @param multiple Whether to allow multiple value selection. Only works
 #' when openIn is 'popup' or 'page'.
 #'
+#' @rdname autocomplete
+#'
 #' @examples
+#' # Autocomplete input
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
@@ -138,7 +141,7 @@ f7AutoComplete <- function(inputId, label, placeholder = NULL,
   }
 
   # input tag + label wrapper
-  mainTag <- if (!(type %in% c("page", "popup"))) {
+  if (!(type %in% c("page", "popup"))) {
     shiny::tags$div(
       class = "list no-hairlines-md",
       shiny::tags$ul(
@@ -160,18 +163,82 @@ f7AutoComplete <- function(inputId, label, placeholder = NULL,
   } else {
     shiny::tags$div(class = "list", shiny::tags$ul(autoCompleteProps))
   }
-
-  # final input tag
-  shiny::tagList(f7InputsDeps(), mainTag)
-
 }
 
 
 
 
-#' Create a Framework7 picker input
+#' Update Framework7 autocomplete
 #'
-#' Build a Framework7 picker input
+#' \link{updateF7AutoComplete} Change the value of an autocomplete input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param value New value.
+#' @param session The Shiny session object.
+#'
+#' @note You cannot update choices yet.
+#'
+#' @export
+#' @rdname autocomplete
+#'
+#' @examples
+#' # Update autocomplete
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'  shinyApp(
+#'   ui = f7Page(
+#'     title = "My app",
+#'     f7SingleLayout(
+#'       navbar = f7Navbar(title = "Update autocomplete"),
+#'       f7Card(
+#'         f7Button(inputId = "update", label = "Update autocomplete"),
+#'         f7AutoComplete(
+#'          inputId = "myautocomplete",
+#'          placeholder = "Some text here!",
+#'          openIn = "dropdown",
+#'          label = "Type a fruit name",
+#'          choices = c('Apple', 'Apricot', 'Avocado', 'Banana', 'Melon',
+#'                      'Orange', 'Peach', 'Pear', 'Pineapple')
+#'         ),
+#'         verbatimTextOutput("autocompleteval")
+#'       )
+#'     )
+#'   ),
+#'   server = function(input, output, session) {
+#'
+#'     observe({
+#'      print(input$myautocomplete)
+#'     })
+#'
+#'     output$autocompleteval <- renderText(input$myautocomplete)
+#'
+#'     observeEvent(input$update, {
+#'       updateF7AutoComplete(
+#'         inputId = "myautocomplete",
+#'         value = "Banana"
+#'       )
+#'     })
+#'   }
+#'  )
+#' }
+updateF7AutoComplete <- function(inputId, value =  NULL,
+                                 session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(
+    list(
+      value = I(value)
+    )
+  )
+  session$sendInputMessage(inputId, message)
+}
+
+
+
+
+
+#' Framework7 picker input
+#'
+#' \link{f7Picker} generates a picker input.
 #'
 #' @param inputId Picker input id.
 #' @param label Picker label.
@@ -190,7 +257,9 @@ f7AutoComplete <- function(inputId, label, placeholder = NULL,
 #' @param toolbarCloseText Text for Done/Close toolbar button.
 #' @param sheetSwipeToClose Enables ability to close Picker sheet with swipe. Default to FALSE.
 #'
+#' @rdname picker
 #' @examples
+#' # Picker input
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
@@ -224,6 +293,7 @@ f7Picker<- function(inputId, label, placeholder = NULL, value = choices[1], choi
                     sheetSwipeToClose = FALSE) {
 
   # for JS
+  if (is.null(value)) stop("value cannot be NULL.")
   value <- jsonlite::toJSON(value)
   choices <- jsonlite::toJSON(choices)
 
@@ -270,7 +340,7 @@ f7Picker<- function(inputId, label, placeholder = NULL, value = choices[1], choi
 
 
   # tag wrapper
-  mainTag <- shiny::tagList(
+  shiny::tagList(
     shiny::tags$div(
       class = "block-title",
       label
@@ -284,11 +354,106 @@ f7Picker<- function(inputId, label, placeholder = NULL, value = choices[1], choi
       )
     )
   )
-
-  # final input tag
-  shiny::tagList(f7InputsDeps(), mainTag)
-
 }
+
+
+
+
+#' Update Framework7 picker
+#'
+#' \link{updateF7Picker} changes the value of a picker input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param value Picker initial value, if any.
+#' @param choices New picker choices.
+#' @param rotateEffect Enables 3D rotate effect. Default to TRUE.
+#' @param openIn Can be auto, popover (to open picker in popover), sheet (to open in sheet modal).
+#'  In case of auto will open in sheet modal on small screens and in popover on large screens. Default
+#'  to auto.
+#' @param scrollToInput Scroll viewport (page-content) to input when picker opened. Default
+#'  to FALSE.
+#' @param closeByOutsideClick If enabled, picker will be closed by clicking outside of picker or related input element.
+#'  Default to TRUE.
+#' @param toolbar Enables picker toolbar. Default to TRUE.
+#' @param toolbarCloseText Text for Done/Close toolbar button.
+#' @param sheetSwipeToClose Enables ability to close Picker sheet with swipe. Default to FALSE.
+#' @param session The Shiny session object, usually the default value will suffice.
+#'
+#' @export
+#' @rdname picker
+#'
+#' @examples
+#' # Update picker input
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'  shinyApp(
+#'   ui = f7Page(
+#'     title = "My app",
+#'     f7SingleLayout(
+#'       navbar = f7Navbar(title = "Update picker"),
+#'       f7Card(
+#'         f7Button(inputId = "update", label = "Update picker"),
+#'         f7Picker(
+#'           inputId = "mypicker",
+#'           placeholder = "Some text here!",
+#'           label = "Picker Input",
+#'           choices = c('a', 'b', 'c')
+#'         ),
+#'         verbatimTextOutput("pickerval"),
+#'         br(),
+#'         f7Button(inputId = "removeToolbar", label = "Remove picker toolbar", color = "red")
+#'       )
+#'     )
+#'   ),
+#'   server = function(input, output, session) {
+#'
+#'     output$pickerval <- renderText(input$mypicker)
+#'
+#'     observeEvent(input$update, {
+#'       updateF7Picker(
+#'         inputId = "mypicker",
+#'         value = "b",
+#'         choices = letters,
+#'         openIn = "sheet",
+#'         toolbarCloseText = "Prout",
+#'         sheetSwipeToClose = TRUE
+#'       )
+#'     })
+#'
+#'     observeEvent(input$removeToolbar, {
+#'       updateF7Picker(
+#'         inputId = "mypicker",
+#'         value = "b",
+#'         choices = letters,
+#'         openIn = "sheet",
+#'         toolbar = FALSE
+#'       )
+#'     })
+#'
+#'   }
+#'  )
+#' }
+updateF7Picker <- function(inputId, value = NULL, choices = NULL,
+                           rotateEffect = NULL, openIn = NULL, scrollToInput = NULL,
+                           closeByOutsideClick = NULL, toolbar = NULL, toolbarCloseText = NULL,
+                           sheetSwipeToClose = NULL,
+                           session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(list(
+    value = value,
+    choices = choices,
+    rotateEffect = rotateEffect,
+    openIn = openIn,
+    scrollToInput = scrollToInput,
+    closeByOutsideClick = closeByOutsideClick,
+    toolbar = toolbar,
+    toolbarCloseText = toolbarCloseText,
+    sheetSwipeToClose = sheetSwipeToClose
+  ))
+  session$sendInputMessage(inputId, message)
+}
+
+
 
 
 f7ColorPickerPalettes <- list(
@@ -447,7 +612,6 @@ f7ColorPicker <- function(inputId, label, value = "#ff0000", placeholder = NULL,
 
   labelTag <- shiny::tags$div(class = "block-title", label)
   shiny::tagList(
-    f7InputsDeps(),
     shiny::singleton(pickerProps),
     labelTag,
     wrapperTag
@@ -459,7 +623,9 @@ f7ColorPicker <- function(inputId, label, value = "#ff0000", placeholder = NULL,
 
 
 
-#' Create a Framework7 date input
+#' Framework7 date picker
+#'
+#' \link{f7DatePicker} creates a Framework7 date picker input.
 #'
 #' @param inputId Date input id.
 #' @param label Input label.
@@ -480,19 +646,19 @@ f7ColorPicker <- function(inputId, label, value = "#ff0000", placeholder = NULL,
 #' @param headerPlaceholder Default calendar header placeholder text.
 #'
 #' @importFrom jsonlite toJSON
+#' @rdname datepicker
 #'
 #' @return a \code{Date} vector.
 #'
 #' @export
 #' @examples
+#' # Date picker
 #' if (interactive()) {
 #'   library(shiny)
 #'   library(shinyMobile)
 #'
 #'   shinyApp(
 #'     ui = f7Page(
-#'       preloader = FALSE,
-#'       color = "pink",
 #'       title = "My app",
 #'       f7SingleLayout(
 #'         navbar = f7Navbar(title = "f7DatePicker"),
@@ -570,7 +736,6 @@ f7DatePicker <- function(inputId, label, value = NULL, multiple = FALSE, directi
   labelTag <- shiny::tags$div(class = "block-title", label)
 
   shiny::tagList(
-    f7InputsDeps(),
     if (!is.null(label)) labelTag,
     # input tag
     shiny::tags$div(
@@ -604,18 +769,117 @@ f7DatePicker <- function(inputId, label, value = NULL, multiple = FALSE, directi
 
 
 
-#' Create a F7 Checkbox
+
+
+#' Update Framework7 date picker
+#'
+#' \link{updateF7DatePicker} changes the value of a date picker input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param value The new value for the input.
+#' @param ... Parameters used to update the date picker,
+#'  use same arguments as in \code{\link{f7DatePicker}}.
+#' @param session The Shiny session object, usually the default value will suffice.
+#'
+#' @export
+#'
+#' @rdname datepicker
+#'
+#' @examples
+#' # Update date picker
+#' if (interactive()) {
+#'   library(shiny)
+#'   library(shinyMobile)
+#'
+#'   shinyApp(
+#'     ui = f7Page(
+#'       title = "My app",
+#'       f7SingleLayout(
+#'         navbar = f7Navbar(title = "Update date picker"),
+#'         f7Card(
+#'           f7Button(inputId = "selectToday", label = "Select today"),
+#'           f7Button(inputId = "rmToolbar", label = "Remove toolbar"),
+#'           f7Button(inputId = "addToolbar", label = "Add toolbar"),
+#'           f7DatePicker(
+#'             inputId = "mypicker",
+#'             label = "Choose a date",
+#'             value = Sys.Date() - 7,
+#'             openIn = "auto",
+#'             direction = "horizontal"
+#'           ),
+#'           verbatimTextOutput("pickerval")
+#'         )
+#'       )
+#'     ),
+#'     server = function(input, output, session) {
+#'
+#'       output$pickerval <- renderPrint(input$mypicker)
+#'
+#'       observeEvent(input$selectToday, {
+#'         updateF7DatePicker(
+#'           inputId = "mypicker",
+#'           value = Sys.Date()
+#'         )
+#'       })
+#'
+#'       observeEvent(input$rmToolbar, {
+#'         updateF7DatePicker(
+#'           inputId = "mypicker",
+#'           toolbar = FALSE,
+#'           dateFormat = "yyyy-mm-dd" # preserve date format
+#'         )
+#'       })
+#'
+#'       observeEvent(input$addToolbar, {
+#'         updateF7DatePicker(
+#'           inputId = "mypicker",
+#'           toolbar = TRUE,
+#'           dateFormat = "yyyy-mm-dd" # preserve date format
+#'         )
+#'       })
+#'
+#'     }
+#'   )
+#' }
+updateF7DatePicker <- function(inputId, value = NULL, ...,
+                               session = shiny::getDefaultReactiveDomain()) {
+  if (!is.null(value)) {
+    if (length(value) == 1) {
+      value <- list(as.character(value))
+    } else {
+      value <- as.character(value)
+    }
+  }
+  config <- dropNulls(list(...))
+  if (length(config) == 0)
+    config <- NULL
+  message <- dropNulls(list(
+    value = value,
+    config = config
+  ))
+  session$sendInputMessage(inputId, message)
+}
+
+
+
+
+
+#' Framework7 checkbox
+#'
+#' Deprecated. \link{f7checkBox} creates a checkbox input.
 #'
 #' @param inputId The input slot that will be used to access the value.
 #' @param label Display label for the control, or NULL for no label.
 #' @param value Initial value (TRUE or FALSE).
+#'
+#' @rdname checkbox
 #'
 #' @examples
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'     title = "My app",
 #'     f7SingleLayout(
@@ -638,6 +902,15 @@ f7DatePicker <- function(inputId, label, value = NULL, multiple = FALSE, directi
 #
 #' @export
 f7checkBox <- function(inputId, label, value = FALSE){
+
+  .Deprecated(
+    "f7Checkbox",
+    package = "shinyMobile",
+    "f7checkBox will be removed in future release. Please use
+    f7Checkbox instead.",
+    old = as.character(sys.call(sys.parent()))[1L]
+  )
+
   value <- shiny::restoreInput(id = inputId, default = value)
   inputTag <- shiny::tags$input(id = inputId, type = "checkbox")
   if (!is.null(value) && value)
@@ -654,8 +927,90 @@ f7checkBox <- function(inputId, label, value = FALSE){
 }
 
 
+#' Framework7 checkbox
+#'
+#' \link{f7Checkbox} creates a checkbox input.
+#'
+#' @param inputId The input slot that will be used to access the value.
+#' @param label Display label for the control, or NULL for no label.
+#' @param value Initial value (TRUE or FALSE).
+#'
+#' @rdname checkbox
+f7Checkbox <- f7checkBox
 
-#' Create an f7 checkbox group input
+
+
+
+#' Update Framework7 checkbox
+#'
+#' \link{updateF7Checkbox} changes the value of a checkbox input on the client.
+#'
+#' @rdname checkbox
+#' @param inputId The id of the input object.
+#' @param label The label to set for the input object.
+#' @param value The value to set for the input object.
+#' @param session The Shiny session object.
+#'
+#' @export
+#'
+#' @examples
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  ui <- f7Page(
+#'    f7SingleLayout(
+#'     navbar = f7Navbar(title = "updateF7CheckBox"),
+#'     f7Slider(
+#'      inputId = "controller",
+#'      label = "Number of observations",
+#'      max = 10,
+#'      min = 0,
+#'      value = 1,
+#'      step = 1,
+#'      scale = TRUE
+#'     ),
+#'     f7checkBox(
+#'      inputId = "check",
+#'      label = "Checkbox"
+#'     )
+#'    )
+#'  )
+#'
+#'  server <- function(input, output, session) {
+#'    observe({
+#'      # TRUE if input$controller is odd, FALSE if even.
+#'      x_even <- input$controller %% 2 == 1
+#'
+#'      if (x_even) {
+#'       showNotification(
+#'        id = "notif",
+#'        paste("The slider is ", input$controller, "and the checkbox is", input$check),
+#'        duration = NULL,
+#'        type = "warning"
+#'       )
+#'      } else {
+#'       removeNotification("notif")
+#'      }
+#'
+#'      updateF7Checkbox("check", value = x_even)
+#'    })
+#'  }
+#'
+#' shinyApp(ui, server)
+#' }
+updateF7Checkbox <- function(inputId, label = NULL, value = NULL,
+                             session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(list(label=label, value=value))
+  session$sendInputMessage(inputId, message)
+}
+
+
+
+
+#' Framework7 checkbox group
+#'
+#' Deprecated. Creates a checkbox group input
 #'
 #' @param inputId Checkbox group input.
 #' @param label Checkbox group label.
@@ -663,6 +1018,7 @@ f7checkBox <- function(inputId, label, value = FALSE){
 #' @param selected Checkbox group selected value.
 #'
 #' @export
+#' @rdname checkboxgroup
 #'
 #' @examples
 #' if(interactive()){
@@ -691,6 +1047,14 @@ f7checkBox <- function(inputId, label, value = FALSE){
 #'   )
 #'  }
 f7checkBoxGroup <- function(inputId, label, choices = NULL, selected = NULL) {
+
+  .Deprecated(
+    "f7CheckboxGroup",
+    package = "shinyMobile",
+    "f7checkBoxGroup will be removed in future release. Please use
+    f7CheckboxGroup instead.",
+    old = as.character(sys.call(sys.parent()))[1L]
+  )
 
   selectedPosition <- if (!is.null(selected)) match(selected, choices) else NULL
 
@@ -730,6 +1094,20 @@ f7checkBoxGroup <- function(inputId, label, choices = NULL, selected = NULL) {
 
 }
 
+
+
+#' Framework7 checkbox group
+#'
+#' Creates a checkbox group input
+#'
+#' @param inputId Checkbox group input.
+#' @param label Checkbox group label.
+#' @param choices Checkbox group choices.
+#' @param selected Checkbox group selected value.
+#'
+#' @export
+#' @rdname checkboxgroup
+f7CheckboxGroup <- f7checkBoxGroup
 
 
 
@@ -791,7 +1169,9 @@ choicesWithNames <- function(choices) {
 }
 
 
-#' Create an f7 select input
+#' Framework7 select input
+#'
+#' \link{f7Select} creates a select input.
 #'
 #' @param inputId Select input id.
 #' @param label Select input label.
@@ -800,8 +1180,10 @@ choicesWithNames <- function(choices) {
 #' @param width The width of the input, e.g. \code{400px}, or \code{100\%}.
 #'
 #' @export
+#' @rdname select
 #'
 #' @examples
+#' # Select input
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
@@ -832,7 +1214,7 @@ f7Select <- function(inputId, label, choices, selected = NULL, width = NULL) {
 
   options <- createSelectOptions(choices, selected)
 
-  selectTag <- shiny::tags$div(
+  shiny::tags$div(
     class = "list",
     style = if (!is.null(width)) paste0("width:", htmltools::validateCssUnit(width), ";"),
     shiny::tags$ul(
@@ -855,16 +1237,75 @@ f7Select <- function(inputId, label, choices, selected = NULL, width = NULL) {
       )
     )
   )
-
-  shiny::tagList(f7InputsDeps(), selectTag)
-
 }
 
 
 
-#' Create a Framework7 smart select
+
+#' Update Framework7 select
 #'
-#' It is smarter than the classic \link{f7Select}
+#' \link{updateF7Select} changes the value of a select input on the client
+#'
+#' @param inputId The id of the input object.
+#' @param selected New value.
+#' @param session The Shiny session object, usually the default value will suffice.
+#'
+#' @export
+#' @rdname select
+#'
+#' @examples
+#' # Update select input
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  shinyApp(
+#'    ui = f7Page(
+#'      title = "My app",
+#'      f7SingleLayout(
+#'        navbar = f7Navbar(title = "updateF7Select"),
+#'        f7Card(
+#'          f7Button(inputId = "update", label = "Update select"),
+#'          br(),
+#'          f7Select(
+#'           inputId = "variable",
+#'           label = "Choose a variable:",
+#'           choices = colnames(mtcars)[-1],
+#'           selected = "hp"
+#'          ),
+#'          verbatimTextOutput("test")
+#'        )
+#'      )
+#'    ),
+#'    server = function(input, output, session) {
+#'
+#'      output$test <- renderPrint(input$variable)
+#'
+#'      observeEvent(input$update, {
+#'        updateF7Select(
+#'          inputId = "variable",
+#'          selected = "gear"
+#'        )
+#'      })
+#'    }
+#'  )
+#' }
+updateF7Select <- function(inputId, selected = NULL,
+                           session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(list(
+    selected = selected
+  ))
+  session$sendInputMessage(inputId, message)
+}
+
+
+
+
+
+#' Framework7 smart select
+#'
+#' \link{f7SmartSelect} is smarter than the classic \link{f7Select},
+#' allows for choices filtering, ...
 #'
 #' @param inputId Select input id.
 #' @param label Select input label.
@@ -878,9 +1319,12 @@ f7Select <- function(inputId, label, choices, selected = NULL, width = NULL) {
 #' @param virtualList Enable Virtual List for smart select if your select has a lot
 #' of options. Default to FALSE.
 #'
+#' @rdname smartselect
+#'
 #' @export
 #'
 #' @examples
+#' # Smart select input
 #' if (interactive()) {
 #' library(shiny)
 #' library(shinyMobile)
@@ -922,38 +1366,35 @@ f7SmartSelect <- function(inputId, label, choices, selected = NULL,
     virtualList = virtualList
   ))
 
-  shiny::tagList(
-    f7InputsDeps(),
-    shiny::tags$div(
-      class = "list",
-      shiny::tags$ul(
-        shiny::tags$li(
-          shiny::tags$a(
-            class = "item-link smart-select",
+  shiny::tags$div(
+    class = "list",
+    shiny::tags$ul(
+      shiny::tags$li(
+        shiny::tags$a(
+          class = "item-link smart-select",
+          id = inputId,
+          shiny::tags$select(
             id = inputId,
-            shiny::tags$select(
-              id = inputId,
-              multiple = if (multiple) NA else NULL,
-              maxlength = if (!is.null(maxlength)) maxlength else NULL,
-              options
-            ),
+            multiple = if (multiple) NA else NULL,
+            maxlength = if (!is.null(maxlength)) maxlength else NULL,
+            options
+          ),
+          shiny::tags$div(
+            class = "item-content",
             shiny::tags$div(
-              class = "item-content",
+              class = "item-inner",
               shiny::tags$div(
-                class = "item-inner",
-                shiny::tags$div(
-                  class = "item-title", label
-                )
+                class = "item-title", label
               )
-            ),
-            shiny::tags$script(
-              type = "application/json",
-              `data-for` = inputId,
-              jsonlite::toJSON(
-                x = config,
-                auto_unbox = TRUE,
-                json_verbatim = TRUE
-              )
+            )
+          ),
+          shiny::tags$script(
+            type = "application/json",
+            `data-for` = inputId,
+            jsonlite::toJSON(
+              x = config,
+              auto_unbox = TRUE,
+              json_verbatim = TRUE
             )
           )
         )
@@ -963,21 +1404,111 @@ f7SmartSelect <- function(inputId, label, choices, selected = NULL,
 }
 
 
-#' Create an f7 text input
+
+
+#' Update Framework7 smart select
+#'
+#' \link{updateF7SmartSelect} changes the value of a smart select input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param selected The new value for the input.
+#' @param choices The new choices.
+#' @param ... Parameters used to update the smart select,
+#'  use same arguments as in \code{\link{f7SmartSelect}}.
+#' @param multiple Whether to allow multiple values.
+#' @param maxLength Maximum items to select when multiple is TRUE.
+#' @param session The Shiny session object, usually the default value will suffice.
+#'
+#' @rdname smartselect
+#' @export
+#'
+#' @examples
+#' # Update smart select
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  shinyApp(
+#'   ui = f7Page(
+#'     title = "My app",
+#'     f7SingleLayout(
+#'       navbar = f7Navbar(title = "Update f7SmartSelect"),
+#'       f7Button("updateSmartSelect", "Update Smart Select"),
+#'       f7SmartSelect(
+#'         inputId = "variable",
+#'         label = "Choose a variable:",
+#'         selected = "drat",
+#'         choices = colnames(mtcars)[-1],
+#'         openIn = "popup"
+#'       ),
+#'       tableOutput("data")
+#'     )
+#'   ),
+#'   server = function(input, output, session) {
+#'     output$data <- renderTable({
+#'       mtcars[, c("mpg", input$variable), drop = FALSE]
+#'     }, rownames = TRUE)
+#'
+#'     observeEvent(input$updateSmartSelect, {
+#'       updateF7SmartSelect(
+#'         inputId = "variable",
+#'         openIn = "sheet",
+#'         selected = "hp",
+#'         choices = c("hp", "gear"),
+#'         multiple = TRUE,
+#'         maxLength = 3
+#'       )
+#'     })
+#'   }
+#'  )
+#' }
+updateF7SmartSelect <- function(inputId, selected = NULL, choices = NULL, multiple = NULL,
+                                maxLength = NULL, ...,
+                                session = shiny::getDefaultReactiveDomain()) {
+
+  if (!is.null(selected)) {
+    if (length(selected) == 1) {
+      selected <- list(as.character(selected))
+    } else {
+      selected <- as.character(selected)
+    }
+  }
+  config <- dropNulls(list(...))
+  if (length(config) == 0)
+    config <- NULL
+  message <- dropNulls(list(
+    selected = selected,
+    choices = choices,
+    multiple = multiple,
+    maxLength = maxLength,
+    config = config
+  ))
+  session$sendInputMessage(inputId, message)
+}
+
+
+
+
+#' Framework7 text input
+#'
+#' \link{f7Text} creates a text input container.
 #'
 #' @param inputId Text input id.
 #' @param label Text input label.
 #' @param value Text input value.
 #' @param placeholder Text input placeholder.
 #'
+#' @rdname text
+#'
 #' @export
 #'
 #' @examples
+#' # A text input
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'      title = "My app",
 #'      f7SingleLayout(
@@ -1045,6 +1576,54 @@ f7Text <- function(inputId, label, value = "", placeholder = NULL#,
 
 
 
+#' Update Framework7 text input
+#'
+#' \link{updateF7Text} changes the value of a text input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param label The label to set for the input object.
+#' @param value The value to set for the input object.
+#' @param placeholder The placeholder to set for the input object.
+#' @param session The Shiny session object, usually the default value will suffice.
+#'
+#' @export
+#' @rdname text
+#'
+#' @examples
+#' # Update text input
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  ui <- f7Page(
+#'    f7SingleLayout(
+#'     navbar = f7Navbar(title = "updateF7Text"),
+#'     f7Block(f7Button("trigger", "Click me")),
+#'     f7Text(
+#'      inputId = "text",
+#'      label = "Caption",
+#'      value = "Some text",
+#'      placeholder = "Your text here"
+#'     ),
+#'     verbatimTextOutput("value")
+#'    )
+#'  )
+#'
+#'  server <- function(input, output, session) {
+#'    output$value <- renderPrint(input$text)
+#'    observeEvent(input$trigger, {
+#'      updateF7Text("text", value = "Updated Text")
+#'    })
+#'  }
+#' shinyApp(ui, server)
+#' }
+updateF7Text <- function(inputId, label = NULL, value = NULL, placeholder = NULL, session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(list(label=label, value=value, placeholder=placeholder))
+  session$sendInputMessage(inputId, message)
+}
+
+
+
 # #' Create an f7 date input
 # #'
 # #' This does only work for mobiles or tablets!
@@ -1077,7 +1656,7 @@ f7Text <- function(inputId, label, value = "", placeholder = NULL#,
 # #' }
 # f7Date <- function(inputId, label, value = "", placeholder = NULL) {
 #
-#   dateTag <- shiny::tags$div(
+#   shiny::tags$div(
 #     class = "list",
 #     shiny::tags$ul(
 #       shiny::tags$li(
@@ -1099,27 +1678,27 @@ f7Text <- function(inputId, label, value = "", placeholder = NULL#,
 #       )
 #     )
 #   )
-#
-#   shiny::tagList(f7InputsDeps(), dateTag)
-#
 # }
 
 
 
 
-#' Create an f7 text area input
+#' Framework7 text area input
+#'
+#' \link{f7TextArea} creates a f7 text area input.
 #'
 #' @inheritParams f7Text
 #' @param resize Whether to box can be resized. Default to FALSE.
 #'
 #' @export
+#' @rdname textarea
 #'
 #' @examples
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'      title = "My app",
 #'      f7TextArea(
@@ -1170,6 +1749,45 @@ f7TextArea <- function(inputId, label, value = "", placeholder = NULL,
 
 
 
+#' Update Framework7 text area input
+#'
+#' \link{updateF7TextArea} changes the value of a text area input on the client.
+#'
+#' @inheritParams updateF7Text
+#' @rdname textarea
+#' @export
+#' @examples
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  ui <- f7Page(
+#'    f7SingleLayout(
+#'     navbar = f7Navbar(title = "updateF7TextArea"),
+#'     f7Block(f7Button("trigger", "Click me")),
+#'     f7TextArea(
+#'      inputId = "textarea",
+#'      label = "Text Area",
+#'      value = "Lorem ipsum dolor sit amet, consectetur
+#'               adipiscing elit, sed do eiusmod tempor incididunt ut
+#'               labore et dolore magna aliqua",
+#'      placeholder = "Your text here",
+#'      resize = TRUE
+#'      ),
+#'     verbatimTextOutput("value")
+#'    )
+#'  )
+#'
+#'  server <- function(input, output, session) {
+#'    output$value <- renderPrint(input$textarea)
+#'    observeEvent(input$trigger, {
+#'      updateF7Text("textarea", value = "Updated Text")
+#'    })
+#'  }
+#' shinyApp(ui, server)
+#' }
+updateF7TextArea <- updateF7Text
+
 
 
 #' Create an f7 password input
@@ -1182,7 +1800,7 @@ f7TextArea <- function(inputId, label, value = "", placeholder = NULL,
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'      title = "My app",
 #'      f7SingleLayout(
@@ -1228,7 +1846,9 @@ f7Password <- function(inputId, label, value = "", placeholder = NULL) {
 
 
 
-#' Create a f7 slider
+#' Framework7 range slider
+#'
+#' \link{f7Slider} creates a f7 slider input.
 #'
 #' @param inputId Slider input id.
 #' @param label Slider label.
@@ -1249,14 +1869,17 @@ f7Password <- function(inputId, label, value = "", placeholder = NULL) {
 #'
 #' @note labels option only works when vertical is FALSE!
 #'
+#' @rdname slider
+#'
 #' @export
 #'
 #' @examples
+#' # Slider input
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'     title = "My app",
 #'     f7SingleLayout(
@@ -1296,7 +1919,7 @@ f7Password <- function(inputId, label, value = "", placeholder = NULL) {
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'     title = "My app",
 #'     f7SingleLayout(
@@ -1371,8 +1994,8 @@ f7Slider <- function(inputId, label, min, max, value, step = 1, scale = FALSE,
 
   labels <- if (!is.null(labels)) {
     lapply(seq_along(labels), function(i) {
-      isF7Icon <- (grep(x = labels[[i]]$attribs$class, pattern = "f7-icons") == 1)
-      if (class(labels[[i]]) != "shiny.tag" | !isF7Icon) {
+      isF7Icon <- (grep(x = labels[[i]][[1]]$attribs$class, pattern = "f7-icons") == 1)
+      if (class(labels[[i]][[1]]) != "shiny.tag" || !isF7Icon) {
         stop("Label must be a f7Icon.")
       }
       shiny::tags$div(
@@ -1386,7 +2009,6 @@ f7Slider <- function(inputId, label, min, max, value, step = 1, scale = FALSE,
 
   # wrapper
   shiny::tags$div(
-    f7InputsDeps(),
     # HTML skeleton
     if (!is.null(label)) shiny::tags$div(class = "block-title", label),
     if (!is.null(labels)) {
@@ -1407,7 +2029,96 @@ f7Slider <- function(inputId, label, min, max, value, step = 1, scale = FALSE,
 }
 
 
-#' Create a F7 radio stepper
+
+
+#' Update Framework7 range slider
+#'
+#' \link{updateF7Slider} changes the value of a slider input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param min Slider minimum range.
+#' @param max Slider maximum range
+#' @param value Slider value or a vector containing 2 values (for a range).
+#' @param scale Slider scale.
+#' @param scaleSteps Number of scale steps.
+#' @param scaleSubSteps Number of scale sub steps (each step will be divided by this value).
+#' @param step Slider increase step size.
+#' @param color See \link{getF7Colors} for valid colors.
+#' @param session The Shiny session object.
+#'
+#' @export
+#' @rdname slider
+#'
+#' @note Important: you cannot transform a range slider into a simple slider and inversely.
+#'
+#' @examples
+#' # Update f7Slider
+#' if(interactive()){
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  shinyApp(
+#'    ui = f7Page(
+#'      title = "My app",
+#'      f7SingleLayout(
+#'        navbar = f7Navbar(title = "updateF7Slider"),
+#'        f7Card(
+#'          f7Button(inputId = "update", label = "Update slider"),
+#'          f7Slider(
+#'            inputId = "obs",
+#'            label = "Range values",
+#'            max = 500,
+#'            min = 0,
+#'            step = 1,
+#'            color = "deeppurple",
+#'            value = c(50, 100)
+#'          ),
+#'          verbatimTextOutput("test")
+#'        )
+#'      )
+#'    ),
+#'    server = function(input, output, session) {
+#'
+#'      output$test <- renderPrint({input$obs})
+#'
+#'      observeEvent(input$update, {
+#'        updateF7Slider(
+#'          inputId = "obs",
+#'          value = c(1, 5),
+#'          min = 0,
+#'          scaleSteps = 10,
+#'          scaleSubSteps = 5,
+#'          step = 0.1,
+#'          max = 10,
+#'          color = "teal"
+#'        )
+#'      })
+#'    }
+#'  )
+#' }
+updateF7Slider <- function(inputId, min = NULL, max = NULL, value = NULL,
+                           scale = FALSE, scaleSteps = NULL, scaleSubSteps = NULL,
+                           step = NULL, color = NULL,
+                           session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(list(
+    value = value,
+    min = min,
+    max = max,
+    scale = scale,
+    step = step,
+    scaleSteps = scaleSteps,
+    scaleSubSteps = scaleSubSteps,
+    color = color
+  ))
+  session$sendInputMessage(inputId, message)
+}
+
+
+
+
+#' Framework7 stepper input
+#'
+#' \link{f7Stepper} creates a stepper input.
 #'
 #' @param inputId Stepper input id.
 #' @param label Stepper label.
@@ -1432,12 +2143,15 @@ f7Slider <- function(inputId, label, min, max, value, step = 1, scale = FALSE,
 #' @param decimalPoint Number of digits after dot, when in manual input mode.
 #' @param buttonsEndInputMode Disables manual input mode on Stepper's minus or plus button click.
 #'
+#'
+#' @rdname stepper
 #' @examples
+#' # Stepper input
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'     title = "My app",
 #'     f7SingleLayout(
@@ -1538,7 +2252,6 @@ f7Stepper <- function(inputId, label, min, max, value, step = 1,
 
   # main wrapper
   shiny::tagList(
-    f7InputsDeps(),
     # stepper tag
     shiny::tags$small(label),
     stepperTag
@@ -1549,21 +2262,136 @@ f7Stepper <- function(inputId, label, min, max, value, step = 1,
 
 
 
+#' Update Framework7 stepper
+#'
+#' \link{updateF7Stepper} changes the value of a stepper input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param min Stepper minimum value.
+#' @param max Stepper maximum value.
+#' @param value Stepper value. Must belong to \[min, max\].
+#' @param step increment step. 1 by default.
+#' @param fill Whether to fill the stepper. FALSE by default.
+#' @param rounded Whether to round the stepper. FALSE by default.
+#' @param raised Whether to put a relied around the stepper. FALSE by default.
+#' @param size Stepper size: "small", "large" or NULL.
+#' @param color Stepper color: NULL or "red", "green", "blue", "pink", "yellow", "orange", "grey" and "black".
+#' @param wraps In wraps mode incrementing beyond maximum value sets value to minimum value,
+#' likewise, decrementing below minimum value sets value to maximum value. FALSE by default.
+#' @param decimalPoint Number of digits after dot, when in manual input mode.
+#' @param autorepeat Pressing and holding one of its buttons increments or decrements the stepper’s
+#' value repeatedly. With dynamic autorepeat, the rate of change depends on how long the user
+#' continues pressing the control. TRUE by default.
+#' @param manual It is possible to enter value manually from keyboard or mobile keypad.
+#'  When click on input field, stepper enter into manual input mode, which allow type value
+#'  from keyboar and check fractional part with defined accurancy. Click outside or enter
+#'  Return key, ending manual mode. TRUE by default.
+#' @param session The Shiny session object, usually the default value will suffice.
+#'
+#' @export
+#' @rdname stepper
+#'
+#' @note While updating, the autorepeat field does not work correctly.
+#'
+#' @examples
+#' # Update stepper input
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  shinyApp(
+#'   ui = f7Page(
+#'     title = "My app",
+#'     f7SingleLayout(
+#'       navbar = f7Navbar(title = "updateF7Stepper"),
+#'       f7Card(
+#'         f7Button(inputId = "update", label = "Update stepper"),
+#'         f7Stepper(
+#'           inputId = "stepper",
+#'           label = "My stepper",
+#'           min = 0,
+#'           max = 10,
+#'           size = "small",
+#'           value = 4,
+#'           wraps = TRUE,
+#'           autorepeat = TRUE,
+#'           rounded = FALSE,
+#'           raised = FALSE,
+#'           manual = FALSE
+#'         ),
+#'         verbatimTextOutput("test")
+#'       )
+#'     )
+#'   ),
+#'   server = function(input, output, session) {
+#'
+#'     output$test <- renderPrint(input$stepper)
+#'
+#'     observeEvent(input$update, {
+#'       updateF7Stepper(
+#'         inputId = "stepper",
+#'         value = 0.1,
+#'         step = 0.01,
+#'         size = "large",
+#'         min = 0,
+#'         max = 1,
+#'         wraps = FALSE,
+#'         autorepeat = FALSE,
+#'         rounded = TRUE,
+#'         raised = TRUE,
+#'         color = "pink",
+#'         manual = TRUE,
+#'         decimalPoint = 2
+#'       )
+#'     })
+#'   }
+#'  )
+#' }
+updateF7Stepper <- function(inputId, min = NULL, max = NULL,
+                            value = NULL, step = NULL, fill = NULL,
+                            rounded = NULL, raised = NULL, size = NULL,
+                            color = NULL, wraps = NULL, decimalPoint = NULL,
+                            autorepeat = NULL, manual = NULL,
+                            session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(list(
+    min = min,
+    max = max,
+    value = value,
+    step = step,
+    fill = fill,
+    rounded = rounded,
+    raised = raised,
+    size = size,
+    color = color,
+    wraps = wraps,
+    decimalPoint = decimalPoint,
+    autorepeat = autorepeat,
+    manual = manual
+  ))
+  session$sendInputMessage(inputId, message)
+}
 
 
-#' Create a F7 toggle switch
+
+
+
+#' Framework7 toggle input
+#'
+#' \link{f7Toggle} creates a F7 toggle switch input.
 #'
 #' @param inputId Toggle input id.
 #' @param label Toggle label.
 #' @param checked Whether to check the toggle. FALSE by default.
 #' @param color Toggle color: NULL or "red", "green", "blue", "pink", "yellow", "orange", "grey" and "black".
 #'
+#' @rdname toggle
 #' @examples
+#' # f7Toggle
 #' if(interactive()){
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'     title = "My app",
 #'     f7SingleLayout(
@@ -1596,9 +2424,6 @@ f7Toggle <- function(inputId, label, checked = FALSE, color = NULL) {
   if (!is.null(color)) toggleCl <- paste0(toggleCl, " color-", color)
 
   shiny::tagList(
-
-    # input binding
-    f7InputsDeps(),
     # toggle tag
     shiny::tags$span(label),
     shiny::tags$label(
@@ -1617,7 +2442,70 @@ f7Toggle <- function(inputId, label, checked = FALSE, color = NULL) {
 
 
 
-#' Create an f7 radio button input
+#' Update Framework7 toggle input
+#'
+#' \link{updateF7Toggle} changes the value of a toggle input on the client.
+#'
+#' @param inputId The id of the input object.
+#' @param checked Whether the toggle is TRUE or FALSE.
+#' @param color Toggle color.
+#' @param session The Shiny session object.
+#'
+#' @export
+#' @rdname toggle
+#'
+#' @examples
+#' # Update f7Toggle
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  shinyApp(
+#'    ui = f7Page(
+#'      title = "My app",
+#'      f7SingleLayout(
+#'        navbar = f7Navbar(title = "updateF7Toggle"),
+#'        f7Card(
+#'          f7Button(inputId = "update", label = "Update toggle"),
+#'          f7Toggle(
+#'            inputId = "toggle",
+#'            label = "My toggle",
+#'            color = "pink",
+#'            checked = FALSE
+#'          ),
+#'          verbatimTextOutput("test")
+#'        )
+#'      )
+#'    ),
+#'    server = function(input, output, session) {
+#'
+#'      output$test <- renderPrint({input$toggle})
+#'
+#'      observeEvent(input$update, {
+#'        updateF7Toggle(
+#'          inputId = "toggle",
+#'          checked = TRUE,
+#'          color = "green"
+#'        )
+#'      })
+#'    }
+#'  )
+#' }
+updateF7Toggle <- function(inputId, checked = NULL, color = NULL,
+                           session = shiny::getDefaultReactiveDomain()) {
+  message <- dropNulls(list(
+    checked = checked,
+    color = color
+  ))
+  session$sendInputMessage(inputId, message)
+}
+
+
+
+
+#' Framework7 radio input
+#'
+#' Creates a radio button input.
 #'
 #' @param inputId Radio input id.
 #' @param label Radio label
@@ -1631,7 +2519,7 @@ f7Toggle <- function(inputId, label, checked = FALSE, color = NULL) {
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'     title = "My app",
 #'     f7SingleLayout(

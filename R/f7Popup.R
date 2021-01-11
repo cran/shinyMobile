@@ -1,7 +1,7 @@
-#' @title Create a f7 popup
+#' Framework7 popup
 #'
-#' @description Popup is a popup window with any UI content that pops up over App's main content.
-#'  Popup as all other overlays is part of so called "Temporary Views".
+#' \link{f7Popup} creates a popup window with any UI content that pops up over App's main content.
+#' Popup as all other overlays is part of so called "Temporary Views".
 #'
 #' @param ... UI elements for the body of the popup window.
 #' @param id Popup unique id.
@@ -22,15 +22,15 @@
 #'  Default to \code{TRUE}.
 #'
 #' @export
+#' @rdname popup
 #'
 #' @examples
 #' if (interactive()) {
 #'  library(shiny)
 #'  library(shinyMobile)
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
-#'      color = "pink",
-#'      title = "My app",
+#'      title = "Popup",
 #'      f7SingleLayout(
 #'       navbar = f7Navbar(
 #'         title = "f7Popup",
@@ -59,7 +59,6 @@
 #'      popupStatus <- if (input$popup1) "opened" else "closed"
 #'
 #'      f7Toast(
-#'       session,
 #'       position = "top",
 #'       text = paste("Popup is", popupStatus)
 #'      )
@@ -107,7 +106,6 @@ f7Popup <- function(..., id, title = NULL,
     class = "popup",
     class = if (isTRUE(fullsize)) "popup-tablet-fullscreen",
     style = "overflow-y: auto;",
-    f7InputsDeps(),
     content,
     shiny::tags$script(
       type = "application/json",
@@ -123,14 +121,35 @@ f7Popup <- function(..., id, title = NULL,
 
 
 
-#' Toggle \link{f7Popup}.
+#' Toggle Framework7 popup
+#'
+#' Deprecated. \link{f7TogglePopup} toggles a \link{f7Popup} from the server.
 #'
 #' @param id Popup id.
 #' @param session Shiny session.
+#' @rdname popup
 #'
 #' @export
-#'
-#' @importFrom shiny getDefaultReactiveDomain
 f7TogglePopup <- function(id, session = shiny::getDefaultReactiveDomain()) {
+  .Deprecated(
+    "updateF7Popup",
+    package = "shinyMobile",
+    "f7TogglePopup will be removed in future release. Please use
+    updateF7Popup instead.",
+    old = as.character(sys.call(sys.parent()))[1L]
+  )
   session$sendInputMessage(id, message = NULL)
 }
+
+
+
+#' Toggle Framework7 popup
+#'
+#' \link{updateF7Popup} toggles a \link{f7Popup} from the server.
+#'
+#' @param id Popup id.
+#' @param session Shiny session.
+#' @rdname popup
+#'
+#' @export
+updateF7Popup <- f7TogglePopup

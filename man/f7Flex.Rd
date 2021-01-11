@@ -2,7 +2,7 @@
 % Please edit documentation in R/f7Grid.R
 \name{f7Flex}
 \alias{f7Flex}
-\title{Create a Framework7 flex container}
+\title{Framework7 flex container}
 \usage{
 f7Flex(...)
 }
@@ -17,16 +17,16 @@ if(interactive()){
  library(shiny)
  library(shinyMobile)
 
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
     title = "Align",
     f7SingleLayout(
      navbar = f7Navbar(title = "f7Flex"),
      f7Flex(
-     f7Block(strong = TRUE),
-     f7Block(strong = TRUE),
-     f7Block(strong = TRUE)
-    )
+      f7Block(strong = TRUE),
+      f7Block(strong = TRUE),
+      f7Block(strong = TRUE)
+     )
     )
    ),
    server = function(input, output) {}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/f7Navbar.R
 \name{f7SubNavbar}
 \alias{f7SubNavbar}
-\title{Create a Framework7 sub navbar}
+\title{Framework7 sub navbar}
 \usage{
 f7SubNavbar(...)
 }
@@ -10,14 +10,15 @@ f7SubNavbar(...)
 \item{...}{Any elements.}
 }
 \description{
-Create a Framework7 sub navbar
+\link{f7SubNavbar} creates a nested navbar component for
+\link{f7Navbar}.
 }
 \examples{
 if (interactive()) {
  library(shiny)
  library(shinyMobile)
 
- shiny::shinyApp(
+ shinyApp(
   ui = f7Page(
      title = "Sub Navbar",
      f7TabLayout(
@@ -29,8 +30,8 @@ if (interactive()) {
            title = "SubNavbar",
            hairline = FALSE,
            shadow = TRUE,
-           left_panel = TRUE,
-           right_panel = TRUE,
+           leftPanel = TRUE,
+           rightPanel = TRUE,
            subNavbar = f7SubNavbar(
               f7Button(label = "My button", outline = TRUE),
               f7Button(label = "My button", outline = TRUE),

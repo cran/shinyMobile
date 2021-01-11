@@ -2,7 +2,7 @@
 % Please edit documentation in R/f7Page.R
 \name{f7SplitLayout}
 \alias{f7SplitLayout}
-\title{Create a Framework7 split layout}
+\title{Framework7 split layout}
 \usage{
 f7SplitLayout(
   ...,
@@ -36,9 +36,9 @@ It is intended to be used with tablets.
 if(interactive()){
  library(shiny)
  library(shinyMobile)
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
-     title = "My app",
+     title = "Split layout",
      f7SplitLayout(
        sidebar = f7Panel(
          inputId = "sidebar",
@@ -59,8 +59,8 @@ if(interactive()){
        ),
        toolbar = f7Toolbar(
          position = "bottom",
-         f7Link(label = "Link 1", src = "https://www.google.com"),
-         f7Link(label = "Link 2", src = "https://www.google.com", external = TRUE)
+         f7Link(label = "Link 1", href = "https://www.google.com"),
+         f7Link(label = "Link 2", href = "https://www.google.com")
        ),
        # main content
        f7Items(

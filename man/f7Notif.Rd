@@ -2,7 +2,7 @@
 % Please edit documentation in R/f7Notif.R
 \name{f7Notif}
 \alias{f7Notif}
-\title{Create a Framework7 notification}
+\title{Framework7 notification}
 \usage{
 f7Notif(
   text,
@@ -14,6 +14,7 @@ f7Notif(
   closeButton = FALSE,
   closeOnClick = TRUE,
   swipeToClose = TRUE,
+  ...,
   session = shiny::getDefaultReactiveDomain()
 )
 }
@@ -37,10 +38,12 @@ FALSE by default.}
 
 \item{swipeToClose}{If enabled, notification can be closed by swipe gesture.}
 
+\item{...}{Other options. See \url{https://framework7.io/docs/notification.html}.}
+
 \item{session}{shiny session.}
 }
 \description{
-Create a Framework7 notification
+Notification with title, text, icon and more.
 }
 \examples{
 if (interactive()) {
@@ -48,7 +51,6 @@ if (interactive()) {
   library(shinyMobile)
   shinyApp(
     ui = f7Page(
-      color = "pink",
       title = "My app",
       f7SingleLayout(
         navbar = f7Navbar(title = "f7Notif"),
@@ -56,14 +58,13 @@ if (interactive()) {
       )
     ),
     server = function(input, output, session) {
-      shiny::observeEvent(input$goButton,{
+      observeEvent(input$goButton,{
         f7Notif(
           text = "test",
           icon = f7Icon("bolt_fill"),
           title = "Notification",
           subtitle = "A subtitle",
-          titleRightText = "now",
-          session = session
+          titleRightText = "now"
         )
       })
     }

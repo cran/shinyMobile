@@ -1,9 +1,29 @@
 library(shiny)
 library(shinyMobile)
-shiny::shinyApp(
+
+shinyApp(
   ui = f7Page(
     title = "My app",
-    init = f7Init(theme = "dark", pullToRefresh = TRUE),
+    options = list(
+      theme = "auto",
+      dark = TRUE,
+      filled = FALSE,
+      color = "#007aff",
+      touch = list(
+        tapHold = TRUE,
+        tapHoldDelay = 750,
+        iosTouchRipple = FALSE
+      ),
+      iosTranslucentBars = FALSE,
+      navbar = list(
+        iosCenterTitle = TRUE,
+        hideNavOnPageScroll = TRUE
+      ),
+      toolbar = list(
+        hideNavOnPageScroll = FALSE
+      ),
+      pullToRefresh = TRUE
+    ),
     f7SingleLayout(
       navbar = f7Navbar(
         title = "Standalone tabs",
@@ -102,7 +122,7 @@ shiny::shinyApp(
     observeEvent(input$removeTab, {
       req(randomTab())
       f7RemoveTab(
-        inputId = "tabs",
+        id = "tabs",
         target = paste("Tab", randomTab())
       )
       n$tabs <- n$tabs[-randomTab()]
@@ -112,7 +132,7 @@ shiny::shinyApp(
     # add new tab
     observeEvent(input$ptr,{
       f7InsertTab(
-        inputId = "tabs",
+        id = "tabs",
         tab = f7Tab(
           tabName = paste("Tab", length(n$tabs) + 1),
           f7Block(
@@ -132,7 +152,6 @@ shiny::shinyApp(
     # updateTab selection
     observeEvent(input$updateTab, {
       updateF7Tabs(
-        session = session,
         id = "tabs",
         selected = paste("Tab", sample(n$tabs, 1))
       )

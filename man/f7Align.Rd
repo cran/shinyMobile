@@ -2,7 +2,7 @@
 % Please edit documentation in R/typography.R
 \name{f7Align}
 \alias{f7Align}
-\title{Create a Framework7 align}
+\title{Framework7 align utility}
 \usage{
 f7Align(tag, side = c("left", "center", "right", "justify"))
 }
@@ -12,23 +12,23 @@ f7Align(tag, side = c("left", "center", "right", "justify"))
 \item{side}{Side to align: "left", "center", "right" or "justify".}
 }
 \description{
-Build a Framework7 align
+\link{f7Align} is an alignment utility for items.
 }
 \examples{
 if(interactive()){
  library(shiny)
  library(shinyMobile)
 
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
     title = "Align",
     f7SingleLayout(
      navbar = f7Navbar(title = "f7Align"),
      f7Row(
-     f7Align(h1("Left"), side = "left"),
-     f7Align(h1("Center"), side = "center"),
-     f7Align(h1("Right"), side = "right")
-    )
+      f7Align(h1("Left"), side = "left"),
+      f7Align(h1("Center"), side = "center"),
+      f7Align(h1("Right"), side = "right")
+     )
     )
    ),
    server = function(input, output) {}

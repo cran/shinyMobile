@@ -2,7 +2,7 @@
 % Please edit documentation in R/typography.R
 \name{f7Padding}
 \alias{f7Padding}
-\title{Create a Framework7 padding}
+\title{Framework7 padding utility}
 \usage{
 f7Padding(tag, side = NULL)
 }
@@ -14,7 +14,7 @@ f7Padding(tag, side = NULL)
 Leave NULL to apply on all sides.}
 }
 \description{
-Build a Framework7 padding
+\link{f7Padding} adds padding to the given tag.
 }
 \examples{
 if(interactive()){
@@ -27,12 +27,12 @@ if(interactive()){
    p("The padding is applied here.")
   ),
   footer = tagList(
-    f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
+    f7Button(color = "blue", label = "My button", href = "https://www.google.com"),
     f7Badge("Badge", color = "green")
   )
  )
 
- shiny::shinyApp(
+ shinyApp(
    ui = f7Page(
     title = "Padding",
     f7SingleLayout(navbar = f7Navbar(title = "f7Padding"), cardTag)

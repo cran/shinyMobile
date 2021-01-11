@@ -1,3 +1,86 @@
+# shinyMobile 0.8.0
+
+This release is to addresses the following reverse dependency issue with [shiny](https://github.com/rstudio/shiny/pull/3239). Moreover, it also starts
+the road to v1.0.0 (later this year).
+
+## Soft Deprecations
+- `f7AddMessages()` will become `updateF7Messages()` in future release
+- `f7HideNavbar()` and `f7ShowNavbar()` will be replaced by `updateF7Navbar()`
+- `f7ShowPopup()` will become `updateF7Popup()`
+- `f7checkBox()` will become `f7Checkbox()`
+- `f7checkBoxGroup()` will become `f7CheckboxGroup()`
+- `f7ValidateInput()` will become `validateF7Input()`
+- `f7InsertTab()` and `f7RemoveTab()` will becomes `insertF7Tab()` and `removeF7Tab()`,
+respectively
+- `f7ShowPreloader()` and `f7HidePreloader()` will become `showF7Preloader()` and
+`hideF7Preloader()`, respectively. 
+- `f7Popover()` and `f7PopoverTarget()` replaced by `addF7Popover()` and `toggleF7Popover()`
+- `create_manifest()` is going to be replaced by the workflow described here: https://unleash-shiny.rinterface.com/mobile-pwa.html#charpente-and-pwa-tools
+
+## Breaking changes
+
+### Inputs
+- `updateF7Fabs()`: __inputId__ becomes __id__
+
+### Layout
+- `f7Appbar()`: __left_panel__ becomes __leftPanel__ and __right_panel__ __rightPanel__
+- `f7Init()` removed. Now pass it through the `f7Page()` __options__
+- `f7Navbar()`:  __left_panel__ becomes __leftPanel__ and __right_panel__ __rightPanel__
+- `f7Panel()` and `updateF7Panel()`: __inputId__ becomes __id__
+- `f7InsertTab()` and `f7RemoveTab()`: __inputId__ becomes __id__
+
+### Cards
+- `f7ExpandableCard()` and `f7Card()`: __img__ becomes __image__
+- `f7SocialCard()`: __author_img__ becomes __image__
+
+### Lists
+- `f7ListItem()`: __url__ becomes __href__
+- `f7VirtualListItem()`:  __url__ becomes __href__
+- `updateF7VirtualList()`: __old_index__ and __new_index__ become __oldIndex__ and __newIndex__, respectively
+
+### Interactions
+- __session__ not mandatory in `f7Toast()`, `updateF7Progress()`, ... and has been
+swapped at the end of the parameters for more convenience
+- `f7Dialog()`: __inputId__ becomes __id__
+- `updateF7Sheet()`: __inputId__ becomes __id__
+
+
+### Buttons
+- `f7Link()`: __external__ has been removed from  (much simpler), __src__ becomes __href__
+- `f7Button()`: __src__ becomes __href__
+
+### Others
+- __session__ swapped to the end in `f7Gauge()` and not mandatory. Default to `shiny::getDefaultReactiveDomain()`
+- `f7Chip()`: __icon_status__ becomes __iconStatus__, __img__ becomes __image__
+- __inputId__ becomes __id__ in `f7Accordion()` and `updateF7Accordion()`
+- Remove `f7ProgressInf()` (useless)
+- Change `f7Swiper()` API. New __options__ parameter
+- `f7PhotoBrowser()` is now called from the shiny server function. See help, __id__ and 
+__label__ have been removed
+- __id__ mandatory for `f7Searchbar()`
+
+
+## Major changes
+- New `updateF7Entity()`
+- New `updateF7ActionSheet()`
+- New `addF7Tooltip()` and `updateF7Tooltip()` to generate tooltips from the server
+- New __allowPWA__ parameter in `f7Page()` so that we doesn't oblige users to create a PWA
+- `f7Page()` has a new __options__ parameter as replacement of `f7Init()`. Much simpler to handle
+- update framework7 from 5.5.0 to 5.7.14
+- add `f7Menu()`, `f7MenuItem()`, `f7MenuDropdown()`, `f7MenuDropdownDivider()` and `updateF7MenuDropdown()`: special buttons and dropdown elements, behaving like action buttons
+
+## Minor changes
+- app instance accessible from anywhere is JS code
+- New __...__ parameter for `f7PhotoBrowser()`
+- Add choices to `updateF7SmartSelect()`: thanks @Edireito
+- Add disconnect toast if `shiny:disconnect` occurs. Gives ability to reload or reconnect
+
+## Bug fixes
+- Fix #128 and #140: workerId issue in url. Thanks @Tixierae and @ppagnone.
+- Fix #104: f7Picker cannot have NULL value. Prevents JS from breaking. Thanks @Seyphaton
+- Correcting an internal use of `htmltools::attachDependencies()` in `create_app_ui`
+
+
 # shinyMobile 0.7.0
 
 ## Notes

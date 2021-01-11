@@ -12,10 +12,75 @@
 
 <meta name="author" content="David Granjon" />
 
-<meta name="date" content="2020-06-17" />
+<meta name="date" content="2021-01-11" />
 
 <title>Getting Started</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+ul > li > .anchor-section {display: none;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '' || x.matches(':empty')) {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -303,52 +368,42 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Getting Started</h1>
 <h4 class="author">David Granjon</h4>
-<h4 class="date">2020-06-17</h4>
+<h4 class="date">2021-01-11</h4>
 
 
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<ul>
-<li><p>shinyMobile is built on top of the latest <a href="https://framework7.io">framework7</a> template (V5.1.3). It may be used for different purposes:</p>
+<p><code>{shinyMobile}</code> is built on top of the latest <a href="https://framework7.io">framework7</a> template (V5.7.14). It may be used for different purposes:</p>
 <ul>
 <li>develop mobile-ready shinyapps</li>
 <li>develop progressive web shinyapps (PWA, similar to native apps)</li>
 <li>develop desktop shinyapps</li>
-</ul></li>
 </ul>
 </div>
 <div id="custom-skins" class="section level2">
 <h2>Custom skins</h2>
+<p><code>{shinyMobile}</code> has 3 skins:</p>
 <ul>
-<li><p>shinyMobile has 3 skins:</p>
-<ul>
-<li>aurora for desktop apps</li>
-<li>ios and md for mobile apps</li>
-<li>automatically detects if the app is running with android or iOS and accordingly adapt the layout</li>
-</ul></li>
+<li><strong>aurora</strong> for desktop apps</li>
+<li><strong>ios</strong> and <strong>md</strong> for mobile apps</li>
 </ul>
-<p>It is possible to apply the iOS skin on android and inversely, even though not recommended.</p>
-<ul>
-<li>This package also provides 2 themes, namely light and dark. While framework7 allows to apply dark or light theme not only at the global level but at the “widget level”, shinyMobile does not support that feature, to improve the overall consistancy. Only panels can have a color independant of the global theme.</li>
-</ul>
+<p>It automatically detects if the app is running with android or iOS and accordingly adapt the layout. It is of course possible to apply the iOS skin on android and inversely, even though not recommended.</p>
+<p><code>{shinyMobile}</code> also provides 2 themes, namely light and dark. While framework7 allows to apply dark or light theme not only at the global level but at the “widget level”, <code>{shinyMobile}</code> does not support that feature, to improve the overall consistency. Only panels can have a color independent of the global theme.</p>
 </div>
 <div id="layouts" class="section level2">
 <h2>Layouts</h2>
+<p><code>{shinyMobile}</code> brings 3 out of the box layouts:</p>
 <ul>
-<li><p>shinyMobile brings 3 out of the box layouts:</p>
-<ul>
-<li><code>f7SingleLayout</code>: develop simple shinyMobile Apps (best choice for iOS/android Apps)</li>
-<li><code>f7TabLayout</code>: develop complex multi tabbed Apps (best choice for iOS/android Apps)</li>
+<li><code>f7SingleLayout</code>: develop simple apps (best choice for iOS/android Apps)</li>
+<li><code>f7TabLayout</code>: develop complex multi-tabbed Apps (best choice for iOS/android Apps)</li>
 <li><code>f7SplitLayout</code>: for tablets and desktop with a sidebar, navbar and a main panel</li>
 <li>Coming soon: a multi-pages layout with animations between pages!</li>
-</ul></li>
 </ul>
 </div>
 <div id="new-inputs" class="section level2">
 <h2>New Inputs</h2>
-<ul>
-<li><p>shinyMobile has its own custom input widgets with unique design for each skin (iOS/android/aurora):</p>
+<p><code>{shinyMobile}</code> has its own custom input widgets with unique design for each skin (iOS/android/aurora):</p>
 <ul>
 <li><code>f7Slider()</code></li>
 <li><code>f7Text()</code></li>
@@ -366,8 +421,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><code>f7AutoComplete()</code></li>
 <li><code>f7Button()</code>: similar to <code>actionButton()</code> from {shiny}</li>
 <li><code>f7Fab()</code>: enhanced <code>f7Button()</code> with ability to be gathered in a <code>f7Fabs()</code> container</li>
-</ul></li>
-<li><p>It also has custom update functions to act on the server side:</p>
+<li>and more</li>
+</ul>
+<p>It also has custom update functions to act on the server side:</p>
 <ul>
 <li><code>updateF7AutoComplete()</code></li>
 <li><code>updateF7Picker()</code></li>
@@ -377,25 +433,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><code>updateF7Fab()</code></li>
 <li><code>updateF7Text()</code></li>
 <li><code>updateF7Checkbox()</code></li>
-<li>more to come on a future release</li>
-</ul></li>
-<li><p>shinyMobile has custom input values tabs as well as dedicated update functions to act on the server side:</p>
-<ul>
-<li><code>updateF7Tabs()</code></li>
-</ul></li>
-<li><p>shinyMobile has custom input for sidebar (<code>f7Panel()</code>) as well as a serve side update function:</p>
-<ul>
-<li><code>updateF7Panel()</code></li>
-</ul></li>
+<li>and many more</li>
 </ul>
-<p>Finally, it also provides tools to dynamically update widgets on the server side like cards, accordions and more:</p>
+<p>Finally, it also provides tools to dynamically update widgets on the server side like cards, accordions, tabs, panels and more:</p>
 <ul>
 <li><code>updateF7Accordion()</code></li>
 <li><code>updateF7Card()</code></li>
 <li><code>updateF7Gauge()</code></li>
 <li><code>updateF7Progress()</code></li>
 <li><code>updateF7Sheet()</code></li>
-<li>more to come soon</li>
+<li>many more</li>
 </ul>
 </div>
 <div id="create-your-first-app" class="section level2">
@@ -450,7 +497,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb4-12"><a href="#cb4-12"></a>    <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;home&quot;</span>)</span>
 <span id="cb4-13"><a href="#cb4-13"></a>  )</span>
 <span id="cb4-14"><a href="#cb4-14"></a>)</span></code></pre></div>
-<p>The id argument is important if you want to get the currently selected item or update the select tab. Each <code>f7PanelItem</code> has a mandatory tabName. The associated input will be <code>input$menu</code> in that example, with “tab1” for value since the first tab was set to an active state. To adequately link the body and the sidebar, you must wrap the body content in <code>f7Items()</code> containing as many <code>f7Item()</code> as sidebar items. The tabName must correspond!</p>
+<p>The <strong>id</strong> argument is important if you want to get the currently selected item or update the select tab. Each <code>f7PanelItem</code> has a mandatory <strong>tabName</strong>. The associated input will be <code>input$menu</code> in that example, with “tab1” for value since the first tab was set to an active state. To adequately link the body and the sidebar, you must wrap the body content in <code>f7Items()</code> containing as many <code>f7Item()</code> as sidebar items. The <strong>tabName</strong> must correspond!</p>
 </div>
 <div id="core-layout-components" class="section level4">
 <h4>Core Layout Components</h4>
@@ -460,15 +507,35 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>It is the main skeleton of the template.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">f7Page</span>(</span>
 <span id="cb5-2"><a href="#cb5-2"></a>  ..., </span>
-<span id="cb5-3"><a href="#cb5-3"></a>  <span class="dt">init =</span> <span class="kw">f7Init</span>(<span class="dt">skin =</span> <span class="st">&quot;auto&quot;</span>, <span class="dt">theme =</span> <span class="st">&quot;light&quot;</span>),</span>
-<span id="cb5-4"><a href="#cb5-4"></a>  <span class="dt">title =</span> <span class="ot">NULL</span>, </span>
-<span id="cb5-5"><a href="#cb5-5"></a>  <span class="dt">preloader =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb5-6"><a href="#cb5-6"></a>  <span class="dt">loading_duration =</span> <span class="dv">3</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a>)</span></code></pre></div>
-<p><code>f7Init()</code> is mandatory (see below) since it sets up the app. preloader is useful in case you want to display a loading screen. <code>f7Page()</code> accepts any shinyMobile layout.</p>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="dt">options =</span> <span class="kw">list</span>(</span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="dt">theme =</span> <span class="kw">c</span>(<span class="st">&quot;ios&quot;</span>, <span class="st">&quot;md&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;aurora&quot;</span>),</span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="dt">dark =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb5-6"><a href="#cb5-6"></a>    <span class="dt">filled =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb5-7"><a href="#cb5-7"></a>    <span class="dt">color =</span> <span class="st">&quot;#007aff&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8"></a>    <span class="dt">touch =</span> <span class="kw">list</span>(</span>
+<span id="cb5-9"><a href="#cb5-9"></a>      <span class="dt">tapHold =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb5-10"><a href="#cb5-10"></a>      <span class="dt">tapHoldDelay =</span> <span class="dv">750</span>,</span>
+<span id="cb5-11"><a href="#cb5-11"></a>      <span class="dt">iosTouchRipple =</span> <span class="ot">FALSE</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a>    ),</span>
+<span id="cb5-13"><a href="#cb5-13"></a>    <span class="dt">iosTranslucentBars =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb5-14"><a href="#cb5-14"></a>    <span class="dt">navbar =</span> <span class="kw">list</span>(</span>
+<span id="cb5-15"><a href="#cb5-15"></a>      <span class="dt">iosCenterTitle =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb5-16"><a href="#cb5-16"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">TRUE</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a>    ),</span>
+<span id="cb5-18"><a href="#cb5-18"></a>    <span class="dt">toolbar =</span> <span class="kw">list</span>(</span>
+<span id="cb5-19"><a href="#cb5-19"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">FALSE</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a>    ),</span>
+<span id="cb5-21"><a href="#cb5-21"></a>    <span class="dt">pullToRefresh =</span> <span class="ot">FALSE</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a>  ),</span>
+<span id="cb5-23"><a href="#cb5-23"></a>  <span class="dt">title =</span> <span class="ot">NULL</span>, </span>
+<span id="cb5-24"><a href="#cb5-24"></a>  <span class="dt">preloader =</span> <span class="ot">FALSE</span>, </span>
+<span id="cb5-25"><a href="#cb5-25"></a>  <span class="dt">loading_duration =</span> <span class="dv">3</span>,</span>
+<span id="cb5-26"><a href="#cb5-26"></a>  <span class="dt">allowPWA =</span> <span class="ot">FALSE</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a>)</span></code></pre></div>
+<p><strong>options</strong> sets up the app look and feel. <strong>preloader</strong> is useful in case you want to display a loading screen. <code>f7Page()</code> accepts any <code>{shinyMobile}</code> layout.</p>
 <div id="navbar" class="section level5">
 <h5>Navbar</h5>
-<p>The navbar is one of the most important element of any shinyMobile layout. It contains a title, a subtitle, triggers for both right and left panels (<code>f7Panel()</code>) as well as a subnavbar (<code>f7SubNavbar()</code>).</p>
+<p>The <strong>navbar</strong> is a mandatory element of any <code>{shinyMobile}</code> layout. It contains a title, a subtitle, triggers for both right and left panels (<code>f7Panel()</code>) as well as a subnavbar (<code>f7SubNavbar()</code>).</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">f7Navbar</span>(</span>
 <span id="cb6-2"><a href="#cb6-2"></a>  ..., </span>
 <span id="cb6-3"><a href="#cb6-3"></a>  <span class="dt">subNavbar =</span> <span class="ot">NULL</span>, </span>
@@ -477,10 +544,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb6-6"><a href="#cb6-6"></a>  <span class="dt">hairline =</span> <span class="ot">TRUE</span>, </span>
 <span id="cb6-7"><a href="#cb6-7"></a>  <span class="dt">shadow =</span> <span class="ot">TRUE</span>, </span>
 <span id="cb6-8"><a href="#cb6-8"></a>  <span class="dt">bigger =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb6-9"><a href="#cb6-9"></a>  <span class="dt">left_panel =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb6-10"><a href="#cb6-10"></a>  <span class="dt">right_panel =</span> <span class="ot">FALSE</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>  <span class="dt">leftPanel =</span> <span class="ot">FALSE</span>, </span>
+<span id="cb6-10"><a href="#cb6-10"></a>  <span class="dt">rightPanel =</span> <span class="ot">FALSE</span></span>
 <span id="cb6-11"><a href="#cb6-11"></a>)</span></code></pre></div>
-<p>For complex apps, it might be interesting to add a <code>f7SubNavbar(...)</code>. It may contain any element like <code>f7Button()</code> or text. <code>f7Navbar()</code> has also styling parameters such as shadow and hairline. Disclaimer: the bigger parameters does not work well yet… and I suggest to ignore it for the moment.</p>
+<p>For complex apps, it might be interesting to add a <code>f7SubNavbar(...)</code>. It may contain any element like <code>f7Button()</code> or text. <code>f7Navbar()</code> has also styling parameters such as shadow and hairline.</p>
 </div>
 <div id="the-toolbar" class="section level5">
 <h5>The Toolbar</h5>
@@ -493,49 +560,64 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb7-6"><a href="#cb7-6"></a>  <span class="dt">icons =</span> <span class="ot">FALSE</span>, </span>
 <span id="cb7-7"><a href="#cb7-7"></a>  <span class="dt">scrollable =</span> <span class="ot">FALSE</span></span>
 <span id="cb7-8"><a href="#cb7-8"></a>)</span></code></pre></div>
-<p>Interestingly, <code>f7Tabs()</code> is a custom <code>f7Toolbar()</code>!</p>
+<p>Under the hood, <code>f7Tabs()</code> is a custom <code>f7Toolbar()</code>!</p>
 </div>
 <div id="panels" class="section level5">
 <h5>Panels</h5>
 <p>Panels are also called sidebars. <code>f7Panel()</code> is the corresponding function.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">f7Panel</span>(</span>
 <span id="cb8-2"><a href="#cb8-2"></a>  ..., </span>
-<span id="cb8-3"><a href="#cb8-3"></a>  <span class="dt">title =</span> <span class="ot">NULL</span>, </span>
-<span id="cb8-4"><a href="#cb8-4"></a>  <span class="dt">side =</span> <span class="kw">c</span>(<span class="st">&quot;left&quot;</span>, <span class="st">&quot;right&quot;</span>),</span>
-<span id="cb8-5"><a href="#cb8-5"></a>  <span class="dt">theme =</span> <span class="kw">c</span>(<span class="st">&quot;dark&quot;</span>, <span class="st">&quot;light&quot;</span>), </span>
-<span id="cb8-6"><a href="#cb8-6"></a>  <span class="dt">effect =</span> <span class="kw">c</span>(<span class="st">&quot;reveal&quot;</span>, <span class="st">&quot;cover&quot;</span>),</span>
-<span id="cb8-7"><a href="#cb8-7"></a>  <span class="dt">resizable =</span> <span class="ot">FALSE</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a>)</span></code></pre></div>
-<p>Although the App has a theme parameter, <code>f7Panel()</code> has an independant theme option. For instance, it is definitely possible to create a dark <code>f7Panel()</code> while the page theme is light, and conversely. Its behaviour is controlled via the effect argument: - “reveal” will make the body content move and resize - “cover” will cover the body content The resizable argument allows to dynamically resize the panel.</p>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="dt">id =</span> <span class="ot">NULL</span>,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="dt">title =</span> <span class="ot">NULL</span>, </span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="dt">side =</span> <span class="kw">c</span>(<span class="st">&quot;left&quot;</span>, <span class="st">&quot;right&quot;</span>),</span>
+<span id="cb8-6"><a href="#cb8-6"></a>  <span class="dt">theme =</span> <span class="kw">c</span>(<span class="st">&quot;dark&quot;</span>, <span class="st">&quot;light&quot;</span>), </span>
+<span id="cb8-7"><a href="#cb8-7"></a>  <span class="dt">effect =</span> <span class="kw">c</span>(<span class="st">&quot;reveal&quot;</span>, <span class="st">&quot;cover&quot;</span>),</span>
+<span id="cb8-8"><a href="#cb8-8"></a>  <span class="dt">resizable =</span> <span class="ot">FALSE</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a>)</span></code></pre></div>
+<p>Although the App has a <strong>theme</strong> option, <code>f7Panel()</code> has an independent <strong>theme</strong> option. For instance, it is definitely possible to create a dark <code>f7Panel()</code> while the page theme is light, and conversely. Its behaviour is controlled via the effect argument:</p>
+<ul>
+<li><strong>reveal</strong> will make the body content move and resize</li>
+<li><strong>cover</strong> will cover the body content</li>
+</ul>
+<p>The <strong>resizable</strong> argument allows to dynamically resize the panel.</p>
 <p>Note that for the moment, there is no option to control the width of each panel.</p>
-<p>As stated previously for the <code>f7SplitLayout</code>, the <code>f7Panel()</code> may also be considered as a sidebar. In that case, we may include <code>f7PanelMenu()</code>. Finally do not forget to set up the <code>f7Navbar()</code> so that panels are allowed!</p>
+<p>As stated previously for the <code>f7SplitLayout()</code>, the <code>f7Panel()</code> may also be considered as a sidebar. In that case, we may include <code>f7PanelMenu()</code>. Finally do not forget to set up the <code>f7Navbar()</code> so that panels are allowed!</p>
 </div>
 <div id="the-appbar" class="section level5">
 <h5>The appbar</h5>
 <p><code>f7Appbar()</code> is displayed on top of the <code>f7Navbar()</code>. It is a best choice to embed <code>f7Searchbar()</code>. <code>f7Appbar()</code> may also trigger <code>f7Panel()</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">f7Appbar</span>(</span>
 <span id="cb9-2"><a href="#cb9-2"></a>  ..., </span>
-<span id="cb9-3"><a href="#cb9-3"></a>  <span class="dt">left_panel =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb9-4"><a href="#cb9-4"></a>  <span class="dt">right_panel =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>  <span class="dt">leftPanel =</span> <span class="ot">FALSE</span>, </span>
+<span id="cb9-4"><a href="#cb9-4"></a>  <span class="dt">rightPanel =</span> <span class="ot">FALSE</span>,</span>
 <span id="cb9-5"><a href="#cb9-5"></a>  <span class="dt">maximizable =</span> <span class="ot">FALSE</span></span>
 <span id="cb9-6"><a href="#cb9-6"></a>)</span></code></pre></div>
 </div>
 </div>
-<div id="app-initialization" class="section level4">
-<h4>App Initialization</h4>
-<p>This is probably the most inportant function of the template: <code>f7Init()</code>. This functions helps to set up the template as well as properly initializing the main view of your app.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">f7Init</span>(</span>
-<span id="cb10-2"><a href="#cb10-2"></a>  <span class="dt">skin =</span> <span class="kw">c</span>(<span class="st">&quot;ios&quot;</span>, <span class="st">&quot;md&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;aurora&quot;</span>), </span>
-<span id="cb10-3"><a href="#cb10-3"></a>  <span class="dt">theme =</span> <span class="kw">c</span>(<span class="st">&quot;dark&quot;</span>, <span class="st">&quot;light&quot;</span>), </span>
-<span id="cb10-4"><a href="#cb10-4"></a>  <span class="dt">filled =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb10-5"><a href="#cb10-5"></a>  <span class="dt">color =</span> <span class="ot">NULL</span>, </span>
-<span id="cb10-6"><a href="#cb10-6"></a>  <span class="dt">tapHold =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb10-7"><a href="#cb10-7"></a>  <span class="dt">iosTouchRipple =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb10-8"><a href="#cb10-8"></a>  <span class="dt">iosCenterTitle =</span> <span class="ot">TRUE</span>, </span>
-<span id="cb10-9"><a href="#cb10-9"></a>  <span class="dt">hideNavOnPageScroll =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb10-10"><a href="#cb10-10"></a>  <span class="dt">hideTabsOnPageScroll =</span> <span class="ot">FALSE</span></span>
-<span id="cb10-11"><a href="#cb10-11"></a>)</span></code></pre></div>
-<p>As stated above, you may choose between 3 skins and 2 color themes. There is a third option called “filled” that allows to fill the navbar and toolbar if enabled. The color options simply changes the color of elements such as buttons, panel triggers, tabs triggers, … shinyMobile brings a lot of different colors. hideNavOnPageScroll and hideTabsOnPageScroll allow to hide/show the navbar and toolbar which is useful to focus on the content. The tapHold parameter ensure that the “long-press” feature is activated. framework7 has more options which will be implemented in a next version of shinyMobile.</p>
+<div id="options" class="section level4">
+<h4>Options</h4>
+<p>This is probably the most important element of the template:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>options =<span class="st"> </span><span class="kw">list</span>(</span>
+<span id="cb10-2"><a href="#cb10-2"></a>    <span class="dt">theme =</span> <span class="kw">c</span>(<span class="st">&quot;ios&quot;</span>, <span class="st">&quot;md&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;aurora&quot;</span>),</span>
+<span id="cb10-3"><a href="#cb10-3"></a>    <span class="dt">dark =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb10-4"><a href="#cb10-4"></a>    <span class="dt">filled =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb10-5"><a href="#cb10-5"></a>    <span class="dt">color =</span> <span class="st">&quot;#007aff&quot;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6"></a>    <span class="dt">touch =</span> <span class="kw">list</span>(</span>
+<span id="cb10-7"><a href="#cb10-7"></a>      <span class="dt">tapHold =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb10-8"><a href="#cb10-8"></a>      <span class="dt">tapHoldDelay =</span> <span class="dv">750</span>,</span>
+<span id="cb10-9"><a href="#cb10-9"></a>      <span class="dt">iosTouchRipple =</span> <span class="ot">FALSE</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>    ),</span>
+<span id="cb10-11"><a href="#cb10-11"></a>    <span class="dt">iosTranslucentBars =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb10-12"><a href="#cb10-12"></a>    <span class="dt">navbar =</span> <span class="kw">list</span>(</span>
+<span id="cb10-13"><a href="#cb10-13"></a>      <span class="dt">iosCenterTitle =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb10-14"><a href="#cb10-14"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">TRUE</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a>    ),</span>
+<span id="cb10-16"><a href="#cb10-16"></a>    <span class="dt">toolbar =</span> <span class="kw">list</span>(</span>
+<span id="cb10-17"><a href="#cb10-17"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">FALSE</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a>    ),</span>
+<span id="cb10-19"><a href="#cb10-19"></a>    <span class="dt">pullToRefresh =</span> <span class="ot">FALSE</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a>  )</span></code></pre></div>
+<p>As stated above, you may choose between 3 skins and 2 color themes. There is a third option called <strong>filled</strong> that allows to fill the navbar and toolbar if enabled. The <strong>color</strong> options simply changes the color of elements such as buttons, panel triggers, tabs triggers, … <code>{shinyMobile}</code> brings a lot of different colors. <strong>hideOnPageScroll</strong> allow to hide/show the navbar and toolbar which is useful to focus on the content. The <strong>tapHold</strong> parameter ensure that the “long-press” feature is activated. Framework7 has many more options which can be passed through this <strong>options</strong> parameter</p>
 </div>
 </div>
 

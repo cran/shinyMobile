@@ -1,4 +1,4 @@
-#' Create a Framework7 row container
+#' Framework7 row container
 #'
 #' Build a Framework7 row container
 #'
@@ -10,7 +10,7 @@
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'   ui = f7Page(
 #'     title = "Grid",
 #'     f7SingleLayout(
@@ -51,7 +51,7 @@ f7Row <- function(..., gap = TRUE) {
 
 
 
-#' Create a Framework7 column container
+#' Framework7 column container
 #'
 #' Build a Framework7 column container
 #'
@@ -69,7 +69,7 @@ f7Col <- function(...) shiny::tags$div(class = "col", ...)
 
 
 
-#' Create a Framework7 flex container
+#' Framework7 flex container
 #'
 #' Build a Framework7 flex container
 #'
@@ -80,16 +80,16 @@ f7Col <- function(...) shiny::tags$div(class = "col", ...)
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'     title = "Align",
 #'     f7SingleLayout(
 #'      navbar = f7Navbar(title = "f7Flex"),
 #'      f7Flex(
-#'      f7Block(strong = TRUE),
-#'      f7Block(strong = TRUE),
-#'      f7Block(strong = TRUE)
-#'     )
+#'       f7Block(strong = TRUE),
+#'       f7Block(strong = TRUE),
+#'       f7Block(strong = TRUE)
+#'      )
 #'     )
 #'    ),
 #'    server = function(input, output) {}
