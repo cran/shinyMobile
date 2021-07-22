@@ -30,7 +30,7 @@ f7Chip(
 \item{closable}{Whether to close the chip. FALSE by default.}
 }
 \description{
-\link{f7Chip} is an improved badge container.
+\code{f7Chip} is an improved badge container.
 }
 \examples{
 if(interactive()){
@@ -46,8 +46,8 @@ if(interactive()){
         strong = TRUE,
         f7Chip(label = "simple Chip"),
         f7Chip(label = "outline Chip", outline = TRUE),
-        f7Chip(label = "icon Chip", icon = f7Icon("add_round"), iconStatus = "pink"),
-        f7Chip(label = "image Chip", image = "https://lorempixel.com/64/64/people/9/"),
+        f7Chip(label = "icon Chip", icon = f7Icon("plus_circle_fill"), iconStatus = "pink"),
+        f7Chip(label = "image Chip", image = "https://loremflickr.com/g/320/240/london"),
         f7Chip(label = "closable Chip", closable = TRUE),
         f7Chip(label = "colored Chip", status = "green"),
         f7Chip(label = "colored outline Chip", status = "green", outline = TRUE)

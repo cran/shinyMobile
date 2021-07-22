@@ -47,20 +47,7 @@ preview_mobile <- function(appPath = NULL, url = NULL, port = 3838,
   if (!is.null(appPath) & is.null(port)) stop("Please set a port when running locally")
 
   # set up the height
-  appHeight <- switch(
-    device,
-    "iphoneX" = if (!landscape) 812 else 375,
-    "galaxyNote8" = if (!landscape) 822 else 400,
-    "iphone8" = if (!landscape) 670 else 375,
-    "iphone8+" = if (!landscape) 736 else 415,
-    "iphone5s" = if (!landscape) 570 else 325,
-    "iphone5c" = if (!landscape) 570 else 325,
-    "ipadMini" = if (!landscape) 770 else 580,
-    "iphone4s" = if (!landscape) 485 else 325,
-    "nexus5" = if (!landscape) 570 else 320,
-    "galaxyS5" = if (!landscape) 570 else 320,
-    "htcOne" = if (!landscape) 570 else 320
-  )
+  appHeight <- set_app_height(device, landscape)
 
   # run the shiny app to test
   if (!is.null(appPath)) {
@@ -98,10 +85,28 @@ preview_mobile <- function(appPath = NULL, url = NULL, port = 3838,
 }
 
 
+set_app_height <- function(device, landscape) {
+  switch(
+    device,
+    "iphoneX" = if (!landscape) 812 else 375,
+    "galaxyNote8" = if (!landscape) 822 else 400,
+    "iphone8" = if (!landscape) 670 else 375,
+    "iphone8+" = if (!landscape) 736 else 415,
+    "iphone5s" = if (!landscape) 570 else 325,
+    "iphone5c" = if (!landscape) 570 else 325,
+    "ipadMini" = if (!landscape) 770 else 580,
+    "iphone4s" = if (!landscape) 485 else 325,
+    "nexus5" = if (!landscape) 570 else 320,
+    "galaxyS5" = if (!landscape) 570 else 320,
+    "htcOne" = if (!landscape) 570 else 320
+  )
+}
+
+
 
 #' Create the app UI
 #'
-#' Internal
+#' @keywords Internal
 #'
 #' @param iframe iframe tag designed by \link{preview_mobile}.
 #' @param device See \link{preview_mobile} input.

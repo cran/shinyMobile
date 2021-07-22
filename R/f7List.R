@@ -230,7 +230,7 @@ f7ListItem <- function(..., title = NULL, subtitle = NULL, header = NULL, footer
 
 #' Create a framework 7 group of contacts
 #'
-#' @param ... slot for \link{f7ListItem}.
+#' @param ... slot for \link{f7ListIndexItem}.
 #' @param title Group title.
 #' @export
 f7ListGroup <- function(..., title) {
@@ -348,17 +348,19 @@ f7ListIndex <- function(..., id) {
 
 #' Create a Framework 7 list index item
 #'
-#' @inheritParams htmltools::tags
+#' @param ... Item content.
 #'
 #' @export
-f7ListIndexItem <- htmltools::tags$li
+f7ListIndexItem <- function(...) {
+  htmltools::tags$li(...)
+}
 
 
 
 
 #' Framework7 virtual list
 #'
-#' \link{f7VirtualList} is a high performance list container.
+#' \code{f7VirtualList} is a high performance list container.
 #' Use if you have too many components in \link{f7List}.
 #'
 #' @param id Virtual list unique id.
@@ -395,7 +397,7 @@ f7ListIndexItem <- htmltools::tags$li
 #'         id = "vlist",
 #'         rowsBefore = 2,
 #'         rowsAfter = 2,
-#'         items = lapply(1:20000, function(i) {
+#'         items = lapply(1:2000, function(i) {
 #'           f7VirtualListItem(
 #'             title = paste("Title", i),
 #'             subtitle = paste("Subtitle", i),
@@ -415,34 +417,34 @@ f7ListIndexItem <- htmltools::tags$li
 #'  )
 #'
 #'  # below example will not load with classic f7List
-#'  shinyApp(
-#'    ui = f7Page(
-#'      title = "My app",
-#'      f7SingleLayout(
-#'        navbar = f7Navbar(
-#'          title = "Virtual Lists",
-#'          hairline = FALSE,
-#'          shadow = TRUE
-#'        ),
-#'        # main content
-#'        f7List(
-#'          lapply(1:20000, function(i) {
-#'            f7ListItem(
-#'              title = paste("Title", i),
-#'              subtitle = paste("Subtitle", i),
-#'              header = paste("Header", i),
-#'              footer = paste("Footer", i),
-#'              right = paste("Right", i),
-#'              content = i
-#'            )
-#'          })
-#'        )
-#'      )
-#'    ),
-#'    server = function(input, output) {
-#'
-#'    }
-#'  )
+#'  #shinyApp(
+#'  #  ui = f7Page(
+#'  #    title = "My app",
+#'  #    f7SingleLayout(
+#'  #      navbar = f7Navbar(
+#'  #        title = "Virtual Lists",
+#'  #        hairline = FALSE,
+#'  #        shadow = TRUE
+#'  #      ),
+#'  #      # main content
+#'  #      f7List(
+#'  #        lapply(1:20000, function(i) {
+#'  #          f7ListItem(
+#'  #            title = paste("Title", i),
+#'  #            subtitle = paste("Subtitle", i),
+#'  #            header = paste("Header", i),
+#'  #            footer = paste("Footer", i),
+#'  #            right = paste("Right", i),
+#'  #            content = i
+#'  #          )
+#'  #        })
+#'  #      )
+#'  #    )
+#'  #  ),
+#'  #  server = function(input, output) {
+#'  #
+#'  #  }
+#'  #)
 #' }
 f7VirtualList <- function(id, items, rowsBefore = NULL, rowsAfter = NULL,
                           cache = TRUE) {
@@ -474,7 +476,7 @@ f7VirtualList <- function(id, items, rowsBefore = NULL, rowsAfter = NULL,
 
 #' Framework7 virtual list item
 #'
-#' \link{f7VirtualListItem} is an item component for \link{f7VirtualList}.
+#' \code{f7VirtualListItem} is an item component for \link{f7VirtualList}.
 #'
 #' @inheritParams f7ListItem
 #' @rdname virtuallist
@@ -499,7 +501,7 @@ f7VirtualListItem <- function(..., title = NULL, subtitle = NULL, header = NULL,
 
 
 
-#' Update a \link{f7VirtualList} on the server side
+#' Update an \link{f7VirtualList} on the server side
 #'
 #' This function wraps all methods from \url{https://framework7.io/docs/virtual-list.html}
 #'

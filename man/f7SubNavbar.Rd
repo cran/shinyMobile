@@ -10,7 +10,7 @@ f7SubNavbar(...)
 \item{...}{Any elements.}
 }
 \description{
-\link{f7SubNavbar} creates a nested navbar component for
+\code{f7SubNavbar} creates a nested navbar component for
 \link{f7Navbar}.
 }
 \examples{
@@ -33,9 +33,9 @@ if (interactive()) {
            leftPanel = TRUE,
            rightPanel = TRUE,
            subNavbar = f7SubNavbar(
-              f7Button(label = "My button", outline = TRUE),
-              f7Button(label = "My button", outline = TRUE),
-              f7Button(label = "My button", outline = TRUE)
+              f7Button(label = "My button"),
+              f7Button(label = "My button"),
+              f7Button(label = "My button")
            )
         ),
         f7Tabs(
@@ -43,7 +43,7 @@ if (interactive()) {
            #swipeable = TRUE,
            f7Tab(
               tabName = "Tab 1",
-              icon = f7Icon("email"),
+              icon = f7Icon("envelope"),
               active = TRUE,
               "Tab 1"
            ),

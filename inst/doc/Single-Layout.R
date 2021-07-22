@@ -1,3 +1,10 @@
+## ---- echo=FALSE--------------------------------------------------------------
+shinyMobile:::app_container(
+  "https://dgranjon.shinyapps.io/miniUI2Single", 
+  deps = TRUE,
+  skin = "iphone8"
+)
+
 ## ---- eval=FALSE--------------------------------------------------------------
 #  library(shiny)
 #  library(shinyMobile)

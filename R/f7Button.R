@@ -1,6 +1,6 @@
 #' Framework7 action button
 #'
-#' \link{f7Button} generates a Framework7 action button.
+#' \code{f7Button} generates a Framework7 action button.
 #'
 #' @param inputId The input slot that will be used to access the value.
 #' @param label The contents of the button or link–usually a text label,
@@ -48,7 +48,9 @@ f7Button <- function(inputId = NULL, label = NULL, href = NULL,
 
   value <- if (!is.null(inputId)) shiny::restoreInput(id = inputId, default = NULL)
 
-  shiny::tags$button(
+  func <- if (!is.null(href)) shiny::tags$a else shiny::tags$button
+
+  func(
     id = inputId,
     type = "button",
     class = buttonCl,
@@ -62,7 +64,7 @@ f7Button <- function(inputId = NULL, label = NULL, href = NULL,
 
 #' Update action button
 #'
-#' \link{updateF7Button} updates a \link{f7Button}.
+#' \code{updateF7Button} updates an \link{f7Button}.
 #'
 #' @param inputId The input slot that will be used to access the value.
 #' @param label The contents of the button or link–usually a text label,

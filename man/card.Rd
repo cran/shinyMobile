@@ -60,14 +60,14 @@ Not compatible with the img argument.}
 \item{session}{Shiny session object.}
 }
 \description{
-\link{f7Card} creates a simple card container.
+\code{f7Card} creates a simple card container.
 
-\link{f7SocialCard} is a special card for social content.
+\code{f7SocialCard} is a special card for social content.
 
-\link{f7ExpandableCard} is a card that can expand. Ideal for a
+\code{f7ExpandableCard} is a card that can expand. Ideal for a
 gallery.
 
-\link{updateF7Card} maximizes a \link{f7ExpandableCard} on the client.
+\code{updateF7Card} maximizes an \link{f7ExpandableCard} on the client.
 }
 \note{
 For \link{f7ExpandableCard}, image and color are not compatible. Choose one of them.
@@ -92,18 +92,18 @@ if(interactive()){
      but cards can also contain their own header,
      footer, list view, image, or any other element.",
      footer = tagList(
-      f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
+      f7Button(color = "blue", label = "My button"),
       f7Badge("Badge", color = "green")
      )
     ),
     f7Card(
      title = "Card header",
-     image = "https://lorempixel.com/1000/600/nature/3/",
+     image = "https://loremflickr.com/320/240",
      "This is a simple card with plain text,
      but cards can also contain their own header,
      footer, list view, image, or any other element.",
      footer = tagList(
-      f7Button(color = "blue", label = "My button", src = "https://www.google.com"),
+      f7Button(color = "blue", label = "My button"),
       f7Badge("Badge", color = "green")
      )
     )
@@ -124,11 +124,11 @@ if(interactive()){
     f7SingleLayout(
      navbar = f7Navbar(title = "f7SocialCard"),
      f7SocialCard(
-     image = "https://lorempixel.com/68/68/people/1/",
+     image = "https://loremflickr.com/g/320/240/paris",
      author = "John Doe",
      date = "Monday at 3:47 PM",
      "What a nice photo i took yesterday!",
-     img(src = "https://lorempixel.com/1000/700/nature/8/", width = "100\%"),
+     img(src = "https://loremflickr.com/g/320/240/paris", width = "100\%"),
      footer = tagList(
       f7Badge("1", color = "yellow"),
       f7Badge("2", color = "green"),

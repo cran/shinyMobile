@@ -4,6 +4,14 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
+## ---- echo=FALSE--------------------------------------------------------------
+shinyMobile:::app_container(
+  "https://dgranjon.shinyapps.io/miniUI2Split", 
+  deps = TRUE,
+  skin = "ipadMini",
+  color = "black"
+)
+
 ## ---- eval=FALSE--------------------------------------------------------------
 #  library(shiny)
 #  library(ggplot2)

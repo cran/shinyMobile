@@ -14,7 +14,8 @@ f7SmartSelect(
   searchbar = TRUE,
   multiple = FALSE,
   maxlength = NULL,
-  virtualList = FALSE
+  virtualList = FALSE,
+  ...
 )
 
 updateF7SmartSelect(
@@ -48,18 +49,18 @@ Note that the search bar is only available when the type is popup.}
 \item{virtualList}{Enable Virtual List for smart select if your select has a lot
 of options. Default to FALSE.}
 
-\item{maxLength}{Maximum items to select when multiple is TRUE.}
-
 \item{...}{Parameters used to update the smart select,
 use same arguments as in \code{\link{f7SmartSelect}}.}
+
+\item{maxLength}{Maximum items to select when multiple is TRUE.}
 
 \item{session}{The Shiny session object, usually the default value will suffice.}
 }
 \description{
-\link{f7SmartSelect} is smarter than the classic \link{f7Select},
+\code{f7SmartSelect} is smarter than the classic \link{f7Select},
 allows for choices filtering, ...
 
-\link{updateF7SmartSelect} changes the value of a smart select input on the client.
+\code{updateF7SmartSelect} changes the value of a smart select input on the client.
 }
 \examples{
 # Smart select input
@@ -79,10 +80,22 @@ library(shinyMobile)
          choices = colnames(mtcars)[-1],
          openIn = "popup"
        ),
-       tableOutput("data")
+       tableOutput("data"),
+       f7SmartSelect(
+         inputId = "variable2",
+         label = "Group variables:",
+         choices = list(
+          `East Coast` = list("NY", "NJ", "CT"),
+          `West Coast` = list("WA", "OR", "CA"),
+          `Midwest` = list("MN", "WI", "IA")
+         ),
+         openIn = "sheet"
+       ),
+       textOutput("var")
      )
    ),
    server = function(input, output) {
+     output$var <- renderText(input$variable2)
      output$data <- renderTable({
        mtcars[, c("mpg", input$variable), drop = FALSE]
      }, rownames = TRUE)

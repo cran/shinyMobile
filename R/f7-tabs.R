@@ -6,7 +6,7 @@
 #'
 #' @param ... Slot for \link{f7Tab}.
 #' @param .items Slot for other items that could be part of the toolbar such as
-#' buttons or \link{f7TabLink}. This may be useful to open a \link{f7Sheet} from
+#' buttons or \link{f7TabLink}. This may be useful to open an \link{f7Sheet} from
 #' the tabbar.
 #' @param id Optional to get the id of the currently selected \link{f7Tab}.
 #' @param swipeable Whether to allow finger swip. FALSE by default. Only for touch-screens.
@@ -79,7 +79,7 @@
 #'          style = "strong", animated = FALSE, swipeable = TRUE,
 #'          f7Tab(
 #'            tabName = "Tab 1",
-#'            icon = f7Icon("email"),
+#'            icon = f7Icon("envelope"),
 #'            active = TRUE,
 #'            f7Shadow(
 #'              intensity = 10,
@@ -178,7 +178,6 @@ f7Tabs <- function(..., .items = NULL, id = NULL, swipeable = FALSE, animated = 
   if (swipeable && animated) stop("Cannot use two effects at the same time")
   if (is.null(id)) id <- paste0("tabs_", round(stats::runif(1, min = 0, max = 1e9)))
   ns <- shiny::NS(id)
-
   items <- list(...)
   found_active <- FALSE
 
@@ -270,7 +269,7 @@ f7Tabs <- function(..., .items = NULL, id = NULL, swipeable = FALSE, animated = 
     )
   }
 
-  # this is for the f7InsertTab and f7RemoveTab functions
+  # this is for the insertF7Tab and removeF7Tab functions
   # since the menu container is not the same, we need a common
   # css class.
   tabLinksTag <- tagAppendAttributes(tabLinksTag, class = "tabLinks")
@@ -490,7 +489,7 @@ f7TabLink <- function(..., icon = NULL, label = NULL) {
 #'         f7Tab(
 #'           active = TRUE,
 #'           tabName = 'Main tab',
-#'           icon = f7Icon('document_text'),
+#'           icon = f7Icon('doc_text'),
 #'           h1("This is the first tab."),
 #'           f7Button(inputId ='goto', label = 'Go to hidden tab')
 #'         ),
@@ -530,7 +529,7 @@ updateF7Tabs <- function(id, selected = NULL, session = shiny::getDefaultReactiv
 
 #' Framework7 tab insertion
 #'
-#' \link{f7InsertTab} is deprecated. Inserts a \link{f7Tab} in a \link{f7Tabs}.
+#' \code{insertF7Tab} inserts an \link{f7Tab} in an \link{f7Tabs}.
 #'
 #' @rdname inserttab
 #' @param id  \link{f7Tabs} id.
@@ -541,7 +540,6 @@ updateF7Tabs <- function(id, selected = NULL, session = shiny::getDefaultReactiv
 #' @param session Shiny session object.
 #'
 #' @export
-#'
 #' @examples
 #' if (interactive()) {
 #'  library(shiny)
@@ -550,10 +548,6 @@ updateF7Tabs <- function(id, selected = NULL, session = shiny::getDefaultReactiv
 #'    ui = f7Page(
 #'      title = "Insert a tab Before the target",
 #'      f7TabLayout(
-#'        panels = tagList(
-#'          f7Panel(title = "Left Panel", side = "left", theme = "light", "Blabla", effect = "cover"),
-#'          f7Panel(title = "Right Panel", side = "right", theme = "dark", "Blabla", effect = "cover")
-#'        ),
 #'        navbar = f7Navbar(
 #'          title = "Tabs",
 #'          hairline = FALSE,
@@ -566,27 +560,38 @@ updateF7Tabs <- function(id, selected = NULL, session = shiny::getDefaultReactiv
 #'          id = "tabs",
 #'          f7Tab(
 #'            tabName = "Tab 1",
-#'            icon = f7Icon("email"),
+#'            icon = f7Icon("airplane"),
 #'            active = TRUE,
 #'            "Tab 1",
-#'            f7Button(inputId = "go", label = "Go")
+#'            f7Button(inputId = "add", label = "Add tabs")
 #'          ),
 #'          f7Tab(
 #'            tabName = "Tab 2",
 #'            icon = f7Icon("today"),
 #'            active = FALSE,
+#'            f7Button(inputId="stay", label = "Stay"),
 #'            "Tab 2"
 #'          )
 #'        )
 #'      )
 #'    ),
 #'    server = function(input, output, session) {
-#'      observeEvent(input$go, {
-#'        f7InsertTab(
+#'      observeEvent(input$stay, {
+#'        f7Toast("Please stay")
+#'      })
+#'      observeEvent(input$add, {
+#'        insertF7Tab(
 #'          id = "tabs",
-#'          position = "before",
-#'          target = "Tab 2",
-#'          tab = f7Tab (tabName = paste0("tab_", input$go), "Test"),
+#'          position = "after",
+#'          target = "Tab 1",
+#'          tab = f7Tab (
+#'            # Use multiple elements to test for accessor function
+#'            f7Button(inputId = "add_dynamic", label = "Add dyn"),
+#'            f7Text(inputId = "my_text", label ="Enter something", placeholder = "What?"),
+#'            f7Text(inputId = "my_other", label ="Else:", placeholder = "Else ?"),
+#'            tabName = paste0("tabx_", input$go), "Test2",
+#'            icon = f7Icon("app_badge")
+#'          ),
 #'          select = TRUE
 #'        )
 #'      })
@@ -594,48 +599,41 @@ updateF7Tabs <- function(id, selected = NULL, session = shiny::getDefaultReactiv
 #'  )
 #' }
 #'
-f7InsertTab <- function(id, tab, target, position = c("before", "after"),
+insertF7Tab <- function(id, tab, target, position = c("before", "after"),
                         select = FALSE, session = shiny::getDefaultReactiveDomain()) {
-
-  .Deprecated(
-    "insertF7Tab",
-    package = "shinyMobile",
-    "f7InsertTab will be removed in future release. Please use
-    insertF7Tab instead.",
-    old = as.character(sys.call(sys.parent()))[1L]
-  )
 
   # in shinyMobile, f7Tab returns a list of 3 elements:
   # - 1 is the tag\
   # - 2 is the icon name
   # - 3 is the tabName
   # Below we check if the tag is really a shiny tag...
-  if (!(class(tab[[1]]) %in% c("shiny.tag" , "shiny.tag.list"))) stop("tab must be a shiny tag")
+  if (!(class(tab[[1]]) %in% c("shiny.tag" , "shiny.tag.list"))) {
+    stop("tab must be a shiny tag")
+  }
 
   nsWrapper <- shiny::NS(id)
   position <- match.arg(position)
-
-  # create the corresponding tablink
+  # create the corresponding tab-link
   tabId <- gsub(" ", "", nsWrapper(tab[[1]]$attribs$id), fixed = TRUE)
-
+  children = tab[[1]]$children
   tabLink <- shiny::a(
-    class = "tab-link",
+    class = if (select) "tab-link tab-link-active" else "tab-link",
     `data-tab` = paste0("#", nsWrapper(tab[[1]]$attribs$id)),
-    tab[[3]]
+    tab[[2]],
+    shiny::span(class = "tabbar-label", tab[[1]]$attribs$`data-value`)
   )
   tabLink <- as.character(force(tabLink))
 
   # force to render shiny.tag and convert it to character
   # since text does not accept anything else
   tab[[1]]$attribs$id <- nsWrapper(tab[[1]]$attribs$id)
-  tab <- as.character(force(tab[[1]]))
 
   # remove all whitespace from the target name
   target <- gsub(" ", "", target, fixed = TRUE)
 
   message <- dropNulls(
     list(
-      value = tab,
+      value = processDeps(tab[[1]], session),
       id = tabId,
       link = tabLink,
       target = target,
@@ -654,16 +652,26 @@ f7InsertTab <- function(id, tab, target, position = c("before", "after"),
 
 #' Framework7 tab insertion
 #'
-#' \link{insertF7Tab} inserts a \link{f7Tab} in a \link{f7Tabs}.
-#' @rdname inserttab
+#' @rdname f7-deprecated
+#' @inheritParams insertF7Tab
+#' @keywords internal
 #' @export
-insertF7Tab <- f7InsertTab
+f7InsertTab <- function(id, tab, target, position = c("before", "after"),
+                        select = FALSE, session = shiny::getDefaultReactiveDomain()) {
+  .Deprecated(
+    "insertF7Tab",
+    package = "shinyMobile",
+    "f7InsertTab will be removed in future release. Please use
+      insertF7Tab instead."
+  )
+  insertF7Tab(id, tab, target, position, select, session)
+}
 
 
 
 #' Framework7 tab deletion
 #'
-#' \link{f7RemoveTab} is deprecated. It removes a \link{f7Tab} in a \link{f7Tabs}.
+#' \code{removeF7Tab} removes an \link{f7Tab} in a \link{f7Tabs}.
 #'
 #' @param id  \link{f7Tabs} id.
 #' @param target \link{f7Tab} to remove.
@@ -717,7 +725,7 @@ insertF7Tab <- f7InsertTab
 #'  server <- function(input, output, session) {
 #'    observe(print(input$tabset1))
 #'    observeEvent(input$remove1, {
-#'      f7RemoveTab(
+#'      removeF7Tab(
 #'        id = "tabset1",
 #'        target = "Tab 1"
 #'      )
@@ -725,16 +733,8 @@ insertF7Tab <- f7InsertTab
 #'  }
 #'  shinyApp(ui, server)
 #' }
-f7RemoveTab <- function(id, target, session = shiny::getDefaultReactiveDomain()) {
+removeF7Tab <- function(id, target, session = shiny::getDefaultReactiveDomain()) {
 
-
-  .Deprecated(
-    "removeF7Tab",
-    package = "shinyMobile",
-    "f7RemoveTab will be removed in future release. Please use
-    removeF7Tab instead.",
-    old = as.character(sys.call(sys.parent()))[1L]
-  )
   # tabsetpanel namespace
   ns <- id
 
@@ -756,9 +756,21 @@ f7RemoveTab <- function(id, target, session = shiny::getDefaultReactiveDomain())
 }
 
 
-#' Framework7 tab deletion
+#' Deprecated functions
 #'
-#' \link{removeF7Tab} removes a \link{f7Tab} in a \link{f7Tabs}.
-#' @rdname removetab
+#' \code{removeF7Tab} removes an \link{f7Tab} in an \link{f7Tabs}.
+#' Use \link{removeF7Tab} instead
+
+#' @rdname f7-deprecated
+#' @inheritParams removeF7Tab
+#' @keywords internal
 #' @export
-removeF7Tab <- f7RemoveTab
+f7RemoveTab <- function(id, target, session = shiny::getDefaultReactiveDomain()) {
+  .Deprecated(
+    "removeF7Tab",
+    package = "shinyMobile",
+    "f7RemoveTab will be removed in future release. Please use
+      removeF7Tab instead."
+  )
+  removeF7Tab(id, target, session)
+}

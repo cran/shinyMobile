@@ -14,6 +14,7 @@ f7Gauge(
   borderBgColor = "#eeeeee",
   borderColor = "#000000",
   borderWidth = "10",
+  valueText = NULL,
   valueTextColor = "#000000",
   valueFontSize = "31",
   valueFontWeight = "500",
@@ -32,6 +33,7 @@ updateF7Gauge(
   borderBgColor = NULL,
   borderColor = NULL,
   borderWidth = NULL,
+  valueText = NULL,
   valueTextColor = NULL,
   valueFontSize = NULL,
   valueFontWeight = NULL,
@@ -58,6 +60,8 @@ updateF7Gauge(
 
 \item{borderWidth}{Main border/stroke width.}
 
+\item{valueText}{Gauge value text (large text in the center of gauge).}
+
 \item{valueTextColor}{Value text color.}
 
 \item{valueFontSize}{Value text font size.}
@@ -75,9 +79,9 @@ updateF7Gauge(
 \item{session}{Shiny session object.}
 }
 \description{
-\link{f7Gauge} creates a gauge instance.
+\code{f7Gauge} creates a gauge instance.
 
-\link{updateF7Gauge} updates a framework7 gauge from the server side.
+\code{updateF7Gauge} updates a framework7 gauge from the server side.
 }
 \examples{
 # Gauge

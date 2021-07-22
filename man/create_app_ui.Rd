@@ -16,5 +16,6 @@ create_app_ui(iframe, device, color, landscape)
 \item{landscape}{See \link{preview_mobile} input.}
 }
 \description{
-Internal
+Create the app UI
 }
+\keyword{Internal}

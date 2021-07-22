@@ -1,6 +1,6 @@
 #' Framework7 autocomplete input
 #'
-#' \link{f7AutoComplete} generates a Framework7 autocomplete input.
+#' \code{f7AutoComplete} generates a Framework7 autocomplete input.
 #'
 #' @param inputId Autocomplete input id.
 #' @param label Autocomplete label.
@@ -78,6 +78,8 @@ f7AutoComplete <- function(inputId, label, placeholder = NULL,
                            dropdownPlaceholderText = NULL, multiple = FALSE) {
 
   type <- match.arg(openIn)
+
+  if(is.null(value)) value <- character()
 
   value <- jsonlite::toJSON(value)
   choices <- jsonlite::toJSON(choices)
@@ -170,7 +172,7 @@ f7AutoComplete <- function(inputId, label, placeholder = NULL,
 
 #' Update Framework7 autocomplete
 #'
-#' \link{updateF7AutoComplete} Change the value of an autocomplete input on the client.
+#' \code{updateF7AutoComplete} changes the value of an autocomplete input on the client.
 #'
 #' @param inputId The id of the input object.
 #' @param value New value.
@@ -238,7 +240,7 @@ updateF7AutoComplete <- function(inputId, value =  NULL,
 
 #' Framework7 picker input
 #'
-#' \link{f7Picker} generates a picker input.
+#' \code{f7Picker} generates a picker input.
 #'
 #' @param inputId Picker input id.
 #' @param label Picker label.
@@ -361,7 +363,7 @@ f7Picker<- function(inputId, label, placeholder = NULL, value = choices[1], choi
 
 #' Update Framework7 picker
 #'
-#' \link{updateF7Picker} changes the value of a picker input on the client.
+#' \code{updateF7Picker} changes the value of a picker input on the client.
 #'
 #' @param inputId The id of the input object.
 #' @param value Picker initial value, if any.
@@ -625,7 +627,7 @@ f7ColorPicker <- function(inputId, label, value = "#ff0000", placeholder = NULL,
 
 #' Framework7 date picker
 #'
-#' \link{f7DatePicker} creates a Framework7 date picker input.
+#' \code{f7DatePicker} creates a Framework7 date picker input.
 #'
 #' @param inputId Date input id.
 #' @param label Input label.
@@ -773,7 +775,7 @@ f7DatePicker <- function(inputId, label, value = NULL, multiple = FALSE, directi
 
 #' Update Framework7 date picker
 #'
-#' \link{updateF7DatePicker} changes the value of a date picker input on the client.
+#' \code{updateF7DatePicker} changes the value of a date picker input on the client.
 #'
 #' @param inputId The id of the input object.
 #' @param value The new value for the input.
@@ -863,17 +865,15 @@ updateF7DatePicker <- function(inputId, value = NULL, ...,
 
 
 
-
 #' Framework7 checkbox
 #'
-#' Deprecated. \link{f7checkBox} creates a checkbox input.
+#' \link{f7Checkbox} creates a checkbox input.
 #'
 #' @param inputId The input slot that will be used to access the value.
 #' @param label Display label for the control, or NULL for no label.
 #' @param value Initial value (TRUE or FALSE).
 #'
 #' @rdname checkbox
-#'
 #' @examples
 #' if(interactive()){
 #'  library(shiny)
@@ -883,9 +883,9 @@ updateF7DatePicker <- function(inputId, value = NULL, ...,
 #'    ui = f7Page(
 #'     title = "My app",
 #'     f7SingleLayout(
-#'      navbar = f7Navbar(title = "f7checkBox"),
+#'      navbar = f7Navbar(title = "f7Checkbox"),
 #'      f7Card(
-#'       f7checkBox(
+#'       f7Checkbox(
 #'        inputId = "check",
 #'        label = "Checkbox",
 #'        value = FALSE
@@ -901,15 +901,7 @@ updateF7DatePicker <- function(inputId, value = NULL, ...,
 #' }
 #
 #' @export
-f7checkBox <- function(inputId, label, value = FALSE){
-
-  .Deprecated(
-    "f7Checkbox",
-    package = "shinyMobile",
-    "f7checkBox will be removed in future release. Please use
-    f7Checkbox instead.",
-    old = as.character(sys.call(sys.parent()))[1L]
-  )
+f7Checkbox <- function(inputId, label, value = FALSE) {
 
   value <- shiny::restoreInput(id = inputId, default = value)
   inputTag <- shiny::tags$input(id = inputId, type = "checkbox")
@@ -927,23 +919,30 @@ f7checkBox <- function(inputId, label, value = FALSE){
 }
 
 
-#' Framework7 checkbox
-#'
-#' \link{f7Checkbox} creates a checkbox input.
-#'
-#' @param inputId The input slot that will be used to access the value.
-#' @param label Display label for the control, or NULL for no label.
-#' @param value Initial value (TRUE or FALSE).
-#'
-#' @rdname checkbox
-f7Checkbox <- f7checkBox
 
+#' Deprecated functions
+#'
+#' \code{f7checkBox} creates a checkbox input. Use \link{f7Checkbox} instead.
+#'
+#' @rdname f7-deprecated
+#' @inheritParams f7checkBoxGroup
+#' @keywords internal
+#' @export
+f7checkBox <- function(inputId, label, value = FALSE){
 
+  .Deprecated(
+    "f7Checkbox",
+    package = "shinyMobile",
+    "f7checkBox will be removed in future release. Please use
+      f7Checkbox instead.",
+    old = as.character(sys.call(sys.parent()))[1L])
+  f7Checkbox(inputId, label, value)
+}
 
 
 #' Update Framework7 checkbox
 #'
-#' \link{updateF7Checkbox} changes the value of a checkbox input on the client.
+#' \code{updateF7Checkbox} changes the value of a checkbox input on the client.
 #'
 #' @rdname checkbox
 #' @param inputId The id of the input object.
@@ -1010,7 +1009,7 @@ updateF7Checkbox <- function(inputId, label = NULL, value = NULL,
 
 #' Framework7 checkbox group
 #'
-#' Deprecated. Creates a checkbox group input
+#' \code{f7CheckboxGroup} creates a checkbox group input
 #'
 #' @param inputId Checkbox group input.
 #' @param label Checkbox group label.
@@ -1029,8 +1028,8 @@ updateF7Checkbox <- function(inputId, label = NULL, value = NULL,
 #'     ui = f7Page(
 #'      title = "My app",
 #'      f7SingleLayout(
-#'       navbar = f7Navbar(title = "f7checkBoxGroup"),
-#'       f7checkBoxGroup(
+#'       navbar = f7Navbar(title = "f7CheckboxGroup"),
+#'       f7CheckboxGroup(
 #'        inputId = "variable",
 #'        label = "Choose a variable:",
 #'        choices = colnames(mtcars)[-1],
@@ -1046,15 +1045,7 @@ updateF7Checkbox <- function(inputId, label = NULL, value = NULL,
 #'     }
 #'   )
 #'  }
-f7checkBoxGroup <- function(inputId, label, choices = NULL, selected = NULL) {
-
-  .Deprecated(
-    "f7CheckboxGroup",
-    package = "shinyMobile",
-    "f7checkBoxGroup will be removed in future release. Please use
-    f7CheckboxGroup instead.",
-    old = as.character(sys.call(sys.parent()))[1L]
-  )
+f7CheckboxGroup <- function(inputId, label, choices = NULL, selected = NULL) {
 
   selectedPosition <- if (!is.null(selected)) match(selected, choices) else NULL
 
@@ -1096,19 +1087,27 @@ f7checkBoxGroup <- function(inputId, label, choices = NULL, selected = NULL) {
 
 
 
-#' Framework7 checkbox group
+#' Deprecated functions
 #'
-#' Creates a checkbox group input
+#' \code{f7checkBoxGroup} creates a checkbox group input.
+#' Use \link{f7CheckboxGroup} instead
 #'
-#' @param inputId Checkbox group input.
-#' @param label Checkbox group label.
-#' @param choices Checkbox group choices.
-#' @param selected Checkbox group selected value.
-#'
+#' @rdname f7-deprecated
+#' @inheritParams f7checkBoxGroup
+#' @keywords internal
 #' @export
-#' @rdname checkboxgroup
-f7CheckboxGroup <- f7checkBoxGroup
+f7checkBoxGroup <- function(inputId, label, choices = NULL, selected = NULL) {
 
+  .Deprecated(
+    "f7CheckboxGroup",
+    package = "shinyMobile",
+    "f7checkBoxGroup will be removed in future release. Please use
+    f7CheckboxGroup instead.",
+    old = as.character(sys.call(sys.parent()))[1L]
+  )
+
+  f7CheckboxGroup(inputId, label, choices, selected)
+}
 
 
 
@@ -1123,13 +1122,28 @@ f7CheckboxGroup <- f7checkBoxGroup
 createSelectOptions <- function(choices, selected) {
   choices <- choicesWithNames(choices)
   options <- lapply(X = seq_along(choices), function(i) {
-    shiny::tags$option(
-      value = choices[[i]],
-      names(choices)[i],
-      selected = if (!is.null(selected)) {
-        if (choices[[i]] %in% selected) NA else NULL
-      }
-    )
+    if (inherits(choices[[1]], "list")) {
+      shiny::tags$optgroup(
+        label = names(choices)[i],
+        lapply(X = seq_along(choices[[i]]), function(j) {
+          shiny::tags$option(
+            value = choices[[i]][[j]],
+            names(choices[[i]])[j],
+            selected = if (!is.null(selected)) {
+              if (choices[[i]][[j]] %in% selected) NA else NULL
+            }
+          )
+        })
+      )
+    } else {
+      shiny::tags$option(
+        value = choices[[i]],
+        names(choices)[i],
+        selected = if (!is.null(selected)) {
+          if (choices[[i]] %in% selected) NA else NULL
+        }
+      )
+    }
   })
 
   return(options)
@@ -1171,7 +1185,7 @@ choicesWithNames <- function(choices) {
 
 #' Framework7 select input
 #'
-#' \link{f7Select} creates a select input.
+#' \code{f7Select} creates a select input.
 #'
 #' @param inputId Select input id.
 #' @param label Select input label.
@@ -1244,7 +1258,7 @@ f7Select <- function(inputId, label, choices, selected = NULL, width = NULL) {
 
 #' Update Framework7 select
 #'
-#' \link{updateF7Select} changes the value of a select input on the client
+#' \code{updateF7Select} changes the value of a select input on the client
 #'
 #' @param inputId The id of the input object.
 #' @param selected New value.
@@ -1304,7 +1318,7 @@ updateF7Select <- function(inputId, selected = NULL,
 
 #' Framework7 smart select
 #'
-#' \link{f7SmartSelect} is smarter than the classic \link{f7Select},
+#' \code{f7SmartSelect} is smarter than the classic \link{f7Select},
 #' allows for choices filtering, ...
 #'
 #' @param inputId Select input id.
@@ -1318,6 +1332,7 @@ updateF7Select <- function(inputId, selected = NULL,
 #' @param maxlength Maximum items to select when multiple is TRUE.
 #' @param virtualList Enable Virtual List for smart select if your select has a lot
 #' of options. Default to FALSE.
+#' @param ... Other options. See \url{https://v5.framework7.io/docs/smart-select.html#smart-select-parameters}.
 #'
 #' @rdname smartselect
 #'
@@ -1341,10 +1356,22 @@ updateF7Select <- function(inputId, selected = NULL,
 #'          choices = colnames(mtcars)[-1],
 #'          openIn = "popup"
 #'        ),
-#'        tableOutput("data")
+#'        tableOutput("data"),
+#'        f7SmartSelect(
+#'          inputId = "variable2",
+#'          label = "Group variables:",
+#'          choices = list(
+#'           `East Coast` = list("NY", "NJ", "CT"),
+#'           `West Coast` = list("WA", "OR", "CA"),
+#'           `Midwest` = list("MN", "WI", "IA")
+#'          ),
+#'          openIn = "sheet"
+#'        ),
+#'        textOutput("var")
 #'      )
 #'    ),
 #'    server = function(input, output) {
+#'      output$var <- renderText(input$variable2)
 #'      output$data <- renderTable({
 #'        mtcars[, c("mpg", input$variable), drop = FALSE]
 #'      }, rownames = TRUE)
@@ -1354,7 +1381,7 @@ updateF7Select <- function(inputId, selected = NULL,
 f7SmartSelect <- function(inputId, label, choices, selected = NULL,
                           openIn = c("page", "sheet", "popup", "popover"),
                           searchbar = TRUE, multiple = FALSE, maxlength = NULL,
-                          virtualList = FALSE) {
+                          virtualList = FALSE, ...) {
 
   options <- createSelectOptions(choices, selected)
   type <- match.arg(openIn)
@@ -1363,7 +1390,8 @@ f7SmartSelect <- function(inputId, label, choices, selected = NULL,
     openIn = openIn,
     searchbar = searchbar,
     searchbarPlaceholder = "Search",
-    virtualList = virtualList
+    virtualList = virtualList,
+    ...
   ))
 
   shiny::tags$div(
@@ -1408,7 +1436,7 @@ f7SmartSelect <- function(inputId, label, choices, selected = NULL,
 
 #' Update Framework7 smart select
 #'
-#' \link{updateF7SmartSelect} changes the value of a smart select input on the client.
+#' \code{updateF7SmartSelect} changes the value of a smart select input on the client.
 #'
 #' @param inputId The id of the input object.
 #' @param selected The new value for the input.
@@ -1491,7 +1519,7 @@ updateF7SmartSelect <- function(inputId, selected = NULL, choices = NULL, multip
 
 #' Framework7 text input
 #'
-#' \link{f7Text} creates a text input container.
+#' \code{f7Text} creates a text input container.
 #'
 #' @param inputId Text input id.
 #' @param label Text input label.
@@ -1578,7 +1606,7 @@ f7Text <- function(inputId, label, value = "", placeholder = NULL#,
 
 #' Update Framework7 text input
 #'
-#' \link{updateF7Text} changes the value of a text input on the client.
+#' \code{updateF7Text} changes the value of a text input on the client.
 #'
 #' @param inputId The id of the input object.
 #' @param label The label to set for the input object.
@@ -1685,7 +1713,7 @@ updateF7Text <- function(inputId, label = NULL, value = NULL, placeholder = NULL
 
 #' Framework7 text area input
 #'
-#' \link{f7TextArea} creates a f7 text area input.
+#' \code{f7TextArea} creates a f7 text area input.
 #'
 #' @inheritParams f7Text
 #' @param resize Whether to box can be resized. Default to FALSE.
@@ -1751,7 +1779,7 @@ f7TextArea <- function(inputId, label, value = "", placeholder = NULL,
 
 #' Update Framework7 text area input
 #'
-#' \link{updateF7TextArea} changes the value of a text area input on the client.
+#' \code{updateF7TextArea} changes the value of a text area input on the client.
 #'
 #' @inheritParams updateF7Text
 #' @rdname textarea
@@ -1848,7 +1876,7 @@ f7Password <- function(inputId, label, value = "", placeholder = NULL) {
 
 #' Framework7 range slider
 #'
-#' \link{f7Slider} creates a f7 slider input.
+#' \code{f7Slider} creates a f7 slider input.
 #'
 #' @param inputId Slider input id.
 #' @param label Slider label.
@@ -1865,7 +1893,7 @@ f7Password <- function(inputId, label, value = "", placeholder = NULL) {
 #' @param labels Enables additional label around range slider knob. List of 2 \link{f7Icon}
 #' expected.
 #' @param color See \link{getF7Colors} for valid colors.
-#' @param noSwipping Prevent swiping when slider is manipulated in a \code{\link{f7TabLayout}}.
+#' @param noSwipping Prevent swiping when slider is manipulated in an \link{f7TabLayout}.
 #'
 #' @note labels option only works when vertical is FALSE!
 #'
@@ -2033,7 +2061,7 @@ f7Slider <- function(inputId, label, min, max, value, step = 1, scale = FALSE,
 
 #' Update Framework7 range slider
 #'
-#' \link{updateF7Slider} changes the value of a slider input on the client.
+#' \code{updateF7Slider} changes the value of a slider input on the client.
 #'
 #' @param inputId The id of the input object.
 #' @param min Slider minimum range.
@@ -2118,7 +2146,7 @@ updateF7Slider <- function(inputId, min = NULL, max = NULL, value = NULL,
 
 #' Framework7 stepper input
 #'
-#' \link{f7Stepper} creates a stepper input.
+#' \code{f7Stepper} creates a stepper input.
 #'
 #' @param inputId Stepper input id.
 #' @param label Stepper label.
@@ -2264,7 +2292,7 @@ f7Stepper <- function(inputId, label, min, max, value, step = 1,
 
 #' Update Framework7 stepper
 #'
-#' \link{updateF7Stepper} changes the value of a stepper input on the client.
+#' \code{updateF7Stepper} changes the value of a stepper input on the client.
 #'
 #' @param inputId The id of the input object.
 #' @param min Stepper minimum value.
@@ -2377,7 +2405,7 @@ updateF7Stepper <- function(inputId, min = NULL, max = NULL,
 
 #' Framework7 toggle input
 #'
-#' \link{f7Toggle} creates a F7 toggle switch input.
+#' \code{f7Toggle} creates a F7 toggle switch input.
 #'
 #' @param inputId Toggle input id.
 #' @param label Toggle label.
@@ -2444,7 +2472,7 @@ f7Toggle <- function(inputId, label, checked = FALSE, color = NULL) {
 
 #' Update Framework7 toggle input
 #'
-#' \link{updateF7Toggle} changes the value of a toggle input on the client.
+#' \code{updateF7Toggle} changes the value of a toggle input on the client.
 #'
 #' @param inputId The id of the input object.
 #' @param checked Whether the toggle is TRUE or FALSE.
@@ -2505,7 +2533,7 @@ updateF7Toggle <- function(inputId, checked = NULL, color = NULL,
 
 #' Framework7 radio input
 #'
-#' Creates a radio button input.
+#' \code{f7Radio} creates a radio button input.
 #'
 #' @param inputId Radio input id.
 #' @param label Radio label
@@ -2513,9 +2541,10 @@ updateF7Toggle <- function(inputId, checked = NULL, color = NULL,
 #' @param selected Selected element. NULL by default.
 #'
 #' @export
+#' @rdname radio
 #'
 #' @examples
-#' if(interactive()){
+#' if (interactive()) {
 #'  library(shiny)
 #'  library(shinyMobile)
 #'
@@ -2542,6 +2571,101 @@ updateF7Toggle <- function(inputId, checked = NULL, color = NULL,
 #' }
 f7Radio <- function(inputId, label, choices = NULL, selected = NULL) {
 
+  shiny::tagList(
+    shiny::tags$div(
+      class = "block-title",
+      label
+    ),
+    shiny::tags$div(
+      class = "list shiny-input-radiogroup",
+      id = inputId,
+      createRadioOptions(choices, selected, inputId)
+    )
+  )
+
+}
+
+
+
+
+
+#' Update Framework7 radio buttons
+#'
+#' \code{updateF7Radio} updates a radio button input.
+#'
+#' @param inputId Radio input id.
+#' @param label New radio label
+#' @param choices New list of choices.
+#' @param selected New selected element. NULL by default.
+#' @param session Shiny session object.
+#'
+#' @rdname radio
+#' @export
+#'
+#' @examples
+#' # Update radio
+#' if (interactive()) {
+#'  library(shiny)
+#'  library(shinyMobile)
+#'
+#'  shinyApp(
+#'   ui = f7Page(
+#'     title = "Update radio",
+#'     f7SingleLayout(
+#'       navbar = f7Navbar(title = "Update f7Radio"),
+#'       f7Button("go", "Update radio"),
+#'       f7Radio(
+#'         inputId = "radio",
+#'         label = "Choose a fruit:",
+#'         choices = c("banana", "apple", "peach"),
+#'         selected = "apple"
+#'       ),
+#'       textOutput("radio_value")
+#'     )
+#'   ),
+#'   server = function(input, output, session) {
+#'     output$radio_value <- renderText(input$radio)
+#'
+#'     observeEvent(input$go, {
+#'       updateF7Radio(
+#'         session,
+#'         inputId = "radio",
+#'         label = "New label",
+#'         choices = colnames(mtcars),
+#'         selected = colnames(mtcars)[1]
+#'       )
+#'     })
+#'   }
+#'  )
+#' }
+updateF7Radio <- function (inputId, label = NULL, choices = NULL,
+                           selected = NULL, session = shiny::getDefaultReactiveDomain()) {
+
+  if (is.null(selected)) {
+    if (!is.null(choices))
+      selected <- choices[[1]]
+  }
+
+  message <- dropNulls(
+    list(
+      label = label,
+      options = as.character(createRadioOptions(choices, selected, inputId)),
+      value = selected
+    )
+  )
+
+  session$sendInputMessage(inputId, message)
+}
+
+
+#' Generates a list of option for \link{f7Radio}
+#'
+#' @param choices List of choices.
+#' @param selected Selected value
+#' @param inputId Radio input id.
+#'
+#' @keywords internal
+createRadioOptions <- function(choices, selected, inputId) {
   selectedPosition <- if (!is.null(selected)) match(selected, choices) else NULL
 
   choicesTag <- lapply(X = seq_along(choices), function(i) {
@@ -2564,18 +2688,5 @@ f7Radio <- function(inputId, label, choices = NULL, selected = NULL) {
 
   if (!is.null(selected)) choicesTag[[selectedPosition]]$children[[1]]$children[[1]]$attribs[["checked"]] <- NA
 
-  shiny::tagList(
-    shiny::tags$div(
-      class = "block-title",
-      label
-    ),
-    shiny::tags$div(
-      class = "list shiny-input-radiogroup",
-      id = inputId,
-      shiny::tags$ul(
-        choicesTag
-      )
-    )
-  )
-
+  shiny::tags$ul(choicesTag)
 }

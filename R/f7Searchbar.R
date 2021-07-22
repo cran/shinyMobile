@@ -6,9 +6,14 @@
 #' @param placeholder Searchbar placeholder.
 #' @param expandable Whether to enable the searchbar with a target link,
 #' in the navbar. See \link{f7SearchbarTrigger}.
-#' @param inline Useful to add a \link{f7Searchbar} in a \link{f7Appbar}.
+#' @param inline Useful to add an \link{f7Searchbar} in an \link{f7Appbar}.
 #' Notice that utilities like \link{f7HideOnSearch} and \link{f7NotFound} are not
 #' compatible with this mode.
+#' @param options Search bar options.
+#' See \url{https://v5.framework7.io/docs/searchbar.html#searchbar-parameters}.
+#' If no options are provided, the searchbar will search in list elements by
+#' item title. This may be changed by updating the default searchContainer and
+#' searchIn.
 #' @export
 #'
 #' @examples
@@ -52,7 +57,7 @@
 #'  # Expandable searchbar with trigger
 #'  cities <- names(precip)
 #'
-#'  shiny::shinyApp(
+#'  shinyApp(
 #'    ui = f7Page(
 #'      title = "Expandable searchbar",
 #'      f7SingleLayout(
@@ -60,14 +65,12 @@
 #'          title = "f7Searchbar with trigger",
 #'          hairline = FALSE,
 #'          shadow = TRUE,
-#'          f7SearchbarTrigger(targetId = "search1"),
 #'          subNavbar = f7SubNavbar(
 #'            f7Searchbar(id = "search1", expandable = TRUE)
 #'          )
 #'        ),
 #'        f7Block(
-#'          "This block will be hidden on search.
-#'          Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+#'          f7SearchbarTrigger(targetId = "search1")
 #'        ) %>% f7HideOnSearch(),
 #'        f7List(
 #'          lapply(seq_along(cities), function(i) {
@@ -107,12 +110,30 @@
 #'   server = function(input, output) {}
 #'  )
 #' }
-f7Searchbar <- function(id, placeholder = "Search", expandable = FALSE, inline = FALSE) {
+f7Searchbar <- function(id, placeholder = "Search", expandable = FALSE, inline = FALSE,
+                        options = NULL) {
+
+  if (is.null(options)) {
+    options <- list(
+      searchContainer = ".list",
+      searchIn = ".item-title"
+    )
+  }
+
+  searchBarConfig <- shiny::tags$script(
+    type = "application/json",
+    `data-for` = id,
+    jsonlite::toJSON(
+      x = options,
+      auto_unbox = TRUE,
+      json_verbatim = TRUE
+    )
+  )
 
   searchBarCl <- "searchbar"
   if (expandable) searchBarCl <- paste0(searchBarCl, " searchbar-expandable")
 
-  if (inline) {
+  searchBarTag <- if (inline) {
     shiny::tags$div(
       class = "searchbar searchbar-inline",
       id = id,
@@ -140,6 +161,11 @@ f7Searchbar <- function(id, placeholder = "Search", expandable = FALSE, inline =
     )
   }
 
+  shiny::tagList(
+    searchBarTag,
+    searchBarConfig
+  )
+
 }
 
 
@@ -150,11 +176,6 @@ f7Searchbar <- function(id, placeholder = "Search", expandable = FALSE, inline =
 #'
 #' @param targetId Id of the \link{f7Searchbar}.
 #' @export
-#'
-#' @examples
-#' if (interactive()) {
-#'
-#' }
 f7SearchbarTrigger <- function(targetId) {
   shiny::tags$a(
     class = "link icon-only searchbar-enable",

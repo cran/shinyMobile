@@ -1,3 +1,34 @@
+# shinyMobile 0.9.0
+
+This release also fixes an issue with R CMD check and [htmltools](https://github.com/RinteRface/shinyMobile/runs/3133178817?check_suite_focus=true#step:10:119)
+
+## Breaking change
+- `f7Link()` __icon__ now expects `f7Icon()`. __label__ is not mandatory anymore.
+
+## Major change
+- New `updateF7Radio()`. Fixes #135. Thanks @korterling.
+
+## Minor change
+- More security for embedded apps. 
+- Added shinyMobile hands on slides in Getting Started vignette. 
+- `f7Dialog()` has a fixed height of 300px and vertical overflow to avoid issues.
+- Add `...` to `f7SmartSelect()`. 
+- Add `options` to `f7SearchBar()` to provide more configuration. Fixes #47: thanks @rodrigoheck.
+- Add `valueText` param for `f7Gauge()`. Fixes #84: thanks @tanho63.
+- Reworked `f7Gauge()` JS code (no user impact).
+- Rework widget JS code base (no user impact). 
+
+## Bug fixes
+- Fix #180: Tab highlight index issue for android devices when tab remove or add tab.
+- Fix #190: How to add a longer dialog text for f7Dialog.
+- Fix #154: How to include link icon in f7Link() function.
+- Fix #127: Enable groups in `f7SmartSelect()`. 
+- Fix #174 and #134: Reactive elements created inside `insertF7Tab()` are losing reactivity.
+- Fix #98: `f7DatePicker()` visibility issue. Thanks @styvens.
+- Fix #120: `f7Button()` with link not working. Thanks @bwganblack.
+- Fix #144: Close `f7SmartSelect()` on selection. Thanks @dewalex.
+
+
 # shinyMobile 0.8.0
 
 This release is to addresses the following reverse dependency issue with [shiny](https://github.com/rstudio/shiny/pull/3239). Moreover, it also starts

@@ -14,12 +14,15 @@
 #'   ui = f7Page(
 #'     title = "My app",
 #'     f7SingleLayout(
+#'        navbar = f7Navbar(
+#'          title = "f7Table"
+#'        ),
 #'       uiOutput("table")
 #'     )
 #'   ),
 #'   server = function(input, output) {
 #'     output$table <- renderUI({
-#'       f7Table(cars)
+#'       f7Table(mtcars)
 #'     })
 #'   }
 #'  )
@@ -47,7 +50,8 @@ f7Table <- function(data, colnames = NULL, card = FALSE){
     shiny::tags$th(class = x$class, x$colname)
   })
 
-  data_list <- apply(data, 1, as.list)
+  data_list <- split(data, seq(nrow(data)))
+  data_list <- lapply(data_list, as.list)
 
   table <- lapply(data_list, function(row){
     r <- lapply(row, function(cell){

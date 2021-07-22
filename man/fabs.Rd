@@ -47,11 +47,11 @@ f7FabMorphTarget(tag)
 \item{tag}{Target tag.}
 }
 \description{
-\link{f7Fabs} hosts multiple \link{f7Fab}.
+\code{f7Fabs} hosts multiple \link{f7Fab}.
 
-\link{updateF7Fabs} toggles \link{f7Fabs} on the server side.
+\code{updateF7Fabs} toggles \link{f7Fabs} on the server side.
 
-\link{f7FabMorphTarget} convert a tag into a target morphing.
+\code{f7FabMorphTarget} convert a tag into a target morphing.
 See \url{https://v5.framework7.io/docs/floating-action-button.html#fab-morph}.
 }
 \note{
@@ -138,7 +138,7 @@ if (interactive()) {
        navbar = f7Navbar(title = "f7Fabs Morph"),
        toolbar = f7Toolbar(
          position = "bottom",
-         lapply(1:3, function(i) f7Link(i) \%>\% f7FabClose())
+         lapply(1:3, function(i) f7Link(href = i) \%>\% f7FabClose())
        ) \%>\% f7FabMorphTarget(),
        # put an empty f7Fabs container
        f7Fabs(

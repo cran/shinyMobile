@@ -29,10 +29,8 @@ $((function() {
     if (config.dark) {
         app.methods.toggleDarkTheme();
     }
-    if (config.hasOwnProperty("touch")) {
-        if (config.touch.tapHold) {
-            $("<style>").prop("type", "text/css").html(`\n          -moz-user-select: none;\n          -webkit-user-select: none;\n          user-select: none;`).appendTo("head");
-        }
+    if (!app.device.desktop) {
+        $("<style>").prop("type", "text/css").html(`-webkit-user-select: none;\n         -khtml-user-select: none;\n         -moz-user-select: none;\n         -ms-user-select: none;\n         user-select: none;\n         -webkit-tap-highligth-color: transparent;\n         -webkit-touch-callout: none;\n        `).appendTo("head");
     }
     if (config.hasOwnProperty("color")) {
         var colorCSS = app.utils.colorThemeCSSProperties(config.color);
@@ -45,6 +43,31 @@ $((function() {
     }
     $("body").addClass(config.color);
     $("body").attr("filled", config.filled);
+    if (isPWA) {
+        var installToast = app.toast.create({
+            position: "center",
+            text: '<button id="install-button" class="toast-button button color-green">Install</button>'
+        });
+        var deferredPrompt;
+        $(window).on("beforeinstallprompt", e => {
+            e.preventDefault();
+            deferredPrompt = e.originalEvent;
+            installToast.open();
+        });
+        app.utils.nextTick((function() {
+            $("#install-button").on("click", (function() {
+                installToast.close();
+                if (!deferredPrompt) {
+                    return;
+                }
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(result => {
+                    console.log("👍", "userChoice", result);
+                    deferredPrompt = null;
+                });
+            }));
+        }), 500);
+    }
 }));
 
 $((function() {
@@ -67,7 +90,7 @@ $((function() {
         Shiny.setInputValue("lastInputChanged", {
             name: event.name,
             value: event.value,
-            type: event.binding.name.split(".")[1]
+            type: event.binding.name !== undefined ? event.binding.name.split(".")[1] : "NA"
         });
     }));
     $(document).on("shiny:connected", (function(event) {
@@ -134,8 +157,26 @@ $((function() {
         var newInstance = app[instanceFamily].create(newConfig);
         app.data[instanceFamily][message.id] = newInstance;
     }));
-    Shiny.addCustomMessageHandler("notif", (function(message) {
-        app.notification.create(message).open();
+    const uiWidgets = [ "gauge", "swiper", "searchbar" ];
+    const serverWidgets = [ "toast", "photoBrowser", "notification" ];
+    const widgets = uiWidgets.concat(serverWidgets);
+    activateWidget = function(widget) {
+        if (uiWidgets.indexOf(widget) > -1) {
+            $("." + widget).each((function() {
+                var $el = $(this);
+                var config = $(document).find("script[data-for='" + $el.attr("id") + "']");
+                config = JSON.parse(config.html());
+                config.el = "#" + $el.attr("id");
+                app[widget].create(config);
+            }));
+        } else {
+            Shiny.addCustomMessageHandler(widget, (function(message) {
+                app[widget].create(message).open();
+            }));
+        }
+    };
+    widgets.forEach((function(w) {
+        activateWidget(w);
     }));
     popoverIds = [];
     getAllPopoverIds = function() {
@@ -199,18 +240,16 @@ $((function() {
             }
         }
     }));
-    Shiny.addCustomMessageHandler("toast", (function(message) {
-        app.toast.create(message).open();
-    }));
     Shiny.addCustomMessageHandler("dialog", (function(message) {
         var type = message.type;
+        var text = `<div style="max-height: 300px; overflow-y: scroll;">${message.text}</div>`;
         switch (type) {
           case "alert":
-            var dialog = app.dialog.alert(message.text, message.title);
+            var dialog = app.dialog.alert(text, message.title);
             break;
 
           case "confirm":
-            var confirm = app.dialog.confirm(text = message.text, title = message.title, callbackOk = function() {
+            var confirm = app.dialog.confirm(text = text, title = message.title, callbackOk = function() {
                 Shiny.setInputValue(message.id, true);
             }, callbackCancel = function() {
                 Shiny.setInputValue(message.id, false);
@@ -218,7 +257,7 @@ $((function() {
             break;
 
           case "prompt":
-            var prompt = app.dialog.prompt(text = message.text, title = message.title, callbackOk = function(value) {
+            var prompt = app.dialog.prompt(text = text, title = message.title, callbackOk = function(value) {
                 Shiny.setInputValue(message.id, value);
             }, callbackCancel = function() {
                 Shiny.setInputValue(message.id, null);
@@ -227,7 +266,7 @@ $((function() {
 
           case "login":
             console.log(login);
-            var login = app.dialog.login(text = message.text, title = message.title, callbackOk = function(username, password) {
+            var login = app.dialog.login(text = text, title = message.title, callbackOk = function(username, password) {
                 Shiny.setInputValue(message.id, {
                     user: username,
                     password: password
@@ -242,11 +281,28 @@ $((function() {
         }
     }));
     Shiny.addCustomMessageHandler("tapHold", (function(message) {
-        var selector = String(message.target);
-        $(selector).on("taphold", (function() {
-            eval(message.callback);
+        var callback = new Function("return (" + message.callback + ")");
+        $(message.target).on("taphold", (function() {
+            callback();
         }));
     }));
+    function handleTabLinkHighlight() {
+        $(".tab-link-highlight").remove();
+        var segment_width = 100 / $(".toolbar-inner > a").length;
+        var tabs = $(".toolbar-inner > a");
+        var tabsClasses = [];
+        for (i = 0; i < tabs.length; i++) {
+            tabsClasses.push(tabs[i].className);
+        }
+        var idx = tabsClasses.indexOf("tab-link tab-link-active");
+        var translate_rate;
+        if (idx === -1) {
+            translate_rate = 0;
+        } else {
+            translate_rate = idx * 100 + "%";
+        }
+        $(".toolbar-inner").append('<span class="tab-link-highlight" style="width: ' + segment_width + "%; transform: translate3d(" + translate_rate + ', 0px, 0px);"></span>');
+    }
     var tabIds = [];
     getAllTabSetIds = function() {
         $(".tabs.ios-edges").each((function() {
@@ -258,19 +314,20 @@ $((function() {
         var id = "insert_" + index;
         Shiny.addCustomMessageHandler(id, (function(message) {
             var tabId = $("#" + message.ns + "-" + message.target);
+            var tab = $(message.value.html);
             var newTab;
             if ($(tabId).hasClass("swiper-slide")) {
-                newTab = $(message.value).addClass("swiper-slide");
+                newTab = $(tab).addClass("swiper-slide");
                 if ($(".tabLinks").children(1).hasClass("segmented")) {
                     $(newTab).removeClass("page-content");
                 }
                 if (message.select === "true") {
                     $(newTab).addClass("swiper-slide-active");
                 }
-                if (dark_mode) $(newTab).css("background-color", "");
+                if (app.params.dark) $(newTab).css("background-color", "");
             } else {
-                newTab = $(message.value);
-                if (dark_mode) $(newTab).css("background-color", "");
+                newTab = $(tab);
+                if (app.params.dark) $(newTab).css("background-color", "");
             }
             if (message.position === "after") {
                 $(newTab).insertAfter($(tabId));
@@ -279,6 +336,10 @@ $((function() {
                 $(newTab).insertBefore($(tabId));
                 $(message.link).insertBefore($('.tabLinks [data-tab ="#' + message.ns + "-" + message.target + '"]'));
             }
+            Shiny.renderContent(tab[0], {
+                html: tab.html(),
+                deps: message.value.deps
+            });
             if ($(".tabLinks").children(1).hasClass("segmented")) {
                 var newLink;
                 var oldLink = $('.tabLinks [data-tab ="#' + message.id + '"]');
@@ -290,6 +351,9 @@ $((function() {
             }
             if (message.select === "true") {
                 app.tab.show("#" + message.id, true);
+            }
+            if (!$(".tabLinks").children(1).hasClass("segmented")) {
+                handleTabLinkHighlight();
             }
         }));
     }));
@@ -322,11 +386,13 @@ $((function() {
             var nextTabId = $(tabToRemove).next().attr("id");
             app.tab.show("#" + nextTabId);
             if (!$(".tabLinks").children(1).hasClass("segmented")) {
-                $(".tab-link-highlight").remove();
-                segment_width = 100 / $(".toolbar-inner > a").length;
-                $(".toolbar-inner").append('<span class="tab-link-highlight" style="width: ' + segment_width + '%;"></span>');
+                handleTabLinkHighlight();
             }
         }));
+    }));
+    Shiny.addCustomMessageHandler("update-gauge", (function(message) {
+        var el = "#" + message.id;
+        app.gauge.get(el).update(message);
     }));
     activateAllProgress = function() {
         $(".progressbar").each((function() {
@@ -339,41 +405,6 @@ $((function() {
     Shiny.addCustomMessageHandler("update-progress", (function(message) {
         app.progressbar.set("#" + message.id, message.progress);
     }));
-    activateAllSwiper = function() {
-        $(".swiper-container.demo-swiper").each((function() {
-            var $el = $(this);
-            var config = $(document).find("script[data-for='" + $el.attr("id") + "']");
-            config = JSON.parse(config.html());
-            app.swiper.create("#" + $el.attr("id"), {
-                speed: config.speed,
-                spaceBetween: config.spaceBetween,
-                slidesPerView: config.slidesPerView,
-                centeredSlides: config.centeredSlides,
-                pagination: config.pagination
-            });
-        }));
-    };
-    activateAllSwiper();
-    Shiny.addCustomMessageHandler("open-photo-browser", (function(message) {
-        app.photoBrowser.create(message).open();
-    }));
-    activateAllSearchbar = function() {
-        $(".searchbar").each((function() {
-            var $el = $(this);
-            app.searchbar.create({
-                el: "#" + $el.attr("id"),
-                searchContainer: ".list",
-                searchIn: ".item-title",
-                backdrop: false,
-                on: {
-                    search(sb, query, previousQuery) {
-                        console.log(query, previousQuery);
-                    }
-                }
-            });
-        }));
-    };
-    activateAllSearchbar();
     Shiny.addCustomMessageHandler("show_navbar", (function(message) {
         var animate;
         if (message.animate == "true") animate = true; else animate = false;
@@ -468,6 +499,14 @@ $((function() {
         } else {
             app.preloader.hide();
         }
+    }));
+    $(".swipeout-item").each((function() {
+        $(this).on("click", (function() {
+            Shiny.setInputValue($(this).attr("id"), true, {
+                priority: "event"
+            });
+            app.swipeout.close($(this).closest(".swipeout"));
+        }));
     }));
 }));
 
@@ -896,51 +935,6 @@ $.extend(f7FabsBinding, {
 
 Shiny.inputBindings.register(f7FabsBinding, "f7.fabs");
 
-var f7GaugeBinding = new Shiny.InputBinding;
-
-$.extend(f7GaugeBinding, {
-    initialize: function(el) {
-        var id = $(el).attr("id");
-        var data = {};
-        [].forEach.call(el.attributes, (function(attr) {
-            if (/^data-/.test(attr.name)) {
-                var camelCaseName = attr.name.substr(5).replace(/-(.)/g, (function($0, $1) {
-                    return $1.toUpperCase();
-                }));
-                data[camelCaseName] = attr.value;
-            }
-        }));
-        data.valueText = 100 * data.value + "%";
-        data.el = "#" + id;
-        var g = app.gauge.create(data);
-    },
-    find: function(scope) {
-        return $(scope).find(".gauge");
-    },
-    getValue: function(el) {},
-    receiveMessage: function(el, data) {
-        var g = app.gauge.get($(el));
-        g.update({
-            value: data.value / 100,
-            valueText: data.value + "%",
-            labelText: data.text,
-            size: data.size,
-            bgColor: data.bgColor,
-            borderBgColor: data.borderBgColor,
-            borderColor: data.borderColor,
-            borderWidth: data.borderWidth,
-            valueTextColor: data.valueTextColor,
-            valueFontSize: data.valueFontSize,
-            valueFontWeight: data.valueFontWeight,
-            labelTextColor: data.labelTextColor,
-            labelFontSize: data.labelFontSize,
-            labelFontWeight: data.labelFontWeight
-        });
-    }
-});
-
-Shiny.inputBindings.register(f7GaugeBinding, "f7.gauge");
-
 var f7LoginBinding = new Shiny.InputBinding;
 
 $.extend(f7LoginBinding, {
@@ -1306,6 +1300,94 @@ $.extend(f7PopupBinding, {
 });
 
 Shiny.inputBindings.register(f7PopupBinding, "f7.popup");
+
+let $escape = Shiny.$escape;
+
+function updateLabel(labelTxt, labelNode) {
+    if (typeof labelTxt === "undefined") return;
+    if (labelNode.length !== 1) {
+        throw new Error("labelNode must be of length 1");
+    }
+    var emptyLabel = $.isArray(labelTxt) && labelTxt.length === 0;
+    if (emptyLabel) {
+        labelNode.addClass("shiny-label-null");
+    } else {
+        labelNode.text(labelTxt);
+        labelNode.removeClass("shiny-label-null");
+    }
+}
+
+var radioInputBinding = new Shiny.InputBinding;
+
+$.extend(radioInputBinding, {
+    find: function(scope) {
+        return $(scope).find(".shiny-input-radiogroup");
+    },
+    getValue: function(el) {
+        var checked_items = $('input:radio[name="' + $escape(el.id) + '"]:checked');
+        if (checked_items.length === 0) {
+            return null;
+        }
+        return checked_items.val();
+    },
+    setValue: function(el, value) {
+        if ($.isArray(value) && value.length === 0) {
+            $('input:radio[name="' + $escape(el.id) + '"]').prop("checked", false);
+        } else {
+            $('input:radio[name="' + $escape(el.id) + '"][value="' + $escape(value) + '"]').prop("checked", true);
+        }
+    },
+    getState: function(el) {
+        var $objs = $('input:radio[name="' + $escape(el.id) + '"]');
+        var options = new Array($objs.length);
+        for (var i = 0; i < options.length; i++) {
+            options[i] = {
+                value: $objs[i].value,
+                label: this._getLabel($objs[i])
+            };
+        }
+        return {
+            label: this._getLabelNode(el).text(),
+            value: this.getValue(el),
+            options: options
+        };
+    },
+    receiveMessage: function(el, data) {
+        var $el = $(el);
+        if (data.hasOwnProperty("options")) {
+            $el.find("ul").remove();
+            $el.append(data.options);
+        }
+        if (data.hasOwnProperty("value")) this.setValue(el, data.value);
+        updateLabel(data.label, this._getLabelNode(el));
+        $(el).trigger("change");
+    },
+    subscribe: function(el, callback) {
+        $(el).on("change.radioInputBinding", (function(event) {
+            callback();
+        }));
+    },
+    unsubscribe: function(el) {
+        $(el).off(".radioInputBinding");
+    },
+    _getLabelNode: function(el) {
+        return $(el).siblings("div.block-title");
+    },
+    _getLabel: function(obj) {
+        if (obj.parentNode.tagName === "LABEL") {
+            return $(obj.parentNode).find("div.item-title").text().trim();
+        }
+        return null;
+    },
+    _setLabel: function(obj, value) {
+        if (obj.parentNode.tagName === "LABEL") {
+            $(obj.parentNode).find("div.item-title").text(value);
+        }
+        return null;
+    }
+});
+
+Shiny.inputBindings.register(radioInputBinding, "shiny.radioInput");
 
 var f7SelectBinding = new Shiny.InputBinding;
 

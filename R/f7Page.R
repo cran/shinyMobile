@@ -1,6 +1,6 @@
 #' Framework7 page container
 #'
-#' \link{f7Page} is the main app container.
+#' \code{f7Page} is the main app container.
 #'
 #' @param ... Slot for shinyMobile skeleton elements: \link{f7Appbar}, \link{f7SingleLayout},
 #' \link{f7TabLayout}, \link{f7SplitLayout}.
@@ -68,10 +68,10 @@ f7Page <- function(
     iosTranslucentBars = FALSE,
     navbar = list(
       iosCenterTitle = TRUE,
-      hideNavOnPageScroll = TRUE
+      hideOnPageScroll = TRUE
     ),
     toolbar = list(
-      hideNavOnPageScroll = FALSE
+      hideOnPageScroll = FALSE
     ),
     pullToRefresh = FALSE
   ),
@@ -168,7 +168,7 @@ f7Page <- function(
 
 #' Framework7 single layout
 #'
-#' \link{f7SingleLayout} provides a simple page layout.
+#' \code{f7SingleLayout} provides a simple page layout.
 #'
 #' @param ... Content.
 #' @param navbar Slot for \link{f7Navbar}.
@@ -255,7 +255,7 @@ f7SingleLayout <- function(..., navbar, toolbar = NULL,
 
 #' Framework7 tab layout
 #'
-#' \link{f7TabLayout} create a single page app with multiple tabs,
+#' \code{f7TabLayout} create a single page app with multiple tabs,
 #' giving the illusion of a multi pages experience.
 #'
 #' @param ... Slot for \link{f7Tabs}.
@@ -301,7 +301,7 @@ f7SingleLayout <- function(..., navbar, toolbar = NULL,
 #'          swipeable = TRUE,
 #'          f7Tab(
 #'            tabName = "Tab 1",
-#'            icon = f7Icon("email"),
+#'            icon = f7Icon("envelope"),
 #'            active = TRUE,
 #'            f7Shadow(
 #'              intensity = 10,
@@ -463,16 +463,16 @@ f7TabLayout <- function(..., navbar, messagebar = NULL, panels = NULL, appbar = 
 #'      title = "Split layout",
 #'      f7SplitLayout(
 #'        sidebar = f7Panel(
-#'          inputId = "sidebar",
+#'          id = "sidebar",
 #'          title = "Sidebar",
 #'          side = "left",
-#'          theme = "light",
+#'          theme = "dark",
 #'          f7PanelMenu(
 #'            id = "menu",
-#'            f7PanelItem(tabName = "tab1", title = "Tab 1", icon = f7Icon("email"), active = TRUE),
-#'            f7PanelItem(tabName = "tab2", title = "Tab 2", icon = f7Icon("home"))
+#'            f7PanelItem(tabName = "tab1", title = "Tab 1", icon = f7Icon("envelope"), active = TRUE),
+#'            f7PanelItem(tabName = "tab2", title = "Tab 2", icon = f7Icon("house"))
 #'          ),
-#'          effect = "reveal"
+#'          uiOutput("selected_tab")
 #'        ),
 #'        navbar = f7Navbar(
 #'          title = "Split Layout",
@@ -499,8 +499,8 @@ f7TabLayout <- function(..., navbar, messagebar = NULL, panels = NULL, appbar = 
 #'    ),
 #'    server = function(input, output) {
 #'
-#'      observe({
-#'        print(input$menu)
+#'      output$selected_tab <- renderUI({
+#'       HTML(paste0("Selected tab: ", strong(input$menu)))
 #'      })
 #'
 #'      output$distPlot <- renderPlot({

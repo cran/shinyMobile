@@ -12,8 +12,8 @@ f7Page(
   options = list(theme = c("ios", "md", "auto", "aurora"), dark = TRUE, filled = FALSE,
     color = "#007aff", touch = list(tapHold = TRUE, tapHoldDelay = 750, iosTouchRipple =
     FALSE), iosTranslucentBars = FALSE, navbar = list(iosCenterTitle = TRUE,
-    hideNavOnPageScroll = TRUE), toolbar = list(hideNavOnPageScroll = FALSE),
-    pullToRefresh = FALSE),
+    hideOnPageScroll = TRUE), toolbar = list(hideOnPageScroll = FALSE), pullToRefresh =
+    FALSE),
   allowPWA = FALSE
 )
 }
@@ -67,7 +67,7 @@ In any case, you must follow the same structure as provided in the function argu
 \item{allowPWA}{Whether to include PWA dependencies. Default to FALSE.}
 }
 \description{
-\link{f7Page} is the main app container.
+\code{f7Page} is the main app container.
 }
 \author{
 David Granjon, \email{dgranjon@ymail.com}
