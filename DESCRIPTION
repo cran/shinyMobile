@@ -1,7 +1,7 @@
 Package: shinyMobile
 Type: Package
 Title: Mobile Ready 'shiny' Apps with Standalone Capabilities
-Version: 0.9.0
+Version: 0.9.1
 Authors@R: c(
   person("David", "Granjon", email = "dgranjon@ymail.com", role = c("aut", "cre")),
   person("Victor", "Perrier", email = "info@dreamrs.fr", role = "aut"),
@@ -24,12 +24,12 @@ Encoding: UTF-8
 URL: https://github.com/RinteRface/shinyMobile,
         https://rinterface.github.io/shinyMobile/
 BugReports: https://github.com/RinteRface/shinyMobile/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: knitr, rmarkdown, stats, cli, testthat (>= 2.1.0),
         rstudioapi, shinyWidgets, apexcharter, ggplot2, dplyr
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2021-07-22 14:25:45 UTC; granjda1
+Packaged: 2021-09-15 21:49:20 UTC; granjda1
 Author: David Granjon [aut, cre],
   Victor Perrier [aut],
   John Coene [ctb],
@@ -38,4 +38,4 @@ Author: David Granjon [aut, cre],
   Marvelapp [ctb, cph] (device.css wrappers),
   Vladimir Kharlampidi [ctb, cph] (Framework7 HTML template)
 Repository: CRAN
-Date/Publication: 2021-07-22 14:50:02 UTC
+Date/Publication: 2021-09-16 05:10:02 UTC
