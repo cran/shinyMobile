@@ -14,19 +14,16 @@
 
 <title>shinyMobile Tools</title>
 
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
   }
 });
 </script>
@@ -41,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -50,19 +48,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 </style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -82,7 +80,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -122,13 +120,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -338,190 +343,228 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="mobile-preview" class="section level2">
 <h2>Mobile preview</h2>
-<p>Since V0.2.0, <code>{shinyMobile}</code> has a function to preview your app in a large range of mobile devices: iphone X, iphone 8+, iphone8, iphone 5s, iphone 4s, ipad, Samsung galaxy S5, Samsung galaxy Note 8, … either locally on online:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(shiny)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(shinyMobile)</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">preview_mobile</span>(<span class="dt">appPath =</span> <span class="kw">system.file</span>(<span class="st">&quot;examples/gallery/app.R&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;shinyMobile&quot;</span>), <span class="dt">device =</span> <span class="st">&quot;iphoneX&quot;</span>)</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">preview_mobile</span>(<span class="dt">url =</span> <span class="st">&quot;https://dgranjon.shinyapps.io/miniUI2DemoMd&quot;</span>, <span class="dt">device =</span> <span class="st">&quot;ipadMini&quot;</span>)</span></code></pre></div>
+<p>Since V0.2.0, <code>{shinyMobile}</code> has a function to preview
+your app in a large range of mobile devices: iphone X, iphone 8+,
+iphone8, iphone 5s, iphone 4s, ipad, Samsung galaxy S5, Samsung galaxy
+Note 8, … either locally on online:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shinyMobile)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">preview_mobile</span>(<span class="at">appPath =</span> <span class="fu">system.file</span>(<span class="st">&quot;examples/gallery/app.R&quot;</span>, <span class="at">package =</span> <span class="st">&quot;shinyMobile&quot;</span>), <span class="at">device =</span> <span class="st">&quot;iphoneX&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">preview_mobile</span>(<span class="at">url =</span> <span class="st">&quot;https://dgranjon.shinyapps.io/miniUI2DemoMd&quot;</span>, <span class="at">device =</span> <span class="st">&quot;ipadMini&quot;</span>)</span></code></pre></div>
 <p>The local preview is a 4 steps process:</p>
 <ul>
 <li>run <code>preview_mobile</code> with appPath</li>
-<li>Copy the returned code <code>R -e &quot;shiny::runApp(&#39;appPath&#39;, port = 3838)&quot;</code> in a terminal to launch the app</li>
+<li>Copy the returned code
+<code>R -e &quot;shiny::runApp(&#39;appPath&#39;, port = 3838)&quot;</code> in a terminal
+to launch the app</li>
 <li>Press enter to run the wrapper app</li>
 <li>Have fun!</li>
 </ul>
-<p><code>preview_mobile</code> has other options such as color and landscape (to preview in landscape mode).</p>
+<p><code>preview_mobile</code> has other options such as color and
+landscape (to preview in landscape mode).</p>
 </div>
 <div id="pull-to-refresh" class="section level2">
 <h2>Pull to Refresh</h2>
-<p><code>{shinyMobile}</code> introduces the pull to refresh feature. It may be used to refresh the page content by pulling from top to bottom. This feature is disabled by default but passing <code>pullToRefresh = TRUE</code> in <code>f7Page</code> options will activate it. On the server side, an input, namely input$ptr is TRUE when ptr is refreshed and becomes NULL at the end of the animation. This allows to trigger updates/computations on the server side, for instance:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">shinyApp</span>(</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  <span class="dt">ui =</span> <span class="kw">f7Page</span>(</span>
-<span id="cb2-3"><a href="#cb2-3"></a>    <span class="dt">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
-<span id="cb2-4"><a href="#cb2-4"></a>    <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">pullToRefresh =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb2-5"><a href="#cb2-5"></a>    <span class="kw">f7SingleLayout</span>(</span>
-<span id="cb2-6"><a href="#cb2-6"></a>      <span class="dt">navbar =</span> <span class="kw">f7Navbar</span>(</span>
-<span id="cb2-7"><a href="#cb2-7"></a>        <span class="dt">title =</span> <span class="st">&quot;Single Layout&quot;</span>,</span>
-<span id="cb2-8"><a href="#cb2-8"></a>        <span class="dt">hairline =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb2-9"><a href="#cb2-9"></a>        <span class="dt">shadow =</span> <span class="ot">TRUE</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a>      ),</span>
-<span id="cb2-11"><a href="#cb2-11"></a>      <span class="dt">toolbar =</span> <span class="kw">f7Toolbar</span>(</span>
-<span id="cb2-12"><a href="#cb2-12"></a>        <span class="dt">position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb2-13"><a href="#cb2-13"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 1&quot;</span>, <span class="dt">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>),</span>
-<span id="cb2-14"><a href="#cb2-14"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 2&quot;</span>, <span class="dt">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>)</span>
-<span id="cb2-15"><a href="#cb2-15"></a>      ),</span>
-<span id="cb2-16"><a href="#cb2-16"></a>      <span class="co"># main content</span></span>
-<span id="cb2-17"><a href="#cb2-17"></a>      <span class="kw">f7List</span>(</span>
-<span id="cb2-18"><a href="#cb2-18"></a>        <span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="cf">function</span>(j) {</span>
-<span id="cb2-19"><a href="#cb2-19"></a>          <span class="kw">f7ListItem</span>(</span>
-<span id="cb2-20"><a href="#cb2-20"></a>            letters[j],</span>
-<span id="cb2-21"><a href="#cb2-21"></a>            <span class="dt">media =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;alarm_fill&quot;</span>),</span>
-<span id="cb2-22"><a href="#cb2-22"></a>            <span class="dt">right =</span> <span class="st">&quot;Right Text&quot;</span>,</span>
-<span id="cb2-23"><a href="#cb2-23"></a>            <span class="dt">header =</span> <span class="st">&quot;Header&quot;</span>,</span>
-<span id="cb2-24"><a href="#cb2-24"></a>            <span class="dt">footer =</span> <span class="st">&quot;Footer&quot;</span></span>
-<span id="cb2-25"><a href="#cb2-25"></a>          )</span>
-<span id="cb2-26"><a href="#cb2-26"></a>        })</span>
-<span id="cb2-27"><a href="#cb2-27"></a>      )</span>
-<span id="cb2-28"><a href="#cb2-28"></a>    )</span>
-<span id="cb2-29"><a href="#cb2-29"></a>  ),</span>
-<span id="cb2-30"><a href="#cb2-30"></a>  <span class="dt">server =</span> <span class="cf">function</span>(input, output, session) {</span>
-<span id="cb2-31"><a href="#cb2-31"></a>    <span class="kw">observe</span>(<span class="kw">print</span>(input<span class="op">$</span>ptr))</span>
-<span id="cb2-32"><a href="#cb2-32"></a></span>
-<span id="cb2-33"><a href="#cb2-33"></a>    <span class="kw">observeEvent</span>(input<span class="op">$</span>ptr, {</span>
-<span id="cb2-34"><a href="#cb2-34"></a>      ptrStatus &lt;-<span class="st"> </span><span class="cf">if</span> (input<span class="op">$</span>ptr) <span class="st">&quot;on&quot;</span></span>
-<span id="cb2-35"><a href="#cb2-35"></a>      <span class="kw">f7Dialog</span>(</span>
-<span id="cb2-36"><a href="#cb2-36"></a>        <span class="dt">text =</span> <span class="kw">paste</span>(<span class="st">&#39;ptr is&#39;</span>, ptrStatus),</span>
-<span id="cb2-37"><a href="#cb2-37"></a>        <span class="dt">type =</span> <span class="st">&quot;alert&quot;</span></span>
-<span id="cb2-38"><a href="#cb2-38"></a>      )</span>
-<span id="cb2-39"><a href="#cb2-39"></a>    })</span>
-<span id="cb2-40"><a href="#cb2-40"></a>  }</span>
-<span id="cb2-41"><a href="#cb2-41"></a>)</span></code></pre></div>
+<p><code>{shinyMobile}</code> introduces the pull to refresh feature. It
+may be used to refresh the page content by pulling from top to bottom.
+This feature is disabled by default but passing
+<code>pullToRefresh = TRUE</code> in <code>f7Page</code> options will
+activate it. On the server side, an input, namely input$ptr is TRUE when
+ptr is refreshed and becomes NULL at the end of the animation. This
+allows to trigger updates/computations on the server side, for
+instance:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ui =</span> <span class="fu">f7Page</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">options =</span> <span class="fu">list</span>(<span class="at">pullToRefresh =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f7SingleLayout</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">navbar =</span> <span class="fu">f7Navbar</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Single Layout&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">hairline =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">shadow =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">toolbar =</span> <span class="fu">f7Toolbar</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f7Link</span>(<span class="at">label =</span> <span class="st">&quot;Link 1&quot;</span>, <span class="at">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f7Link</span>(<span class="at">label =</span> <span class="st">&quot;Link 2&quot;</span>, <span class="at">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      <span class="co"># main content</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">f7List</span>(</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="cf">function</span>(j) {</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>          <span class="fu">f7ListItem</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            letters[j],</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">media =</span> <span class="fu">f7Icon</span>(<span class="st">&quot;alarm_fill&quot;</span>),</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">right =</span> <span class="st">&quot;Right Text&quot;</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">header =</span> <span class="st">&quot;Header&quot;</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">footer =</span> <span class="st">&quot;Footer&quot;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">server =</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">observe</span>(<span class="fu">print</span>(input<span class="sc">$</span>ptr))</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">observeEvent</span>(input<span class="sc">$</span>ptr, {</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>      ptrStatus <span class="ot">&lt;-</span> <span class="cf">if</span> (input<span class="sc">$</span>ptr) <span class="st">&quot;on&quot;</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">f7Dialog</span>(</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> <span class="fu">paste</span>(<span class="st">&#39;ptr is&#39;</span>, ptrStatus),</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">&quot;alert&quot;</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="predefined-input-values" class="section level2">
 <h2>Predefined input values</h2>
-<p><code>{shinyMobile}</code> contains a set of useful functions to help you setting the layout as best as possible.</p>
+<p><code>{shinyMobile}</code> contains a set of useful functions to help
+you setting the layout as best as possible.</p>
 <div id="informations-about-your-current-device" class="section level3">
 <h3>Informations about your current device</h3>
 <div id="description" class="section level4">
 <h4>Description</h4>
-<p><code>{shinyMobile}</code> has a predefined input, namely <strong>input$deviceInfo</strong>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>shiny<span class="op">::</span><span class="kw">shinyApp</span>(</span>
-<span id="cb3-2"><a href="#cb3-2"></a>  <span class="dt">ui =</span> <span class="kw">f7Page</span>(</span>
-<span id="cb3-3"><a href="#cb3-3"></a>    <span class="dt">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
-<span id="cb3-4"><a href="#cb3-4"></a>    <span class="kw">f7SingleLayout</span>(</span>
-<span id="cb3-5"><a href="#cb3-5"></a>      <span class="dt">navbar =</span> <span class="kw">f7Navbar</span>(</span>
-<span id="cb3-6"><a href="#cb3-6"></a>        <span class="dt">title =</span> <span class="st">&quot;Access device info&quot;</span>,</span>
-<span id="cb3-7"><a href="#cb3-7"></a>        <span class="dt">hairline =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb3-8"><a href="#cb3-8"></a>        <span class="dt">shadow =</span> <span class="ot">TRUE</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a>      ),</span>
-<span id="cb3-10"><a href="#cb3-10"></a>      <span class="co"># main content</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a>      <span class="kw">verbatimTextOutput</span>(<span class="st">&quot;info&quot;</span>)</span>
-<span id="cb3-12"><a href="#cb3-12"></a>    )</span>
-<span id="cb3-13"><a href="#cb3-13"></a>  ),</span>
-<span id="cb3-14"><a href="#cb3-14"></a>  <span class="dt">server =</span> <span class="cf">function</span>(input, output) {</span>
-<span id="cb3-15"><a href="#cb3-15"></a>    output<span class="op">$</span>info &lt;-<span class="st"> </span><span class="kw">renderPrint</span>({</span>
-<span id="cb3-16"><a href="#cb3-16"></a>      input<span class="op">$</span>deviceInfo</span>
-<span id="cb3-17"><a href="#cb3-17"></a>    })</span>
-<span id="cb3-18"><a href="#cb3-18"></a>  }</span>
-<span id="cb3-19"><a href="#cb3-19"></a>)</span></code></pre></div>
+<p><code>{shinyMobile}</code> has a predefined input, namely
+<strong>input$deviceInfo</strong>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">shinyApp</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ui =</span> <span class="fu">f7Page</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f7SingleLayout</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">navbar =</span> <span class="fu">f7Navbar</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Access device info&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">hairline =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">shadow =</span> <span class="cn">TRUE</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="co"># main content</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">verbatimTextOutput</span>(<span class="st">&quot;info&quot;</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">server =</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>info <span class="ot">&lt;-</span> <span class="fu">renderPrint</span>({</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      input<span class="sc">$</span>deviceInfo</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>The following fields are returned:</p>
 <ul>
-<li><code>input$deviceInfo$os</code>, returns a string containing your OS</li>
-<li><code>input$deviceInfo$desktop</code>, TRUE or FALSE (if you are running the app on your laptop or desktop)</li>
-<li><code>input$deviceInfo$standalone</code>, TRUE or FALSE (standalone, namely whether you access the app like a native app)</li>
+<li><code>input$deviceInfo$os</code>, returns a string containing your
+OS</li>
+<li><code>input$deviceInfo$desktop</code>, TRUE or FALSE (if you are
+running the app on your laptop or desktop)</li>
+<li><code>input$deviceInfo$standalone</code>, TRUE or FALSE (standalone,
+namely whether you access the app like a native app)</li>
 <li><code>input$deviceInfo$webview</code>, TRUE or FALSE (webview)</li>
-<li><code>input$deviceInfo$electron</code>, TRUE or FALSE (electron)</li>
+<li><code>input$deviceInfo$electron</code>, TRUE or FALSE
+(electron)</li>
 </ul>
 <p>There are other fields, with less inportance:</p>
 <ul>
-<li><code>input$deviceInfo$ios</code>, TRUE or FALSE (if you are running under iOS)</li>
-<li><code>input$deviceInfo$android</code>, TRUE or FALSE (if you are running under android)</li>
-<li><code>input$deviceInfo$androidChrome</code>, TRUE or FALSE (if you are running under android with Chrome)</li>
-<li><code>input$deviceInfo$iphone</code>, TRUE or FALSE (if you have an iphone)</li>
-<li><code>input$deviceInfo$ipod</code>, TRUE or FALSE (if you have an ipod)</li>
-<li><code>input$deviceInfo$ipad</code>, TRUE or FALSE (if you have an ipad)</li>
-<li><code>input$deviceInfo$edge</code>, TRUE or FALSE (if you are using edge)</li>
-<li><code>input$deviceInfo$ie</code>, TRUE or FALSE (if you are using Internet Explorer)</li>
-<li><code>input$deviceInfo$firefox</code>, TRUE or FALSE (if you are using Firefox)</li>
-<li><code>input$deviceInfo$macos</code>, TRUE or FALSE (if you have macOS)</li>
-<li><code>input$deviceInfo$windows</code>, TRUE or FALSE (if you have Windows)</li>
+<li><code>input$deviceInfo$ios</code>, TRUE or FALSE (if you are running
+under iOS)</li>
+<li><code>input$deviceInfo$android</code>, TRUE or FALSE (if you are
+running under android)</li>
+<li><code>input$deviceInfo$androidChrome</code>, TRUE or FALSE (if you
+are running under android with Chrome)</li>
+<li><code>input$deviceInfo$iphone</code>, TRUE or FALSE (if you have an
+iphone)</li>
+<li><code>input$deviceInfo$ipod</code>, TRUE or FALSE (if you have an
+ipod)</li>
+<li><code>input$deviceInfo$ipad</code>, TRUE or FALSE (if you have an
+ipad)</li>
+<li><code>input$deviceInfo$edge</code>, TRUE or FALSE (if you are using
+edge)</li>
+<li><code>input$deviceInfo$ie</code>, TRUE or FALSE (if you are using
+Internet Explorer)</li>
+<li><code>input$deviceInfo$firefox</code>, TRUE or FALSE (if you are
+using Firefox)</li>
+<li><code>input$deviceInfo$macos</code>, TRUE or FALSE (if you have
+macOS)</li>
+<li><code>input$deviceInfo$windows</code>, TRUE or FALSE (if you have
+Windows)</li>
 <li><code>input$deviceInfo$cordova</code>, TRUE or FALSE (cordova)</li>
-<li><code>input$deviceInfo$phonegap</code>, TRUE or FALSE (phonegap)</li>
+<li><code>input$deviceInfo$phonegap</code>, TRUE or FALSE
+(phonegap)</li>
 </ul>
 </div>
 <div id="usecase" class="section level4">
 <h4>Usecase</h4>
-<p>Below the example displays a card only when the app is on desktop.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">shinyApp</span>(</span>
-<span id="cb4-2"><a href="#cb4-2"></a>  <span class="dt">ui =</span> <span class="kw">f7Page</span>(</span>
-<span id="cb4-3"><a href="#cb4-3"></a>    <span class="dt">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
-<span id="cb4-4"><a href="#cb4-4"></a>    <span class="kw">f7SingleLayout</span>(</span>
-<span id="cb4-5"><a href="#cb4-5"></a>      <span class="dt">navbar =</span> <span class="kw">f7Navbar</span>(</span>
-<span id="cb4-6"><a href="#cb4-6"></a>        <span class="dt">title =</span> <span class="st">&quot;Access device info&quot;</span>,</span>
-<span id="cb4-7"><a href="#cb4-7"></a>        <span class="dt">hairline =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb4-8"><a href="#cb4-8"></a>        <span class="dt">shadow =</span> <span class="ot">TRUE</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a>      ),</span>
-<span id="cb4-10"><a href="#cb4-10"></a>      <span class="co"># main content</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a>      <span class="kw">uiOutput</span>(<span class="st">&quot;card&quot;</span>),</span>
-<span id="cb4-12"><a href="#cb4-12"></a>      <span class="kw">textOutput</span>(<span class="st">&quot;userAgent&quot;</span>),</span>
-<span id="cb4-13"><a href="#cb4-13"></a>    )</span>
-<span id="cb4-14"><a href="#cb4-14"></a>  ),</span>
-<span id="cb4-15"><a href="#cb4-15"></a>  <span class="dt">server =</span> <span class="cf">function</span>(input, output) {</span>
-<span id="cb4-16"><a href="#cb4-16"></a>    </span>
-<span id="cb4-17"><a href="#cb4-17"></a>    output<span class="op">$</span>userAgent &lt;-<span class="st"> </span><span class="kw">renderText</span>(input<span class="op">$</span>deviceInfo<span class="op">$</span>desktop)</span>
-<span id="cb4-18"><a href="#cb4-18"></a>    </span>
-<span id="cb4-19"><a href="#cb4-19"></a>    <span class="co"># generate a card only for desktop</span></span>
-<span id="cb4-20"><a href="#cb4-20"></a>    output<span class="op">$</span>card &lt;-<span class="st"> </span><span class="kw">renderUI</span>({</span>
-<span id="cb4-21"><a href="#cb4-21"></a>      <span class="cf">if</span> (input<span class="op">$</span>deviceInfo<span class="op">$</span>desktop) {</span>
-<span id="cb4-22"><a href="#cb4-22"></a>        <span class="kw">f7Card</span>(</span>
-<span id="cb4-23"><a href="#cb4-23"></a>          <span class="st">&quot;This is a simple card with plain text,</span></span>
-<span id="cb4-24"><a href="#cb4-24"></a><span class="st">          but cards can also contain their own header,</span></span>
-<span id="cb4-25"><a href="#cb4-25"></a><span class="st">          footer, list view, image, or any other element.&quot;</span></span>
-<span id="cb4-26"><a href="#cb4-26"></a>        )</span>
-<span id="cb4-27"><a href="#cb4-27"></a>      }</span>
-<span id="cb4-28"><a href="#cb4-28"></a>    })</span>
-<span id="cb4-29"><a href="#cb4-29"></a>  }</span>
-<span id="cb4-30"><a href="#cb4-30"></a>)</span></code></pre></div>
+<p>Below the example displays a card only when the app is on
+desktop.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ui =</span> <span class="fu">f7Page</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f7SingleLayout</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">navbar =</span> <span class="fu">f7Navbar</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Access device info&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">hairline =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">shadow =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="co"># main content</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">uiOutput</span>(<span class="st">&quot;card&quot;</span>),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">textOutput</span>(<span class="st">&quot;userAgent&quot;</span>),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">server =</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>userAgent <span class="ot">&lt;-</span> <span class="fu">renderText</span>(input<span class="sc">$</span>deviceInfo<span class="sc">$</span>desktop)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># generate a card only for desktop</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>card <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (input<span class="sc">$</span>deviceInfo<span class="sc">$</span>desktop) {</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f7Card</span>(</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;This is a simple card with plain text,</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="st">          but cards can also contain their own header,</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="st">          footer, list view, image, or any other element.&quot;</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 </div>
 <div id="informations-about-shiny-inputs" class="section level3">
 <h3>Informations about Shiny inputs</h3>
-<p><code>{shinyMobile}</code> has <code>input$lastInputChanged</code> which returns the name, value and type of the last changed input, see below:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">shinyApp</span>(</span>
-<span id="cb5-2"><a href="#cb5-2"></a>  <span class="dt">ui =</span> <span class="kw">f7Page</span>(</span>
-<span id="cb5-3"><a href="#cb5-3"></a>    <span class="dt">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
-<span id="cb5-4"><a href="#cb5-4"></a>    <span class="kw">f7SingleLayout</span>(</span>
-<span id="cb5-5"><a href="#cb5-5"></a>      <span class="dt">navbar =</span> <span class="kw">f7Navbar</span>(</span>
-<span id="cb5-6"><a href="#cb5-6"></a>        <span class="dt">title =</span> <span class="st">&quot;Single Layout&quot;</span>,</span>
-<span id="cb5-7"><a href="#cb5-7"></a>        <span class="dt">hairline =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb5-8"><a href="#cb5-8"></a>        <span class="dt">shadow =</span> <span class="ot">TRUE</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>      ),</span>
-<span id="cb5-10"><a href="#cb5-10"></a>      <span class="dt">toolbar =</span> <span class="kw">f7Toolbar</span>(</span>
-<span id="cb5-11"><a href="#cb5-11"></a>        <span class="dt">position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb5-12"><a href="#cb5-12"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 1&quot;</span>, <span class="dt">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>),</span>
-<span id="cb5-13"><a href="#cb5-13"></a>        <span class="kw">f7Link</span>(<span class="dt">label =</span> <span class="st">&quot;Link 2&quot;</span>, <span class="dt">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>)</span>
-<span id="cb5-14"><a href="#cb5-14"></a>      ),</span>
-<span id="cb5-15"><a href="#cb5-15"></a>      <span class="co"># main content</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a>      <span class="kw">f7Card</span>(<span class="kw">verbatimTextOutput</span>(<span class="st">&quot;infos&quot;</span>)),</span>
-<span id="cb5-17"><a href="#cb5-17"></a>      <span class="kw">f7Card</span>(</span>
-<span id="cb5-18"><a href="#cb5-18"></a>        <span class="kw">f7Text</span>(<span class="dt">inputId =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">label =</span> <span class="st">&quot;Text&quot;</span>),</span>
-<span id="cb5-19"><a href="#cb5-19"></a>        <span class="kw">f7Slider</span>(<span class="dt">inputId =</span> <span class="st">&quot;range1&quot;</span>, <span class="dt">label =</span> <span class="st">&quot;Range&quot;</span>, <span class="dt">min =</span> <span class="dv">0</span>, <span class="dt">max =</span> <span class="dv">2</span>, <span class="dt">value =</span> <span class="dv">1</span>, <span class="dt">step =</span> <span class="fl">0.1</span>),</span>
-<span id="cb5-20"><a href="#cb5-20"></a>        <span class="kw">f7Stepper</span>(<span class="dt">inputId =</span> <span class="st">&quot;stepper1&quot;</span>, <span class="dt">label =</span> <span class="st">&quot;Stepper&quot;</span>, <span class="dt">min =</span> <span class="dv">0</span>, <span class="dt">max =</span> <span class="dv">10</span>, <span class="dt">value =</span> <span class="dv">5</span>),</span>
-<span id="cb5-21"><a href="#cb5-21"></a>        <span class="kw">verbatimTextOutput</span>(<span class="st">&quot;lastChanged&quot;</span>)</span>
-<span id="cb5-22"><a href="#cb5-22"></a>      )</span>
-<span id="cb5-23"><a href="#cb5-23"></a>    )</span>
-<span id="cb5-24"><a href="#cb5-24"></a>  ),</span>
-<span id="cb5-25"><a href="#cb5-25"></a>  <span class="dt">server =</span> <span class="cf">function</span>(input, output) {</span>
-<span id="cb5-26"><a href="#cb5-26"></a>    output<span class="op">$</span>infos &lt;-<span class="st"> </span><span class="kw">renderPrint</span>(input<span class="op">$</span>shinyInfo)</span>
-<span id="cb5-27"><a href="#cb5-27"></a>    output<span class="op">$</span>lastChanged &lt;-<span class="st"> </span><span class="kw">renderPrint</span>(input<span class="op">$</span>lastInputChanged)</span>
-<span id="cb5-28"><a href="#cb5-28"></a>  }</span>
-<span id="cb5-29"><a href="#cb5-29"></a>)</span></code></pre></div>
-<p>This is convenient since usually, there is no shortcut to get the last changed value and this needs to be done server side in shiny.</p>
-<p>Soon there will be a way to compare initial input values (frozen) to current input values and get a diff.</p>
+<p><code>{shinyMobile}</code> has <code>input$lastInputChanged</code>
+which returns the name, value and type of the last changed input, see
+below:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ui =</span> <span class="fu">f7Page</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;My app&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f7SingleLayout</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">navbar =</span> <span class="fu">f7Navbar</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Single Layout&quot;</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">hairline =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">shadow =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">toolbar =</span> <span class="fu">f7Toolbar</span>(</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f7Link</span>(<span class="at">label =</span> <span class="st">&quot;Link 1&quot;</span>, <span class="at">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f7Link</span>(<span class="at">label =</span> <span class="st">&quot;Link 2&quot;</span>, <span class="at">href =</span> <span class="st">&quot;https://www.google.com&quot;</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      <span class="co"># main content</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">f7Card</span>(<span class="fu">verbatimTextOutput</span>(<span class="st">&quot;infos&quot;</span>)),</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">f7Card</span>(</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f7Text</span>(<span class="at">inputId =</span> <span class="st">&quot;text&quot;</span>, <span class="at">label =</span> <span class="st">&quot;Text&quot;</span>),</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f7Slider</span>(<span class="at">inputId =</span> <span class="st">&quot;range1&quot;</span>, <span class="at">label =</span> <span class="st">&quot;Range&quot;</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">2</span>, <span class="at">value =</span> <span class="dv">1</span>, <span class="at">step =</span> <span class="fl">0.1</span>),</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f7Stepper</span>(<span class="at">inputId =</span> <span class="st">&quot;stepper1&quot;</span>, <span class="at">label =</span> <span class="st">&quot;Stepper&quot;</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">10</span>, <span class="at">value =</span> <span class="dv">5</span>),</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">verbatimTextOutput</span>(<span class="st">&quot;lastChanged&quot;</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">server =</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>infos <span class="ot">&lt;-</span> <span class="fu">renderPrint</span>(input<span class="sc">$</span>shinyInfo)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>lastChanged <span class="ot">&lt;-</span> <span class="fu">renderPrint</span>(input<span class="sc">$</span>lastInputChanged)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>This is convenient since usually, there is no shortcut to get the
+last changed value and this needs to be done server side in shiny.</p>
+<p>Soon there will be a way to compare initial input values (frozen) to
+current input values and get a diff.</p>
 </div>
 <div id="other-information" class="section level3">
 <h3>Other information</h3>
-<p><code>input$shinyInfo</code> gives the current workerId (for shinyapps.io, shiny server pro, rstudio connect), the unique sessionId (equal to session$token on the server side).</p>
+<p><code>input$shinyInfo</code> gives the current workerId (for
+shinyapps.io, shiny server pro, rstudio connect), the unique sessionId
+(equal to session$token on the server side).</p>
 </div>
 </div>
 

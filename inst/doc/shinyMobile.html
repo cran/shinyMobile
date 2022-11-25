@@ -12,23 +12,20 @@
 
 <meta name="author" content="David Granjon" />
 
-<meta name="date" content="2021-09-15" />
+<meta name="date" content="2022-11-18" />
 
 <title>Getting Started</title>
 
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
   }
 });
 </script>
@@ -43,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -52,19 +50,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 </style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -84,7 +82,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -124,13 +122,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -336,15 +341,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Getting Started</h1>
 <h4 class="author">David Granjon</h4>
-<h4 class="date">2021-09-15</h4>
+<h4 class="date">2022-11-18</h4>
 
 
 
-<iframe src="https://rinterface.com/shiny/talks/rencontresR2021/slides.html" width="100%" height="400px">
+<iframe src="https://rinterface.com/shiny/talks/rencontresR2021/slides.html" width="100%" height="400px" data-external="1">
 </iframe>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p><code>{shinyMobile}</code> is built on top of the latest <a href="https://framework7.io">framework7</a> template (V5.7.14). It may be used for different purposes:</p>
+<p><code>{shinyMobile}</code> is built on top of the latest <a href="https://framework7.io">framework7</a> template (V5.7.14). It may
+be used for different purposes:</p>
 <ul>
 <li>develop mobile-ready shinyapps</li>
 <li>develop progressive web shinyapps (PWA, similar to native apps)</li>
@@ -358,22 +364,33 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><strong>aurora</strong> for desktop apps</li>
 <li><strong>ios</strong> and <strong>md</strong> for mobile apps</li>
 </ul>
-<p>It automatically detects if the app is running with android or iOS and accordingly adapt the layout. It is of course possible to apply the iOS skin on android and inversely, even though not recommended.</p>
-<p><code>{shinyMobile}</code> also provides 2 themes, namely light and dark. While framework7 allows to apply dark or light theme not only at the global level but at the “widget level”, <code>{shinyMobile}</code> does not support that feature, to improve the overall consistency. Only panels can have a color independent of the global theme.</p>
+<p>It automatically detects if the app is running with android or iOS
+and accordingly adapt the layout. It is of course possible to apply the
+iOS skin on android and inversely, even though not recommended.</p>
+<p><code>{shinyMobile}</code> also provides 2 themes, namely light and
+dark. While framework7 allows to apply dark or light theme not only at
+the global level but at the “widget level”, <code>{shinyMobile}</code>
+does not support that feature, to improve the overall consistency. Only
+panels can have a color independent of the global theme.</p>
 </div>
 <div id="layouts" class="section level2">
 <h2>Layouts</h2>
 <p><code>{shinyMobile}</code> brings 3 out of the box layouts:</p>
 <ul>
-<li><code>f7SingleLayout</code>: develop simple apps (best choice for iOS/android Apps)</li>
-<li><code>f7TabLayout</code>: develop complex multi-tabbed Apps (best choice for iOS/android Apps)</li>
-<li><code>f7SplitLayout</code>: for tablets and desktop with a sidebar, navbar and a main panel</li>
-<li>Coming soon: a multi-pages layout with animations between pages!</li>
+<li><code>f7SingleLayout</code>: develop simple apps (best choice for
+iOS/android Apps)</li>
+<li><code>f7TabLayout</code>: develop complex multi-tabbed Apps (best
+choice for iOS/android Apps)</li>
+<li><code>f7SplitLayout</code>: for tablets and desktop with a sidebar,
+navbar and a main panel</li>
+<li>Coming soon: a multi-pages layout with animations between
+pages!</li>
 </ul>
 </div>
 <div id="new-inputs" class="section level2">
 <h2>New Inputs</h2>
-<p><code>{shinyMobile}</code> has its own custom input widgets with unique design for each skin (iOS/android/aurora):</p>
+<p><code>{shinyMobile}</code> has its own custom input widgets with
+unique design for each skin (iOS/android/aurora):</p>
 <ul>
 <li><code>f7Slider()</code></li>
 <li><code>f7Text()</code></li>
@@ -381,7 +398,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><code>f7checkBoxGroup()</code></li>
 <li><code>f7Radio()</code></li>
 <li><code>f7Toggle()</code></li>
-<li><code>f7Stepper()</code>: equivalent to <code>numericInput()</code> from {shiny}</li>
+<li><code>f7Stepper()</code>: equivalent to <code>numericInput()</code>
+from {shiny}</li>
 <li><code>f7Picker()</code></li>
 <li><code>f7DatePicker()</code></li>
 <li><code>f7ColorPicker()</code></li>
@@ -389,8 +407,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><code>f7SmartSelect()</code></li>
 <li><code>f7Select()</code></li>
 <li><code>f7AutoComplete()</code></li>
-<li><code>f7Button()</code>: similar to <code>actionButton()</code> from {shiny}</li>
-<li><code>f7Fab()</code>: enhanced <code>f7Button()</code> with ability to be gathered in a <code>f7Fabs()</code> container</li>
+<li><code>f7Button()</code>: similar to <code>actionButton()</code> from
+{shiny}</li>
+<li><code>f7Fab()</code>: enhanced <code>f7Button()</code> with ability
+to be gathered in a <code>f7Fabs()</code> container</li>
 <li>and more</li>
 </ul>
 <p>It also has custom update functions to act on the server side:</p>
@@ -405,7 +425,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><code>updateF7Checkbox()</code></li>
 <li>and many more</li>
 </ul>
-<p>Finally, it also provides tools to dynamically update widgets on the server side like cards, accordions, tabs, panels and more:</p>
+<p>Finally, it also provides tools to dynamically update widgets on the
+server side like cards, accordions, tabs, panels and more:</p>
 <ul>
 <li><code>updateF7Accordion()</code></li>
 <li><code>updateF7Card()</code></li>
@@ -419,55 +440,76 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h2>Create your first App</h2>
 <div id="select-a-template" class="section level4">
 <h4>Select a template</h4>
-<p>This choice is crucial when you are developing an App. It depends on the complexity of your visualizations and content. If your plan is to develop a simple graph or table, you should go for the <code>f7SingleLayout()</code> option. For more complex design, the best is <code>f7TabLayout()</code>. <code>f7SplitLayout()</code> is specific for tablets and desktop apps.</p>
+<p>This choice is crucial when you are developing an App. It depends on
+the complexity of your visualizations and content. If your plan is to
+develop a simple graph or table, you should go for the
+<code>f7SingleLayout()</code> option. For more complex design, the best
+is <code>f7TabLayout()</code>. <code>f7SplitLayout()</code> is specific
+for tablets and desktop apps.</p>
 </div>
 <div id="simple-layout" class="section level4">
 <h4>Simple Layout</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">f7SingleLayout</span>(</span>
-<span id="cb1-2"><a href="#cb1-2"></a>  ..., </span>
-<span id="cb1-3"><a href="#cb1-3"></a>  navbar, </span>
-<span id="cb1-4"><a href="#cb1-4"></a>  <span class="dt">toolbar =</span> <span class="ot">NULL</span>, </span>
-<span id="cb1-5"><a href="#cb1-5"></a>  <span class="dt">panels =</span> <span class="ot">NULL</span>,</span>
-<span id="cb1-6"><a href="#cb1-6"></a>  <span class="dt">appbar =</span> <span class="ot">NULL</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a>)</span></code></pre></div>
-<p>While only the navbar is mandatory, other components such as the toolbar are optionnal for the <code>f7SingleLayout()</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7SingleLayout</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  ..., </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  navbar, </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">toolbar =</span> <span class="cn">NULL</span>, </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">panels =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">appbar =</span> <span class="cn">NULL</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>While only the navbar is mandatory, other components such as the
+toolbar are optionnal for the <code>f7SingleLayout()</code>.</p>
 </div>
 <div id="tabs-layout" class="section level4">
 <h4>Tabs Layout</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">f7TabLayout</span>(</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  ..., </span>
-<span id="cb2-3"><a href="#cb2-3"></a>  navbar, </span>
-<span id="cb2-4"><a href="#cb2-4"></a>  <span class="dt">panels =</span> <span class="ot">NULL</span>, </span>
-<span id="cb2-5"><a href="#cb2-5"></a>  <span class="dt">appbar =</span> <span class="ot">NULL</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a>)</span></code></pre></div>
-<p>The … argument requires <code>f7Tabs(..., id = NULL, swipeable = FALSE, animated = TRUE)</code>. The id argument is mandatory if you want to exploit the <code>updateF7Tabs()</code> function. <code>f7Tabs()</code> expect to have <code>f7Tab(..., tabName, icon = NULL, active = FALSE)</code> passed inside.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7TabLayout</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  ..., </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  navbar, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">panels =</span> <span class="cn">NULL</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">appbar =</span> <span class="cn">NULL</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>The … argument requires
+<code>f7Tabs(..., id = NULL, swipeable = FALSE, animated = TRUE)</code>.
+The id argument is mandatory if you want to exploit the
+<code>updateF7Tabs()</code> function. <code>f7Tabs()</code> expect to
+have <code>f7Tab(..., tabName, icon = NULL, active = FALSE)</code>
+passed inside.</p>
 </div>
 <div id="split-layout-similar-to-sidebarlayout-in-shiny" class="section level4">
 <h4>Split Layout (similar to sidebarLayout in {shiny})</h4>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">f7SplitLayout</span>(.</span>
-<span id="cb3-2"><a href="#cb3-2"></a>  ..., </span>
-<span id="cb3-3"><a href="#cb3-3"></a>  navbar, </span>
-<span id="cb3-4"><a href="#cb3-4"></a>  sidebar, </span>
-<span id="cb3-5"><a href="#cb3-5"></a>  <span class="dt">toolbar =</span> <span class="ot">NULL</span>, </span>
-<span id="cb3-6"><a href="#cb3-6"></a>  <span class="dt">panels =</span> <span class="ot">NULL</span>,</span>
-<span id="cb3-7"><a href="#cb3-7"></a>  <span class="dt">appbar =</span> <span class="ot">NULL</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a>)</span></code></pre></div>
-<p>The main content goes in the … parameter. Navigation items are gathered in the sidebar slot. The sidebar expect a <code>f7Panel</code>. Importantly, the side parameter must be set to “left” and the style to “reveal”. The navigation menu is organized as follows:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">f7PanelMenu</span>(</span>
-<span id="cb4-2"><a href="#cb4-2"></a>  <span class="dt">id =</span> <span class="st">&quot;menu&quot;</span>,</span>
-<span id="cb4-3"><a href="#cb4-3"></a>  <span class="kw">f7PanelItem</span>(</span>
-<span id="cb4-4"><a href="#cb4-4"></a>    <span class="dt">tabName =</span> <span class="st">&quot;tab1&quot;</span>, </span>
-<span id="cb4-5"><a href="#cb4-5"></a>    <span class="dt">title =</span> <span class="st">&quot;Tab 1&quot;</span>, </span>
-<span id="cb4-6"><a href="#cb4-6"></a>    <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;email&quot;</span>), </span>
-<span id="cb4-7"><a href="#cb4-7"></a>    <span class="dt">active =</span> <span class="ot">TRUE</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a>  ),</span>
-<span id="cb4-9"><a href="#cb4-9"></a>  <span class="kw">f7PanelItem</span>(</span>
-<span id="cb4-10"><a href="#cb4-10"></a>    <span class="dt">tabName =</span> <span class="st">&quot;tab2&quot;</span>, </span>
-<span id="cb4-11"><a href="#cb4-11"></a>    <span class="dt">title =</span> <span class="st">&quot;Tab 2&quot;</span>, </span>
-<span id="cb4-12"><a href="#cb4-12"></a>    <span class="dt">icon =</span> <span class="kw">f7Icon</span>(<span class="st">&quot;home&quot;</span>)</span>
-<span id="cb4-13"><a href="#cb4-13"></a>  )</span>
-<span id="cb4-14"><a href="#cb4-14"></a>)</span></code></pre></div>
-<p>The <strong>id</strong> argument is important if you want to get the currently selected item or update the select tab. Each <code>f7PanelItem</code> has a mandatory <strong>tabName</strong>. The associated input will be <code>input$menu</code> in that example, with “tab1” for value since the first tab was set to an active state. To adequately link the body and the sidebar, you must wrap the body content in <code>f7Items()</code> containing as many <code>f7Item()</code> as sidebar items. The <strong>tabName</strong> must correspond!</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7SplitLayout</span>(.</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  ..., </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  navbar, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  sidebar, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">toolbar =</span> <span class="cn">NULL</span>, </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">panels =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">appbar =</span> <span class="cn">NULL</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>The main content goes in the … parameter. Navigation items are
+gathered in the sidebar slot. The sidebar expect a <code>f7Panel</code>.
+Importantly, the side parameter must be set to “left” and the style to
+“reveal”. The navigation menu is organized as follows:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7PanelMenu</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">&quot;menu&quot;</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">f7PanelItem</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">tabName =</span> <span class="st">&quot;tab1&quot;</span>, </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Tab 1&quot;</span>, </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">icon =</span> <span class="fu">f7Icon</span>(<span class="st">&quot;email&quot;</span>), </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">active =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">f7PanelItem</span>(</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">tabName =</span> <span class="st">&quot;tab2&quot;</span>, </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Tab 2&quot;</span>, </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">icon =</span> <span class="fu">f7Icon</span>(<span class="st">&quot;home&quot;</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>The <strong>id</strong> argument is important if you want to get the
+currently selected item or update the select tab. Each
+<code>f7PanelItem</code> has a mandatory <strong>tabName</strong>. The
+associated input will be <code>input$menu</code> in that example, with
+“tab1” for value since the first tab was set to an active state. To
+adequately link the body and the sidebar, you must wrap the body content
+in <code>f7Items()</code> containing as many <code>f7Item()</code> as
+sidebar items. The <strong>tabName</strong> must correspond!</p>
 </div>
 <div id="core-layout-components" class="section level4">
 <h4>Core Layout Components</h4>
@@ -475,119 +517,156 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="page" class="section level4">
 <h4>Page</h4>
 <p>It is the main skeleton of the template.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">f7Page</span>(</span>
-<span id="cb5-2"><a href="#cb5-2"></a>  ..., </span>
-<span id="cb5-3"><a href="#cb5-3"></a>  <span class="dt">options =</span> <span class="kw">list</span>(</span>
-<span id="cb5-4"><a href="#cb5-4"></a>    <span class="dt">theme =</span> <span class="kw">c</span>(<span class="st">&quot;ios&quot;</span>, <span class="st">&quot;md&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;aurora&quot;</span>),</span>
-<span id="cb5-5"><a href="#cb5-5"></a>    <span class="dt">dark =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb5-6"><a href="#cb5-6"></a>    <span class="dt">filled =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb5-7"><a href="#cb5-7"></a>    <span class="dt">color =</span> <span class="st">&quot;#007aff&quot;</span>,</span>
-<span id="cb5-8"><a href="#cb5-8"></a>    <span class="dt">touch =</span> <span class="kw">list</span>(</span>
-<span id="cb5-9"><a href="#cb5-9"></a>      <span class="dt">tapHold =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb5-10"><a href="#cb5-10"></a>      <span class="dt">tapHoldDelay =</span> <span class="dv">750</span>,</span>
-<span id="cb5-11"><a href="#cb5-11"></a>      <span class="dt">iosTouchRipple =</span> <span class="ot">FALSE</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a>    ),</span>
-<span id="cb5-13"><a href="#cb5-13"></a>    <span class="dt">iosTranslucentBars =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb5-14"><a href="#cb5-14"></a>    <span class="dt">navbar =</span> <span class="kw">list</span>(</span>
-<span id="cb5-15"><a href="#cb5-15"></a>      <span class="dt">iosCenterTitle =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb5-16"><a href="#cb5-16"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">TRUE</span></span>
-<span id="cb5-17"><a href="#cb5-17"></a>    ),</span>
-<span id="cb5-18"><a href="#cb5-18"></a>    <span class="dt">toolbar =</span> <span class="kw">list</span>(</span>
-<span id="cb5-19"><a href="#cb5-19"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">FALSE</span></span>
-<span id="cb5-20"><a href="#cb5-20"></a>    ),</span>
-<span id="cb5-21"><a href="#cb5-21"></a>    <span class="dt">pullToRefresh =</span> <span class="ot">FALSE</span></span>
-<span id="cb5-22"><a href="#cb5-22"></a>  ),</span>
-<span id="cb5-23"><a href="#cb5-23"></a>  <span class="dt">title =</span> <span class="ot">NULL</span>, </span>
-<span id="cb5-24"><a href="#cb5-24"></a>  <span class="dt">preloader =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb5-25"><a href="#cb5-25"></a>  <span class="dt">loading_duration =</span> <span class="dv">3</span>,</span>
-<span id="cb5-26"><a href="#cb5-26"></a>  <span class="dt">allowPWA =</span> <span class="ot">FALSE</span></span>
-<span id="cb5-27"><a href="#cb5-27"></a>)</span></code></pre></div>
-<p><strong>options</strong> sets up the app look and feel. <strong>preloader</strong> is useful in case you want to display a loading screen. <code>f7Page()</code> accepts any <code>{shinyMobile}</code> layout.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7Page</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  ..., </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">c</span>(<span class="st">&quot;ios&quot;</span>, <span class="st">&quot;md&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;aurora&quot;</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">dark =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">filled =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;#007aff&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">touch =</span> <span class="fu">list</span>(</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">tapHold =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">tapHoldDelay =</span> <span class="dv">750</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">iosTouchRipple =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">iosTranslucentBars =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">navbar =</span> <span class="fu">list</span>(</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">iosCenterTitle =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">hideNavOnPageScroll =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">toolbar =</span> <span class="fu">list</span>(</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">hideNavOnPageScroll =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">pullToRefresh =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="cn">NULL</span>, </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">preloader =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">loading_duration =</span> <span class="dv">3</span>,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">allowPWA =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><strong>options</strong> sets up the app look and feel.
+<strong>preloader</strong> is useful in case you want to display a
+loading screen. <code>f7Page()</code> accepts any
+<code>{shinyMobile}</code> layout.</p>
 <div id="navbar" class="section level5">
 <h5>Navbar</h5>
-<p>The <strong>navbar</strong> is a mandatory element of any <code>{shinyMobile}</code> layout. It contains a title, a subtitle, triggers for both right and left panels (<code>f7Panel()</code>) as well as a subnavbar (<code>f7SubNavbar()</code>).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">f7Navbar</span>(</span>
-<span id="cb6-2"><a href="#cb6-2"></a>  ..., </span>
-<span id="cb6-3"><a href="#cb6-3"></a>  <span class="dt">subNavbar =</span> <span class="ot">NULL</span>, </span>
-<span id="cb6-4"><a href="#cb6-4"></a>  <span class="dt">title =</span> <span class="ot">NULL</span>, </span>
-<span id="cb6-5"><a href="#cb6-5"></a>  <span class="dt">subtitle =</span> <span class="ot">NULL</span>,</span>
-<span id="cb6-6"><a href="#cb6-6"></a>  <span class="dt">hairline =</span> <span class="ot">TRUE</span>, </span>
-<span id="cb6-7"><a href="#cb6-7"></a>  <span class="dt">shadow =</span> <span class="ot">TRUE</span>, </span>
-<span id="cb6-8"><a href="#cb6-8"></a>  <span class="dt">bigger =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb6-9"><a href="#cb6-9"></a>  <span class="dt">leftPanel =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb6-10"><a href="#cb6-10"></a>  <span class="dt">rightPanel =</span> <span class="ot">FALSE</span></span>
-<span id="cb6-11"><a href="#cb6-11"></a>)</span></code></pre></div>
-<p>For complex apps, it might be interesting to add a <code>f7SubNavbar(...)</code>. It may contain any element like <code>f7Button()</code> or text. <code>f7Navbar()</code> has also styling parameters such as shadow and hairline.</p>
+<p>The <strong>navbar</strong> is a mandatory element of any
+<code>{shinyMobile}</code> layout. It contains a title, a subtitle,
+triggers for both right and left panels (<code>f7Panel()</code>) as well
+as a subnavbar (<code>f7SubNavbar()</code>).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7Navbar</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  ..., </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">subNavbar =</span> <span class="cn">NULL</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="cn">NULL</span>, </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="cn">NULL</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">hairline =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">shadow =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">bigger =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">leftPanel =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">rightPanel =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>For complex apps, it might be interesting to add a
+<code>f7SubNavbar(...)</code>. It may contain any element like
+<code>f7Button()</code> or text. <code>f7Navbar()</code> has also
+styling parameters such as shadow and hairline.</p>
 </div>
 <div id="the-toolbar" class="section level5">
 <h5>The Toolbar</h5>
-<p>This is an option if you decide not to embed a <code>f7SubNavbar()</code>. The toolbar is the rigth place to add <code>f7Button()</code>, <code>f7Link()</code>, <code>f7Badge()</code>… Its position is controlled with the position parameter (either top or bottom).</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">f7Toolbar</span>(</span>
-<span id="cb7-2"><a href="#cb7-2"></a>  ..., </span>
-<span id="cb7-3"><a href="#cb7-3"></a>  <span class="dt">position =</span> <span class="kw">c</span>(<span class="st">&quot;top&quot;</span>, <span class="st">&quot;bottom&quot;</span>), </span>
-<span id="cb7-4"><a href="#cb7-4"></a>  <span class="dt">hairline =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb7-5"><a href="#cb7-5"></a>  <span class="dt">shadow =</span> <span class="ot">TRUE</span>, </span>
-<span id="cb7-6"><a href="#cb7-6"></a>  <span class="dt">icons =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb7-7"><a href="#cb7-7"></a>  <span class="dt">scrollable =</span> <span class="ot">FALSE</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a>)</span></code></pre></div>
-<p>Under the hood, <code>f7Tabs()</code> is a custom <code>f7Toolbar()</code>!</p>
+<p>This is an option if you decide not to embed a
+<code>f7SubNavbar()</code>. The toolbar is the rigth place to add
+<code>f7Button()</code>, <code>f7Link()</code>, <code>f7Badge()</code>…
+Its position is controlled with the position parameter (either top or
+bottom).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7Toolbar</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  ..., </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">position =</span> <span class="fu">c</span>(<span class="st">&quot;top&quot;</span>, <span class="st">&quot;bottom&quot;</span>), </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">hairline =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">shadow =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">icons =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">scrollable =</span> <span class="cn">FALSE</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>Under the hood, <code>f7Tabs()</code> is a custom
+<code>f7Toolbar()</code>!</p>
 </div>
 <div id="panels" class="section level5">
 <h5>Panels</h5>
-<p>Panels are also called sidebars. <code>f7Panel()</code> is the corresponding function.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">f7Panel</span>(</span>
-<span id="cb8-2"><a href="#cb8-2"></a>  ..., </span>
-<span id="cb8-3"><a href="#cb8-3"></a>  <span class="dt">id =</span> <span class="ot">NULL</span>,</span>
-<span id="cb8-4"><a href="#cb8-4"></a>  <span class="dt">title =</span> <span class="ot">NULL</span>, </span>
-<span id="cb8-5"><a href="#cb8-5"></a>  <span class="dt">side =</span> <span class="kw">c</span>(<span class="st">&quot;left&quot;</span>, <span class="st">&quot;right&quot;</span>),</span>
-<span id="cb8-6"><a href="#cb8-6"></a>  <span class="dt">theme =</span> <span class="kw">c</span>(<span class="st">&quot;dark&quot;</span>, <span class="st">&quot;light&quot;</span>), </span>
-<span id="cb8-7"><a href="#cb8-7"></a>  <span class="dt">effect =</span> <span class="kw">c</span>(<span class="st">&quot;reveal&quot;</span>, <span class="st">&quot;cover&quot;</span>),</span>
-<span id="cb8-8"><a href="#cb8-8"></a>  <span class="dt">resizable =</span> <span class="ot">FALSE</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a>)</span></code></pre></div>
-<p>Although the App has a <strong>theme</strong> option, <code>f7Panel()</code> has an independent <strong>theme</strong> option. For instance, it is definitely possible to create a dark <code>f7Panel()</code> while the page theme is light, and conversely. Its behaviour is controlled via the effect argument:</p>
+<p>Panels are also called sidebars. <code>f7Panel()</code> is the
+corresponding function.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7Panel</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  ..., </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="cn">NULL</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="cn">NULL</span>, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">side =</span> <span class="fu">c</span>(<span class="st">&quot;left&quot;</span>, <span class="st">&quot;right&quot;</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="fu">c</span>(<span class="st">&quot;dark&quot;</span>, <span class="st">&quot;light&quot;</span>), </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">effect =</span> <span class="fu">c</span>(<span class="st">&quot;reveal&quot;</span>, <span class="st">&quot;cover&quot;</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">resizable =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>Although the App has a <strong>theme</strong> option,
+<code>f7Panel()</code> has an independent <strong>theme</strong> option.
+For instance, it is definitely possible to create a dark
+<code>f7Panel()</code> while the page theme is light, and conversely.
+Its behaviour is controlled via the effect argument:</p>
 <ul>
-<li><strong>reveal</strong> will make the body content move and resize</li>
+<li><strong>reveal</strong> will make the body content move and
+resize</li>
 <li><strong>cover</strong> will cover the body content</li>
 </ul>
-<p>The <strong>resizable</strong> argument allows to dynamically resize the panel.</p>
-<p>Note that for the moment, there is no option to control the width of each panel.</p>
-<p>As stated previously for the <code>f7SplitLayout()</code>, the <code>f7Panel()</code> may also be considered as a sidebar. In that case, we may include <code>f7PanelMenu()</code>. Finally do not forget to set up the <code>f7Navbar()</code> so that panels are allowed!</p>
+<p>The <strong>resizable</strong> argument allows to dynamically resize
+the panel.</p>
+<p>Note that for the moment, there is no option to control the width of
+each panel.</p>
+<p>As stated previously for the <code>f7SplitLayout()</code>, the
+<code>f7Panel()</code> may also be considered as a sidebar. In that
+case, we may include <code>f7PanelMenu()</code>. Finally do not forget
+to set up the <code>f7Navbar()</code> so that panels are allowed!</p>
 </div>
 <div id="the-appbar" class="section level5">
 <h5>The appbar</h5>
-<p><code>f7Appbar()</code> is displayed on top of the <code>f7Navbar()</code>. It is a best choice to embed <code>f7Searchbar()</code>. <code>f7Appbar()</code> may also trigger <code>f7Panel()</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">f7Appbar</span>(</span>
-<span id="cb9-2"><a href="#cb9-2"></a>  ..., </span>
-<span id="cb9-3"><a href="#cb9-3"></a>  <span class="dt">leftPanel =</span> <span class="ot">FALSE</span>, </span>
-<span id="cb9-4"><a href="#cb9-4"></a>  <span class="dt">rightPanel =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb9-5"><a href="#cb9-5"></a>  <span class="dt">maximizable =</span> <span class="ot">FALSE</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a>)</span></code></pre></div>
+<p><code>f7Appbar()</code> is displayed on top of the
+<code>f7Navbar()</code>. It is a best choice to embed
+<code>f7Searchbar()</code>. <code>f7Appbar()</code> may also trigger
+<code>f7Panel()</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f7Appbar</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  ..., </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">leftPanel =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rightPanel =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">maximizable =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 </div>
 <div id="options" class="section level4">
 <h4>Options</h4>
 <p>This is probably the most important element of the template:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>options =<span class="st"> </span><span class="kw">list</span>(</span>
-<span id="cb10-2"><a href="#cb10-2"></a>    <span class="dt">theme =</span> <span class="kw">c</span>(<span class="st">&quot;ios&quot;</span>, <span class="st">&quot;md&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;aurora&quot;</span>),</span>
-<span id="cb10-3"><a href="#cb10-3"></a>    <span class="dt">dark =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb10-4"><a href="#cb10-4"></a>    <span class="dt">filled =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb10-5"><a href="#cb10-5"></a>    <span class="dt">color =</span> <span class="st">&quot;#007aff&quot;</span>,</span>
-<span id="cb10-6"><a href="#cb10-6"></a>    <span class="dt">touch =</span> <span class="kw">list</span>(</span>
-<span id="cb10-7"><a href="#cb10-7"></a>      <span class="dt">tapHold =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb10-8"><a href="#cb10-8"></a>      <span class="dt">tapHoldDelay =</span> <span class="dv">750</span>,</span>
-<span id="cb10-9"><a href="#cb10-9"></a>      <span class="dt">iosTouchRipple =</span> <span class="ot">FALSE</span></span>
-<span id="cb10-10"><a href="#cb10-10"></a>    ),</span>
-<span id="cb10-11"><a href="#cb10-11"></a>    <span class="dt">iosTranslucentBars =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb10-12"><a href="#cb10-12"></a>    <span class="dt">navbar =</span> <span class="kw">list</span>(</span>
-<span id="cb10-13"><a href="#cb10-13"></a>      <span class="dt">iosCenterTitle =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb10-14"><a href="#cb10-14"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">TRUE</span></span>
-<span id="cb10-15"><a href="#cb10-15"></a>    ),</span>
-<span id="cb10-16"><a href="#cb10-16"></a>    <span class="dt">toolbar =</span> <span class="kw">list</span>(</span>
-<span id="cb10-17"><a href="#cb10-17"></a>      <span class="dt">hideNavOnPageScroll =</span> <span class="ot">FALSE</span></span>
-<span id="cb10-18"><a href="#cb10-18"></a>    ),</span>
-<span id="cb10-19"><a href="#cb10-19"></a>    <span class="dt">pullToRefresh =</span> <span class="ot">FALSE</span></span>
-<span id="cb10-20"><a href="#cb10-20"></a>  )</span></code></pre></div>
-<p>As stated above, you may choose between 3 skins and 2 color themes. There is a third option called <strong>filled</strong> that allows to fill the navbar and toolbar if enabled. The <strong>color</strong> options simply changes the color of elements such as buttons, panel triggers, tabs triggers, … <code>{shinyMobile}</code> brings a lot of different colors. <strong>hideOnPageScroll</strong> allow to hide/show the navbar and toolbar which is useful to focus on the content. The <strong>tapHold</strong> parameter ensure that the “long-press” feature is activated. Framework7 has many more options which can be passed through this <strong>options</strong> parameter</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>options <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">c</span>(<span class="st">&quot;ios&quot;</span>, <span class="st">&quot;md&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;aurora&quot;</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">dark =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">filled =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;#007aff&quot;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">touch =</span> <span class="fu">list</span>(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">tapHold =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">tapHoldDelay =</span> <span class="dv">750</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">iosTouchRipple =</span> <span class="cn">FALSE</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">iosTranslucentBars =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">navbar =</span> <span class="fu">list</span>(</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">iosCenterTitle =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">hideNavOnPageScroll =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">toolbar =</span> <span class="fu">list</span>(</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">hideNavOnPageScroll =</span> <span class="cn">FALSE</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">pullToRefresh =</span> <span class="cn">FALSE</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>As stated above, you may choose between 3 skins and 2 color themes.
+There is a third option called <strong>filled</strong> that allows to
+fill the navbar and toolbar if enabled. The <strong>color</strong>
+options simply changes the color of elements such as buttons, panel
+triggers, tabs triggers, … <code>{shinyMobile}</code> brings a lot of
+different colors. <strong>hideOnPageScroll</strong> allow to hide/show
+the navbar and toolbar which is useful to focus on the content. The
+<strong>tapHold</strong> parameter ensure that the “long-press” feature
+is activated. Framework7 has many more options which can be passed
+through this <strong>options</strong> parameter</p>
 </div>
 </div>
 
