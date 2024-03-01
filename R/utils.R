@@ -90,7 +90,7 @@ shinyInputLabel <- function(inputId, label = NULL) {
 #' @param tag Tag to attach the dependencies.
 #' @param deps Dependencies to add. Expect a vector of names. If NULL, all dependencies
 #' are added.
-#' @export
+#' @keywords internal
 add_dependencies <- function(tag, deps = NULL) {
   if (is.null(deps)) {
     temp_names <- list.files("./R", pattern = "dependencies.R$")
@@ -158,6 +158,7 @@ processDeps <- function (tags, session) {
 #' iphone5c (white,red , yellow, green, blue), iphone4s (black, silver), ipadMini (black, silver) and
 #' galaxyS5 (black, white).
 #' @param landscape Whether to put the device wrapper in landscape mode. Default to FALSE.
+#' @keywords internal
 app_container <- function(url, deps = FALSE, skin, color = NULL, landscape = FALSE) {
 
   # test app availability
@@ -199,4 +200,37 @@ get_args <- function(level) {
   f <- get(as.character(cl[[1]]), mode="function", sys.frame(-2))
   cl <- match.call(definition=f, call=cl)
   as.list(cl)[-1]
+}
+
+#' Create shinylive iframe
+#'
+#' @param app_code base64 app code. You can create it from https://shinylive.io/r
+#' by writing code and click on share and copy the link. The code is located at
+#' the end of the url.
+#' @param mode How to display the shinylive app. Default to app mode.
+#' @param header Whether to display the shinylive header. Default to TRUE.
+#'
+#' @keywords internal
+create_app_link <- function(app_code, mode = c("app", "editor"), header = TRUE) {
+  mode <- match.arg(mode)
+
+  app_url <- sprintf(
+    "https://shinylive.io/r/%s/#code=%s", mode, app_code
+  )
+
+  if (!header) {
+    app_url <- paste0(app_url, "&h=0")
+  }
+
+  shiny::tags$iframe(
+    # To allow the content to fill the full screen card
+    class = "html-fill-item",
+    src = app_url,
+    height = "700",
+    width = "100%",
+    style = "border: 1px solid rgba(0,0,0,0.175); border-radius: .375rem;",
+    allowfullscreen = "",
+    allow = "autoplay",
+    `data-external` = "1"
+  )
 }
